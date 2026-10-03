@@ -1,6 +1,6 @@
 <!--
 Generated from docs/templates/README.tmpl.md by ml/fill_docs.py (numbers come from results/numbers.json).
-Left for the team to fill: https://git-lsd.github.io/kahawa-check/, https://github.com/git-lsd/kahawa-check, {{VIDEO_URL}}, {{TEAMMATE}}, MIT (see LICENSE). Delete this comment after filling.
+Left for the team to fill: {{VIDEO_URL}}. Delete this comment after filling.
 -->
 
 # Kahawa Check
@@ -243,6 +243,6 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 ## Team
 
 - **Sidian Lin**, PhD in Public Policy (Harvard GSAS and HKS). Works on operations research and machine learning for public services. Co-wrote a report on Zimbabwe's Friendship Bench (task-sharing in community mental health), and wrote a paper on steering patients to hospitals when hospital quality is estimated from few cases.
-- **{{TEAMMATE}}**
+- **Yicong Li**, PhD student in Computer Science (Harvard), working on computer vision.
 
 Built with an AI coding assistant (Claude Code). The team directed the design and is responsible for what is submitted.

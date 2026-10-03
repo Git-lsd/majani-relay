@@ -10,6 +10,7 @@ TEAM_DECISIONS = {
     'CODE_LICENCE': 'MIT (see LICENSE)',
     'REPO_URL': 'https://github.com/git-lsd/kahawa-check',
     'APP_URL': 'https://git-lsd.github.io/kahawa-check/',
+    'TEAMMATE': 'Yicong Li',
 }
 N.update(TEAM_DECISIONS)  # one-time download: model 16.8 + runtime 14.2 + reference 1.3 + audio 1.5 + rest
 OUT = {'README.tmpl.md': 'README.md', 'VIDEO_SCRIPTS.tmpl.md': 'docs/VIDEO_SCRIPTS.md', 'ONE_PAGER.tmpl.md': 'docs/ONE_PAGER.md'}
