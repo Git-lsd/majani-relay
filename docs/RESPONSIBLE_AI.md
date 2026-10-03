@@ -31,7 +31,7 @@ All of this sits in the browser storage (IndexedDB) of the relay farmer's phone,
 
 Data leaves the phone only when a person exports it:
 - **Co-op CSV** (button "Export CSV"): one row per village with counts, shares and the alert flag. No member codes, no photos.
-- **Model update file** (button "Share this update with other relay farmers"): the refitted small head, the list of officer labels, and an 8-bit copy of the 1,280-number embedding of each officer-labelled photo (about 1.3 KB per photo). No photos, no villages, no member codes. An embedding is a summary of a leaf photo; it is not designed to be turned back into an image.
+- **Model update file** (button "Share this update with other relay farmers"): the refitted small head, the list of officer labels, and an 8-bit copy of the 1,280-number embedding of each officer-labelled photo (1284 bytes per photo in binary form, `results/numbers.json`). No photos, no villages, no member codes. An embedding is a summary of a leaf photo; it is not designed to be turned back into an image.
 
 How these files travel (Bluetooth, WhatsApp, a memory card) is up to the user. Once a file leaves the app, the app cannot delete it.
 
@@ -116,7 +116,21 @@ The full list per dataset is in `docs/DATA_CARD.md`. The main limits:
 - **One answer per photo.** A leaf with two problems gets one answer. Severity is not measured.
 - **Underside protocol.** Rust shows best on the leaf underside. Leaf miner shows best on the upper side.
 - **Language.** Swahili and Kikuyu text is unverified. A farmer who speaks neither gets English or Swahili.
-- **Who is left out.** Farmers no relay farmer visits; relay farmers without a smartphone; farmers who do not want photos taken. The tool reaches Noor through a person, not through her own basic phone.
+- **Who is left out.**
+  - Farmers outside cooperatives. Records are keyed to the cooperative member number, and the relay farmer is a cooperative role.
+  - Land that is not yet mapped, if records are later linked to plot maps or to KIAMIS. The tool itself uses village and member number, not maps. About 30% of Kenya's coffee land was geo-mapped in July 2025 (32,688 of 109,384 ha; AFA via Business Daily, 29 Jul 2025: https://www.businessdailyafrica.com/bd/economy/kenya-in-2-month-dash-to-comply-with-eu-coffee-import-rules-5136340).
+  - Farmers no relay farmer visits; relay farmers without a smartphone; farmers who do not want photos taken.
+  - The tool reaches Noor through a person, not through her own basic phone.
+
+### Scope limits
+
+- **Leaf photos only.** The AI looks at leaves. It misses coffee berry disease, which attacks berries and is Kenya's most damaging coffee disease, and bacterial blight of coffee, which is not in its five labels.
+- **The checklist, not the AI, covers the rest.** Soil fertility (fertiliser or manure), very old trees, weeds, spots or holes in the berries, and a dry spell at flowering are fixed questions marked "not AI". A "yes" on a berry question tells the relay farmer to tell the officer.
+- **It does not explain a yield drop.** Kenya's 2020 coffee policy explains falling yields mainly by soil fertility, ageing trees and farmers, low reinvestment, climate and missing extension, not by misidentified disease. The tool covers one part: leaf problems the officer should look at.
+- **It does not predict outbreaks.** The village ranking ranks rust already seen in photos.
+- **It does not give spray timing.** It never names a product, dose or date. The officer decides when action starts.
+
+Sources for these points: `docs/NEED_EVIDENCE.md`.
 
 ## 8. Human oversight
 
@@ -125,13 +139,26 @@ The full list per dataset is in `docs/DATA_CARD.md`. The main limits:
 - **The learning loop uses only officer labels** for the five classes. The model's own guesses are never used as labels.
 - **Drift is limited.** When the small head is refit on the phone, a penalty pulls it toward the shipped weights (`prior_strength` in `model/head.json`). A few wrong labels cannot move it far. The image backbone is never changed.
 - **Shared updates are checked.** An update file only loads on the model version it was made for, and it carries its list of labels, so the receiver can see how many labels it rests on.
-- **The co-op early warning is advice to a person.** It ranks villages for the officer to visit first. It raises no alarm to anyone by itself. The demo villages are labelled "synthetic".
+- **The village ranking is advice to a person.** It ranks villages for the officer to visit first, from rust already seen in photos; it does not predict outbreaks. It raises no alarm to anyone by itself. The demo villages are labelled "synthetic".
 - **Spot check.** A random 1 in 10 of the photos the tool did answer also goes to the officer queue, to catch confident mistakes. The farmer sees a note that the photo was picked.
 - **"Different problem (not in list)".** The officer can mark a photo as a problem outside the five classes. These photos are not used to refit the model and are not added to the familiar-photo set, so the tool keeps saying "not sure" to similar photos. The officer can also choose "Skip (cannot tell)"; skipped photos are not used either.
 
 Limits of oversight:
-- The officer visits about twice a year. A "not sure" photo may wait months. The relay farmer and farmer may act before then. That is why the "not sure" text tells them not to spray.
+- In the brief's scenario the officer visits about twice a year (we found no Kenyan survey of visit frequency). A "not sure" photo may wait months. The relay farmer and farmer may act before then. That is why the "not sure" text tells them not to spray.
 - If the officer labels wrongly, the error spreads to every phone that loads the update. The prior penalty limits this; it does not prevent it.
+
+### Who answers the "not sure" queue, and what happens if nobody does
+
+- **Who.** One named person per cooperative: the county extension officer, or the cooperative's own agronomist or field officer. The cooperative names this person before a pilot. Simplification: the app does not record the reviewer's name; naming the person is an agreement, not a feature.
+- **How the photos reach them.** Today the queue lives on the relay farmer's phone. The officer reviews it on that phone, in person (for example at the cooperative office or a monthly meeting). Sending queued photos to the officer's own phone is not built.
+- **How much work it is.** Out of the box the tool says "not sure" to 99.6% of field photos in our test, so at first the officer sees almost every photo. After 50 officer labels it answers 91% of field photos (82% of those correctly), and the officer sees the rest plus a 1 in 10 spot check. These numbers are from Ecuadorian photos with the dataset authors' labels standing in for an officer (`results/RESULTS.md`).
+- **If nobody answers:**
+  - the photos stay queued on the phone;
+  - the plot card says "Not sure, waiting for the officer";
+  - the advice stays "Do not spray because of this result. Wait for the officer's advice first." (`action_not_sure`);
+  - the model is not updated, so it keeps saying "not sure" to similar photos;
+  - the village ranking counts only answered photos and shows how many are waiting, so with an unanswered queue it rests on very few photos.
+- **The risk this leaves.** Kenya's 2024 coffee strategy says coffee-specific extension has "collapsed" in places (https://kilimo.go.ke/wp-content/uploads/2024/10/Final-Draft-Coffee-Developemnt-and-Marketing-Strategy-27-Jan-2024-1.pdf), and a 2016 survey of Kenyan plant doctors found no answer came back for 27% of samples sent to a lab (https://www.cabi.org/cabi-publications/diagnostic-support-to-plantwise-plant-doctors-in-kenya/). A queue with no named reviewer would repeat that. So a cooperative should not start without a named reviewer.
 
 ## 9. What the tool never does
 
@@ -154,8 +181,9 @@ Limits of oversight:
 | Lost or shared phone | Plot data seen by others | No names; member number hashed; thumbnails only; delete-all button | Short member numbers can be guessed; no app PIN; no remote wipe |
 | Browser clears storage | Records lost | Persistent-storage request; export | Possible on iPhone if not added to the home screen |
 | Plot results used against a farmer (price talks) | Livelihood harm | Data stays on the phone; exports are village totals | A person with the phone can still see plot results |
-| Early-warning false alarm or miss | Officer goes to the wrong village | Small-sample adjustment; ranked list, not an alarm; officer decides | Fewer false alarms but more misses than raw shares (finding 4) |
+| Village alert: false alarm or miss | Officer goes to the wrong village | Small-sample adjustment; ranked list, not an alarm; officer decides | Fewer false alarms but more misses than raw shares (finding 4) |
 | Relay farmer over-relies on the tool | Skips the officer | Every result points to the officer; "not sure" is common by design | Depends on training and trust |
+| Nobody answers the "not sure" queue | Photos wait; the model never adapts; the ranking rests on few photos | Plot card says "waiting for the officer"; advice stays "do not spray because of this result"; waiting counts shown per village | Needs a named reviewer agreed with the cooperative |
 
 ## 11. Open items before a real pilot
 
@@ -164,3 +192,4 @@ Limits of oversight:
 3. Field photos from Kenyan farms, taken with the relay farmers' own phones, labelled by an officer, to measure accuracy where it will be used.
 4. A data agreement with the cooperative: who is controller, retention period, ODPC registration check, short impact assessment.
 5. If the service is ever paid: replace the CC-BY-NC speech audio with recorded human clips or a commercially licensed voice.
+6. A named reviewer for the "not sure" queue (county extension officer or cooperative agronomist), and a rule for how often they review it.

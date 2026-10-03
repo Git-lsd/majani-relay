@@ -1,0 +1,141 @@
+{
+ "classes": [
+  {
+   "id": "healthy",
+   "name": "Healthy",
+   "line": "No sign of rust, leaf miner or leaf spot.",
+   "answers_json_en": "These leaves look healthy. No sign of rust, leaf miner or leaf spot was seen. This check covers leaves only, not berries.",
+   "pictures": [
+    {
+     "file": "card/healthy_1.jpg",
+     "kind": "close-up crop, Kenya (JMuBEN)",
+     "size": [
+      128,
+      128
+     ],
+     "source_path": "tgv3zb82nd/Healthy-20210326T083815Z-001/Healthy/1 (320).jpg"
+    },
+    {
+     "file": "card/healthy_2.jpg",
+     "kind": "whole leaf, Brazil (BRACOL)",
+     "size": [
+      600,
+      300
+     ],
+     "source_path": "yy2k5y8mxg/BRACOL/coffee-datasets/coffee-datasets/leaf/images/1370.jpg"
+    }
+   ]
+  },
+  {
+   "id": "rust",
+   "name": "Leaf rust",
+   "line": "Rust shows as yellow-orange powder under the leaf.",
+   "answers_json_en": "This looks like coffee leaf rust. Rust shows as yellow-orange powder under the leaf. The extension officer makes the final call.",
+   "pictures": [
+    {
+     "file": "card/rust_1.jpg",
+     "kind": "close-up crop, Kenya (JMuBEN)",
+     "size": [
+      128,
+      128
+     ],
+     "source_path": "t2r6rszp5c/Leaf_rust-20210326T083416Z-001/Leaf rust/1 (113).jpg"
+    },
+    {
+     "file": "card/rust_2.jpg",
+     "kind": "whole leaf, Brazil (BRACOL)",
+     "size": [
+      600,
+      300
+     ],
+     "source_path": "yy2k5y8mxg/BRACOL/coffee-datasets/coffee-datasets/leaf/images/168.jpg"
+    }
+   ]
+  },
+  {
+   "id": "miner",
+   "name": "Leaf miner",
+   "line": "Dry brown patches on the leaf.",
+   "answers_json_en": "This looks like leaf miner damage. It shows as dry brown patches on the leaf. The extension officer makes the final call.",
+   "pictures": [
+    {
+     "file": "card/miner_1.jpg",
+     "kind": "close-up crop, Kenya (JMuBEN)",
+     "size": [
+      128,
+      128
+     ],
+     "source_path": "tgv3zb82nd/Miner-20210326T082341Z-001/Miner/1 (2022).jpg"
+    },
+    {
+     "file": "card/miner_2.jpg",
+     "kind": "whole leaf, Brazil (BRACOL)",
+     "size": [
+      600,
+      300
+     ],
+     "source_path": "yy2k5y8mxg/BRACOL/coffee-datasets/coffee-datasets/leaf/images/686.jpg"
+    }
+   ]
+  },
+  {
+   "id": "cercospora",
+   "name": "Brown eye spot (Cercospora)",
+   "line": "Round brown spots with a pale centre.",
+   "answers_json_en": "This looks like brown eye spot. It shows as round brown spots with a pale centre. The extension officer makes the final call.",
+   "pictures": [
+    {
+     "file": "card/cercospora_1.jpg",
+     "kind": "close-up crop, Kenya (JMuBEN)",
+     "size": [
+      128,
+      128
+     ],
+     "source_path": "t2r6rszp5c/Cerscospora-20210326T085017Z-001/Cerscospora/9 (2996).jpg"
+    },
+    {
+     "file": "card/cercospora_2.jpg",
+     "kind": "whole leaf, Brazil (BRACOL)",
+     "size": [
+      600,
+      300
+     ],
+     "source_path": "yy2k5y8mxg/BRACOL/coffee-datasets/coffee-datasets/leaf/images/1252.jpg"
+    }
+   ]
+  },
+  {
+   "id": "phoma",
+   "name": "Phoma",
+   "line": "Dark patches, often on young leaves after cold weather.",
+   "answers_json_en": "This looks like Phoma leaf spot. It shows as dark patches, often on young leaves after cold weather. The extension officer makes the final call.",
+   "pictures": [
+    {
+     "file": "card/phoma_1.jpg",
+     "kind": "close-up crop, Kenya (JMuBEN)",
+     "size": [
+      128,
+      128
+     ],
+     "source_path": "t2r6rszp5c/Phoma-20210326T082051Z-001/Phoma/6 (2714).jpg"
+    },
+    {
+     "file": "card/phoma_2.jpg",
+     "kind": "whole leaf, Brazil (BRACOL)",
+     "size": [
+      600,
+      300
+     ],
+     "source_path": "yy2k5y8mxg/BRACOL/coffee-datasets/coffee-datasets/leaf/images/355.jpg"
+    }
+   ]
+  }
+ ],
+ "credits": [
+  "JMuBEN and JMuBEN2: Jepkoech, Mugo, Kenduiywo, Too (2021), Mendeley Data, CC BY 4.0.",
+  "BRACOL: Krohling, Esgario, Ventura (2019), Mendeley Data, CC BY 4.0.",
+  "Photos to label: RoCoLe, Parraga-Alava, Cusme, Loor, Santander (2019), Mendeley Data, CC BY 4.0.",
+  "Pictures resized; no other changes."
+ ],
+ "note": "Card pictures come from the training photos (Kenya close-up crops and Brazil whole leaves), not from the photos you will label."
+}

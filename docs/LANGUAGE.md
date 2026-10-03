@@ -47,7 +47,7 @@ The brief's glossary defines a **fixed list of answers** as everything the tool 
 Our reasons:
 - **It can be checked.** 24 answers, each one to three short sentences (14 words or fewer per sentence). A native speaker can review all of them in about 30 minutes.
 - **No made-up advice.** The tool never writes new sentences, so it cannot invent a pesticide, a dose or a diagnosis. The guardrails are in the text itself: no product names, no doses, and "The extension officer makes the final call" on every disease result.
-- **It works offline and is small.** The audio is made once, before shipping. The phone plays WAV files (about 10 MB in total). It does not run a 145 MB speech model or a 2.4 GB translation model.
+- **It works offline and is small.** The audio is made once, before shipping. The phone plays compressed audio files (AAC, about 1.5 MB in total). It does not run a 145 MB speech model or a 2.4 GB translation model.
 - **It fits a weak language.** Machine translation into Kikuyu scores far below Swahili (section 3). Generating Kikuyu on the phone would produce text no one on the team can check.
 
 The cost: the tool cannot answer free questions. Anything outside the list goes to the extension officer.
@@ -141,12 +141,12 @@ Human clips are better than TTS in two ways: the voice is local, and there is no
 
 | Folder | Files | Format | Length | Total size |
 |---|---|---|---|---|
-| `audio/sw/` | 24 (one per answer) | WAV, 16-bit PCM, mono, 16 kHz | 7.5 to 24 seconds each | about 9.7 MB |
-| `audio/kik/` | 3 | Same | 9 to 13 seconds each (Kikuyu phrase 0.5 to 3.2 seconds, then Swahili) | about 1 MB |
+| `audio/sw/` | 24 (one per answer) | AAC (`.m4a`), 32 kbps, mono, converted from 16 kHz WAV | 7.5 to 24 seconds each | about 1.45 MB |
+| `audio/kik/` | 3 | Same | 9 to 13 seconds each (Kikuyu phrase 0.5 to 3.2 seconds, then Swahili) | about 0.14 MB |
 
 How they were made: each sentence was synthesized separately and joined with a 0.3-second pause, because the MMS vocabulary has no punctuation and would otherwise run sentences together. The random seed is fixed, so rerunning gives the same audio. Each file is peak-normalised.
 
-Size note: WAV is large. A compressed format (Opus or MP3) would cut the size about tenfold. We kept WAV because no audio encoder is installed on our machine.
+Size note: the WAV files (about 11 MB) were converted to AAC with macOS `afconvert`, which cut the size about sevenfold.
 
 Scripts and logs to rebuild everything are in `audio/tools/`:
 - `content.py`: English, Swahili and Kikuyu texts with notes and sources.

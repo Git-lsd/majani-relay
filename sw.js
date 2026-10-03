@@ -4,7 +4,7 @@
      the background when online, so the next visit gets updates. The backbone, the wasm runtime,
      photos and audio are only re-downloaded when VERSION changes.
    - Bump VERSION whenever backbone.onnx, audio or the vendor files change (safest: on every deploy). */
-const VERSION = 'kahawa-v9';
+const VERSION = 'kahawa-v11';
 
 // Files the app cannot work without. Install fails (and the page falls back to the network) if one is missing.
 const CORE = [
@@ -138,7 +138,9 @@ async function handle(e) {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  if (new URL(req.url).origin !== self.location.origin) return;
+  const u = new URL(req.url);
+  if (u.origin !== self.location.origin) return;
+  if (u.pathname.includes('/baseline/')) return; // the human-baseline test page is separate from the app
   if (req.headers.has('range')) return; // let the browser handle media range requests directly
   e.respondWith(handle(e));
 });

@@ -5,7 +5,7 @@ Left for the team to fill: {{VIDEO_URL}}. Delete this comment after filling.
 
 # Kahawa Check
 
-**An offline coffee-leaf check for cooperative relay farmers in central Kenya. It says "not sure" when it should, and the extension officer makes the final call.**
+**Standard leaf checks by cooperative relay farmers in central Kenya, turned into rust counts for the extension officer. Offline, in Swahili. It says "not sure" when it should, and the officer makes the final call.**
 
 *Kahawa* is Swahili for coffee. "Kahawa Check" is a working name.
 
@@ -17,18 +17,39 @@ Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agr
 
 ## What it is
 
-Kahawa Check is a phone web app for the cooperative's relay farmer: a volunteer farmer who visits other members' plots. On a plot visit, the relay farmer photographs the underside of 3 leaves on each of 5 coffee trees. A small image model on the phone checks each photo for leaf rust, leaf miner, brown eye spot (Cercospora) and Phoma, or says **"not sure — the officer will look"**. The 15 results become a plot card, read out in Swahili. A six-question checklist (marked "not AI") covers yield causes a leaf photo cannot show. Photos the model is unsure about wait in a queue for the extension officer. When the officer labels them, the model is updated on the phone, and the update can be shared with other relay farmers as a small file. A co-op screen ranks villages by rust signal, adjusted for small numbers of photos, so the officer's few visits go where they are most needed. Everything runs on the phone, without internet, after the first visit.
+Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts.
+
+Kahawa Check is a phone web app that turns each relay farmer's plot visit into a standard record, keyed to the cooperative member (grower) number. A relay farmer is a farmer the cooperative trains to visit other members' plots. On each visit the relay farmer photographs the underside of 3 leaves on each of 5 coffee trees. A small image model on the phone labels each photo (healthy, leaf rust, leaf miner, brown eye spot (Cercospora) or Phoma) or says **"not sure — the officer will look"**, so 15 photos become a rust count without the officer looking at every one. Unclear photos wait on the phone for a named officer, whose labels update the model on the phone; the update can be shared with other relay farmers as a small file. Village rust shares, adjusted for small numbers of photos, rank where the officer should go first. This works like the brief's own cotton example (Wadhwani AI), which counts pests to decide whether and when to act. A six-question checklist (marked "not AI") covers causes a leaf photo cannot show. Everything runs on the phone, without internet, after the first visit.
+
+**Which decision from the brief.** The brief's list includes "documenting a field observation" and "connecting evidence to a pricing, market or extension-service next step". Kahawa Check does both (the extension-service part), plus a third item on the list, identifying a crop problem, as far as a leaf photo can show it.
+
+**Simplification, stated.** Out of the box the model says "not sure" to 99.6% of field photos in our test, so at first the officer does look at almost every photo. After 50 officer labels it answers 91% of field photos, 82% of them correctly (see Evaluation).
 
 ## Who uses it, and when
 
 | Person | When | What they do with it |
 |---|---|---|
-| **Relay farmer** (cooperative volunteer, own smartphone) | During a plot visit, about 15 minutes per plot (our estimate; not timed on a farm) | Asks consent, takes 15 leaf photos, reads or plays the plot card to the farmer, asks the checklist, saves |
+| **Relay farmer** (cooperative volunteer, own smartphone) | During a plot visit, about 15 minutes per plot (our estimate; not timed on a farm) | Asks consent, enters the member number, takes 15 leaf photos, reads or plays the plot card to the farmer, asks the checklist, saves. Exports village totals for the cooperative. |
+| **Extension officer or cooperative agronomist** (the named reviewer) | When they meet the relay farmer (the brief's scenario says the officer visits about twice a year), and when planning visits | Reviews the "not sure" queue and a 1-in-10 spot check on the relay farmer's phone, labels photos, presses "Update the model on this phone", shares the update. Uses the village ranking to choose where to go first. |
+| **Cooperative office** | When planning the officer's visits | Keeps the member list. Collects each relay farmer's village totals (CSV) and combines them; today this is done by hand. |
 | **Noor** (smallholder, basic phone) | During the visit, on her own plot | Hears the result in Swahili (a few phrases in Kikuyu). Her own phone is not needed. |
-| **Extension officer / cooperative agronomist** | On a visit to the area (the brief's scenario says about twice a year) | Reviews the "not sure" queue and a 1-in-10 spot check, labels photos, presses "Update the model on this phone", shares the update |
-| **Cooperative office** | When planning the officer's visits | Looks at the village ranking; exports a CSV of village totals |
 
-Why the relay farmer and not Noor: only 27.5% of rural Kenyan women aged 15–49 own a smartphone (Kenya DHS 2022). Noor's phone stays at the house while she works. The cooperative already exists (cooperatives market 70% of Kenya's coffee), and the World Bank-funded NAVCDP project already uses 3,248 "digitally equipped agripreneurs" for last-mile advice. Sources: [docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md).
+Why the relay farmer and not Noor: only 27.5% of rural Kenyan women aged 15–49 own a smartphone (Kenya DHS 2022). Noor's phone stays at the house while she works. The cooperative already exists (cooperatives produce 70% of Kenya's coffee), and the World Bank-funded NAVCDP project already uses 3,248 "digitally equipped agripreneurs" for last-mile advice. Sources: [docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md).
+
+## The problem
+
+What the evidence says (every source, country, year and link: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md)):
+
+- **Farmers mostly recognise visible rust, by their own report.** 83.8% of Ugandan farmers knew leaf rust (2016). A 2018 project covering Kenya, Uganda, Rwanda, Zimbabwe and India says most smallholders could recognise rust but many lacked the knowledge to manage it. No study we found tests how accurately coffee farmers name leaf problems, in any country.
+- **The hard parts are elsewhere.** Early rust is pale spots before the orange powder appears. People judging rust severity by eye were off by up to 38% (Brazil, 2011). Acting in time fails too: in the Uganda study, rust cut Arabica income by 49.5% and only 20.8% of farmers sprayed.
+- **The officer is stretched, and field information arrives late.** Kenya has one public extension agent per 1,380 farmers (target 1:600). The Ministry's 2026 draft data policy says one officer "typically serves 1,500–3,000 farmers" and that paper reporting has caused "delayed information flows". Kenya's 2024 coffee strategy says coffee-specific extension has "collapsed" in places.
+- **Central America's answer after its 2012–13 rust crisis** was routine plot surveillance with alerts to field technicians (for example, Colombia inspects more than 4,500 plots four times a year). Those losses had many causes, and no study shows that phone surveillance cut rust losses.
+
+**Problem statement** (the brief's template):
+
+> Because of this tool, the county extension officer or cooperative agronomist will send their next visits to the villages with the most leaf rust, by the week the relay farmers' plot checks reach the cooperative, that they would otherwise do late, after paper reports arrive; we know because one Kenyan extension officer typically serves 1,500–3,000 farmers and paper-based reporting has caused "delayed information flows" (Ministry of Agriculture draft data policy, 2026), and coffee-specific extension has "collapsed" in places (Coffee Development and Marketing Strategy, 2024).
+
+Simplifications: the evidence shows the gap is real; it does not show that this tool closes it, which needs a field pilot. "The week the checks reach the cooperative" depends on how often relay farmers export their totals.
 
 ## How it works
 
@@ -76,19 +97,41 @@ Why the relay farmer and not Noor: only 27.5% of rural Kenyan women aged 15–49
 
 | Rule from the brief | How Kahawa Check meets it | Limit, stated |
 |---|---|---|
-| Runs on a device the user already has | The relay farmer's own smartphone, in the browser (iPhone or Android). No app store, no account, no server. | Tested in a desktop browser at phone size (375 × 812) and in headless Chrome. Not yet tested on a real phone or on iPhone Safari. Noor's basic phone is not used; she is reached through a person. |
+| Runs on a device the user already has | The relay farmer's own smartphone, in the browser (iPhone or Android). No app store, no account, no server. | Tested in a desktop browser at phone size (375 × 812) and in headless Chrome. Tried on one iPhone over local Wi-Fi (screens and audio); offline mode is not yet tested on a phone. Noor's basic phone is not used; she is reached through a person. |
 | Core feature works offline | After the first visit, a service worker keeps every file on the phone. Photo check, plot card, checklist, officer review, model update and co-op screen all work in airplane mode. | Tested with Chrome's offline mode in a test browser, including under a sub-path as on GitHub Pages. A test on a real phone in airplane mode is still to do. |
-| Model files small enough to side-load or send over a weak connection | Image model 16.8 MB; head 68 KB; familiarity set 1284 KB. An officer's update is a file of about 0.3 MB for 50 labels (about 13 KB for the head plus about 1.3 KB per labelled photo in binary form; the app writes it as text, which is larger). | The first visit downloads about 35 MB once (model, runtime, Swahili audio), best done on cooperative Wi-Fi. A web app cannot be copied phone-to-phone like an Android install file. The image model is not quantised (32-bit numbers). |
+| Model files small enough to side-load or send over a weak connection | Image model 16.8 MB; head 68 KB; familiarity set 1284 KB. An officer's update is a file of about 0.3 MB for 50 labels (about 13 KB for the head plus 1284 bytes per labelled photo in binary form; the app writes it as text, which is larger). | The first visit downloads about 35 MB once (model, runtime, Swahili audio), best done on cooperative Wi-Fi. A web app cannot be copied phone-to-phone like an Android install file. The image model is not quantised (32-bit numbers). |
 | At least one interaction in a named local language | **Swahili**: all 24 fixed answers as text and audio. **Kikuyu** (Gĩkũyũ), the less-supported tier: 3 answers start with a Kikuyu phrase, the rest falls back to Swahili, and the app says so. | No native speaker has checked the text yet. Every local-language string is marked "not yet checked" on screen. See [docs/LANGUAGE.md](docs/LANGUAGE.md). |
 | A person makes the final call; flag what it is unsure of | Two "not sure" gates; officer queue; spot check; "Different problem (not in list)" label for the officer; every disease answer ends with "The extension officer makes the final call"; no spray names or doses; nothing is sent automatically. | The officer visits rarely, so a "not sure" photo can wait a long time. The "not sure" answer says "Do not spray because of this result". |
 | Avoid hallucinations | The tool never writes text. Every sentence comes from a fixed list of 24 answers in `answers.json`. | The tool cannot answer free questions. Those go to the officer. |
 
 ## What the AI does, and why a simpler tool would not do the same job
 
-- **Computer vision.** It reads a leaf photo and recognises disease patterns. SMS cannot carry or read a photo. A spreadsheet cannot look at a leaf. A web search needs signal and returns general pictures, not an answer about this leaf.
-- **Knowing when it does not know.** The familiarity check compares each photo with stored training photos. This is the part that matters most in the field (see Evaluation).
-- **Learning from local labels on the phone.** The officer's labels refit the last layer of the model on the phone. No server and no data scientist are needed.
+- **It turns photos into counts.** It labels each leaf photo, or says "not sure". That makes 15 photos per plot into a rust count the cooperative can add up, without the officer looking at every photo. SMS cannot carry or read a photo. A spreadsheet cannot look at a leaf. A web search needs signal and returns general pictures, not a label for this leaf.
+- **It knows when it does not know.** The familiarity check compares each photo with stored training photos. This is the part that matters most in the field (see Evaluation).
+- **It learns from local labels on the phone.** The officer's labels refit the last layer of the model on the phone. No server and no data scientist are needed.
 - **What is not AI, and is labelled so.** The six-question checklist is fixed questions. The village ranking is plain statistics (a Beta-binomial model). The plot card rule is a fixed rule.
+
+**Why not a paper tally sheet or a plain digital form?** A form can carry a count that a person writes down. What the AI step adds:
+- the same labelling rule on every phone, across many relay farmers, instead of each person's own judgement;
+- separating rust from look-alikes (leaf miner, brown eye spot, Phoma);
+- a "not sure" route, so an unclear leaf goes to the officer instead of into the count as a guess;
+- the photo is kept (as a small copy), so the officer can check any label later.
+
+What we have not shown: that the AI gives better counts than a trained relay farmer with a tally sheet.
+
+> TODO: Human baseline: see results/human_baseline.json once run.
+
+## Fit with the farmer registry
+
+The brief warns that AI built where there is no farmer registry will be hard to use. In Kenyan coffee this precondition is **partly met**: the national registry (KIAMIS) exists but is incomplete and its contact details are not kept up to date, while cooperative member lists, keyed by member (grower) number, are what reliably reaches coffee farmers today (they were used to pay hundreds of thousands of farmers). We do not build or fix a registry; we plug into the cooperative list. Kenya has over 800,000 smallholder coffee farmers, and about 550 cooperatives market over 80% of the coffee ([docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md), rows 4 and 6).
+
+- **How it fits.** Each plot record is keyed to the member number, stored on the phone as a scrambled code. Today that links visits to the same farm on the phone; exports hold village totals only. A later version could link records to the cooperative's list and to KIAMIS, the national farmer registry, through the same number. We have not built that link.
+- **What the tool assumes exists:**
+  - a cooperative member list, and a cooperative active enough to support a relay farmer (in the brief, Noor is a member for 11 years yet sells her parchment to a passing middleman, which suggests her cooperative is weak at marketing; our tool needs its list and its relay farmers, not its marketing);
+  - a relay farmer with a smartphone;
+  - a named person who answers the "not sure" queue: the county extension officer, or the cooperative's agronomist or field officer.
+- **If nobody answers the queue:** the photos stay queued, the plot card says "waiting for the officer", and the advice stays "Do not spray because of this result". The model does not adapt, and the village ranking rests on few photos.
+- **Who is left out:** farmers outside cooperatives; and, if records are later linked to plot maps, land that is not yet mapped (about 30% of coffee land was geo-mapped in July 2025). Sources: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 5.
 
 ## Data
 
@@ -132,7 +175,7 @@ Out of the box, the tool is mainly a structured way to send photos to the office
 
 ![Learning loop](results/figs/learning_loop.png)
 
-**3. Co-op early warning (simulation with synthetic villages).** Per round of 40 villages with about 6.5 real outbreaks: raw shares raise 8.1 false alarms and miss 1.2 outbreaks; adjusted shares raise 4.7 false alarms and miss 2.0. If the officer can visit 5 villages, the adjusted ranking finds 3.3 real outbreaks against 3.0 for raw shares. The adjustment trades fewer false alarms for more misses. Simplification: the villages are synthetic; only the model's error rates are measured. The app and the simulation use the same rule: alert when the chance that a village's share of answered photos flagged as rust is above 25% is more than 0.5. Because the share includes the tool's own false positives (healthy leaves flagged as rust), healthy villages sit close to the line, which is why raw shares give many false alarms.
+**3. Village ranking (simulation with synthetic villages).** Per round of 40 villages with about 6.5 real outbreaks: raw shares raise 8.1 false alarms and miss 1.2 outbreaks; adjusted shares raise 4.7 false alarms and miss 2.0. If the officer can visit 5 villages, the adjusted ranking finds 3.3 real outbreaks against 3.0 for raw shares. The adjustment trades fewer false alarms for more misses. Simplification: the villages are synthetic; only the model's error rates are measured. The app and the simulation use the same rule: alert when the chance that a village's share of answered photos flagged as rust is above 25% is more than 0.5. Because the share includes the tool's own false positives (healthy leaves flagged as rust), healthy villages sit close to the line, which is why raw shares give many false alarms.
 
 **4. Size vs accuracy.** A 5 times larger image model (DINOv2-small, 21.6M parameters, about 87 MB) is right 49% of the time on field photos with no local labels. After 50 labels it answers 58% of photos, 90% of them correctly. We ship the small model to respect the side-loading rule and rely on local labels instead.
 
@@ -147,6 +190,7 @@ Out of the box, the tool is mainly a structured way to send photos to the office
 Summary below. The full account (privacy, consent, deletion, Kenya Data Protection Act, bias, failure modes): [docs/RESPONSIBLE_AI.md](docs/RESPONSIBLE_AI.md).
 
 - **Fail-safe:** "not sure — the officer will look" whenever the model is unsure or the photo is unfamiliar.
+- **Who answers "not sure":** a named county extension officer or cooperative agronomist. If nobody does, photos wait and the advice stays "Do not spray because of this result".
 - **Human oversight:** the officer makes the final call. Only officer labels change the model. A penalty keeps updates close to the shipped model. An update loads only on the model version it was made for.
 - **No advice that can hurt:** no pesticide names, no doses, no prices. Fixed answers only.
 - **Privacy:** no names, phone numbers or locations. The member number is saved only as a SHA-256 code (short numbers can still be guessed by someone with the phone). Photos are kept as 160-pixel thumbnails. Data stays on the phone until a person exports it. The co-op export holds village totals only. The model update file holds no photos, villages or member codes.
@@ -210,7 +254,7 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | `samples/` | 7 RoCoLe field photos for the demo |
 | `ml/` | Training and evaluation scripts |
 | `results/` | Metrics, figures, RESULTS.md |
-| `docs/` | Data card, Responsible AI, languages, problem evidence, video scripts |
+| `docs/` | Data card, Responsible AI, languages, problem evidence, need evidence, video scripts |
 
 ## Licences and attributions
 
@@ -232,13 +276,18 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 - **Out of the box it mostly says "not sure".** It becomes useful only after the officer labels local photos. If the officer never comes, the queue only grows.
 - **The learning-loop gain is likely too optimistic.** Labelled photos and test photos come from the same field in Ecuador, and labels come from the dataset authors, not an officer.
 - **Unknown problems after adaptation.** Once field photos look familiar, the familiarity check catches unknown pests less often. The spot check sees only 1 in 10 answers.
-- **Five leaf classes only.** No bacterial blight, Fusarium, nutrient shortage or other pests. No berries.
+- **Leaf photos only.** It misses coffee berry disease (berries), which is Kenya's most damaging coffee disease, and bacterial blight of coffee, which is not in its five labels. Also not covered: Fusarium, nutrient shortage, other pests. The checklist (not AI) asks about soil fertility, old trees, weeds, berry spots and holes, and dry spells.
+- **It does not explain a yield drop.** It covers one part of it: leaf problems the officer should look at.
+- **The ranking does not predict outbreaks.** It ranks rust already seen in photos. Each phone ranks only its own records; combining several phones' exports is done by hand.
+- **It needs a named reviewer.** Without one, "not sure" photos wait, the model does not adapt, and the ranking rests on few photos.
+- **Who is left out.** Farmers outside cooperatives; farmers no relay farmer visits; land not yet mapped, if records are later linked to plot maps.
 - **Unverified Swahili and Kikuyu.** Back-translation flagged 10 of 24 Swahili answers for a speaker to check.
-- **Phones.** Not yet tested on a real phone or on iPhone Safari. Phone speed not yet measured. First download is about 35 MB.
+- **Phones.** Tried on one iPhone over local Wi-Fi only; offline mode is not yet tested on a phone. Phone speed not yet measured. First download is about 35 MB.
 - **Privacy on a shared phone.** No app PIN, no per-farm delete, no remote wipe. Short member numbers can be guessed from their codes.
 - **The co-op ranking assumes** photos are independent and the model's answers are correct.
 - **The village simulation uses synthetic villages.**
-- **Price is out of scope.** The brief also mentions price information; this tool stays on one decision: what is affecting the leaves, and who should look next.
+- **Price is out of scope.** The brief also mentions price information; this tool stays on one decision: where the officer should look first, based on standard leaf checks.
+- **What we do not claim:** that farmers cannot tell when coffee is sick; that the tool finds rust earlier than people or before symptoms show; that it cuts losses or raises yield; that it beats extension officers or a paper form; that it predicts outbreaks. Full list: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 6.
 
 ## Team
 

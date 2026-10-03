@@ -1,0 +1,629 @@
+{
+ "meta": {
+  "set": "rocole60-seed2026",
+  "seed": 2026,
+  "n": 60,
+  "healthy": 30,
+  "rust_by_level": {
+   "rust_level_1": 17,
+   "rust_level_2": 8,
+   "rust_level_3": 3,
+   "rust_level_4": 2
+  },
+  "pool_available": {
+   "healthy": 758,
+   "rust_level_1": 330,
+   "rust_level_2": 154,
+   "rust_level_3": 59,
+   "rust_level_4": 28
+  },
+  "excluded": {
+   "demo_update_50": 50,
+   "demo_samples": 7
+  },
+  "demo_update_check_min_cosine": 0.99943,
+  "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photos, CC BY 4.0"
+ },
+ "photos": {
+  "p01": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqt6og7ial60828l18zmb9y.jpeg",
+   "index_row": 9913,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p02": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvobzdwtwmow0a706xm27gvd.jpeg",
+   "index_row": 9399,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p03": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqwp3zhja1p0a0845yg32ij.jpeg",
+   "index_row": 10118,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p04": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqxvefvjjhv0984bej5nm5n.jpeg",
+   "index_row": 10216,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p05": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvo27gdqrcsj0a088z8h03xt.jpeg",
+   "index_row": 9109,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p06": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvo260xjr5k70804sjd9nooh.jpeg",
+   "index_row": 9107,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p07": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvo6pw39t9zz0984lxshsqte.jpeg",
+   "index_row": 9290,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p08": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvq19t9ybjqr0866bdaatj0j.jpeg",
+   "index_row": 9832,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p09": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqxxj1vjnrd08048fhe3xli.jpeg",
+   "index_row": 10219,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p10": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvo4yzwbsl730838idt5h2oc.jpeg",
+   "index_row": 9188,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p11": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvraju4kmd1k0984rk7y5pv9.jpeg",
+   "index_row": 10356,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p12": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvqred6mhvb508289fh0pvzq.jpeg",
+   "index_row": 9873,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p13": {
+   "truth": "rust",
+   "rust_level": 4,
+   "original_file": "cjvqxropajin80984lanmd2pj.jpeg",
+   "index_row": 10206,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p14": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqq8wzkhlj50828li6ph9yh.jpeg",
+   "index_row": 9843,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p15": {
+   "truth": "rust",
+   "rust_level": 3,
+   "original_file": "cjvqtcc2qiicc0804r9jkkb1z.jpeg",
+   "index_row": 9929,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p16": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqwf8u2j74x0984ux2gc7i4.jpeg",
+   "index_row": 10104,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p17": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvnywsjnpmjz0795sh7w4y4v.jpeg",
+   "index_row": 8971,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p18": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvocs4vbx1ne0a700335s9v6.jpeg",
+   "index_row": 9419,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p19": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqti6d1ieas0984k56mobyd.jpeg",
+   "index_row": 9942,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p20": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvo1lp48rb7b0a70opy59mgz.jpeg",
+   "index_row": 9097,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p21": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvquljgniz7v0838unx3z8tl.jpeg",
+   "index_row": 10009,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p22": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqtt9hfidir0795m37o0m1d.jpeg",
+   "index_row": 9963,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p23": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqx3gztjb4w0828flcsleqo.jpeg",
+   "index_row": 10150,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p24": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvqtgrmyin6e08380wa21dge.jpeg",
+   "index_row": 9938,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p25": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvq0hx1kbda80866z12gnplk.jpeg",
+   "index_row": 9807,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p26": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvpg6qw36vst0795m0mh85ua.jpeg",
+   "index_row": 9748,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p27": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqr52g3i9yn08662ol7kyrk.jpeg",
+   "index_row": 9865,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p28": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvqw2r3gjctr0838giwja562.jpeg",
+   "index_row": 10077,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p29": {
+   "truth": "rust",
+   "rust_level": 3,
+   "original_file": "cjvr0cniuk9qu0a089z97do1v.jpeg",
+   "index_row": 10330,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p30": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvog17o4y4pp0a70gjpgenaa.jpeg",
+   "index_row": 9548,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p31": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvnxbxb5ozfb0984i65vk24y.jpeg",
+   "index_row": 8881,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p32": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvnzq5rkq0cj0795f24s664f.jpeg",
+   "index_row": 9026,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p33": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvr01guyk0bf0795nh2oux09.jpeg",
+   "index_row": 10302,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p34": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvo6xirutfuy0828pheuxkeo.jpeg",
+   "index_row": 9309,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p35": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqv4nz6jbtc0a7020vkkzjj.jpeg",
+   "index_row": 10036,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p36": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqvth0dj1ce0984ns27wd9u.jpeg",
+   "index_row": 10059,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p37": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvohxvopymbf0866jav3tu0y.jpeg",
+   "index_row": 9605,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p38": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvo9okucuy6i0838bf7voub3.jpeg",
+   "index_row": 9367,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p39": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvoq7iua0kmc0828t78fyjy5.jpeg",
+   "index_row": 9654,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p40": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqqa1x8hlt00828rt5qnllu.jpeg",
+   "index_row": 9844,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p41": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvpk6vb27yb50804nw3273ot.jpeg",
+   "index_row": 9785,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p42": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvodknrfx7ht0984otme8pgp.jpeg",
+   "index_row": 9459,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p43": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvo72a2bthgz0795dw2m7e0c.jpeg",
+   "index_row": 9318,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p44": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvq0xqg4ax66079514sbkk6v.jpeg",
+   "index_row": 9822,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p45": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvo1jo3jraa00a70jvzvgepm.jpeg",
+   "index_row": 9096,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p46": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvo5u4s1szy508389n6awold.jpeg",
+   "index_row": 9239,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p47": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvog5l2oxuuq0804uh32tku9.jpeg",
+   "index_row": 9557,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p48": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvoe7bq3xts30a701mcuwhtv.jpeg",
+   "index_row": 9493,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p49": {
+   "truth": "rust",
+   "rust_level": 2,
+   "original_file": "cjvqrdazphxgb0a08yzfef0ib.jpeg",
+   "index_row": 9872,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p50": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqzj0adkdqs0866y6bx72c1.jpeg",
+   "index_row": 10252,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p51": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvrdtd01n3tx08383jeblefi.jpeg",
+   "index_row": 10389,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p52": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvocf8n7wkf007950udfy0c6.jpeg",
+   "index_row": 9411,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p53": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvnza11jpy670a0826rf8b58.jpeg",
+   "index_row": 8998,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p54": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvr0b1i8k7rs082861wa8pqx.jpeg",
+   "index_row": 10323,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p55": {
+   "truth": "healthy",
+   "rust_level": 0,
+   "original_file": "cjvqts0ejiyb40a70i3qsvih6.jpeg",
+   "index_row": 9962,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p56": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvonvdrl01zq0a08usix4ybw.jpeg",
+   "index_row": 9631,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p57": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqzfnthjxau0984nidkjsml.jpeg",
+   "index_row": 10244,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p58": {
+   "truth": "rust",
+   "rust_level": 1,
+   "original_file": "cjvqx612ijbon0828b2pr594y.jpeg",
+   "index_row": 10155,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p59": {
+   "truth": "rust",
+   "rust_level": 3,
+   "original_file": "cjvqtmbpaifip0984w89nhfg9.jpeg",
+   "index_row": 9951,
+   "shown_size": [
+    900,
+    506
+   ]
+  },
+  "p60": {
+   "truth": "rust",
+   "rust_level": 4,
+   "original_file": "cjvquo0dvj68g0866k1c8crgz.jpeg",
+   "index_row": 10012,
+   "shown_size": [
+    900,
+    506
+   ]
+  }
+ }
+}

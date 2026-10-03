@@ -77,7 +77,7 @@ All figures are for **Kenya** unless the row says otherwise.
 
 ## 4. The registry precondition
 
-The brief says the binding constraint is often a missing farmer registry. **In Kenya this precondition is mostly in place, with known data-quality problems.**
+The brief says the binding constraint is often a missing farmer registry. **In Kenyan coffee this precondition is partly met.** The national registry (KIAMIS) exists but is incomplete and its contact details are not kept up to date; what reliably reaches coffee farmers today is the cooperative member list keyed by grower number. Farmers outside cooperatives and unmapped plots are not covered. Our tool plugs into the cooperative list; it does not build or fix a registry.
 
 - **National registry exists.** KIAMIS holds 8.9 million registered farmers as of 30 Sep 2026 (row 30). It was 6.4 million in March 2023 (World Bank KCSAP completion report, https://documents1.worldbank.org/curated/en/099061024092575123/pdf/BOSIB1887abe1c019186251678c4cc131cf.pdf) and 6.6 million in July 2025 (The Star, 26 Aug 2025: https://www.the-star.co.ke/news/2025-08-26-state-rolls-out-phase-two-of-farmer-registration-targets-500000).
 - **Known weaknesses.** The Ministry's March 2026 draft data policy lists "data fragmentation, lack of realtime farmer contact validation", low digital literacy, unreliable networks and "insufficient extension staff" (https://kilimo.go.ke/wp-content/uploads/2026/03/Final-DRAFT-KENYA-AGRICULTURAL-DATA-INFORMATION-AND-DIGITAL-3.pdf).
@@ -98,7 +98,7 @@ The brief says the binding constraint is often a missing farmer registry. **In K
   - The Nairobi Coffee Exchange moved under the Capital Markets Authority in 2023 (USDA 2025, row 3 source).
   - The Direct Settlement System pays farmers within five days instead of up to six months (The Star, 14 Jul 2026, row 31 source).
   - A new Coffee Act was signed in March 2026. It creates a Coffee Board of Kenya and a Coffee Research and Training Institute, and allows four marketing channels (The Star, 14 Jul 2026; allAfrica, 13 Mar 2026: https://allafrica.com/stories/202603130221.html). The exact signing date (13 Mar 2026) we saw only in a search summary.
-  - These reforms make price information more visible. Our tool stays on one decision: what is affecting the crop, and who should look next.
+  - These reforms make price information more visible. Our tool stays on one decision: where the officer should look first, based on standard leaf checks.
 
 ## 6. Prior art and how ours differs
 
@@ -116,8 +116,8 @@ Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not docum
 1. **Abstains.** Two gates (low confidence, or an image unlike the training data) give "not sure, the officer will look". Most tools above document a diagnosis or a confidence score, not a refusal.
 2. **Measured field gap.** We test on a sealed set from another country and setting (RoCoLe, Ecuador, on-plant phone photos) and report the drop, not only a lab score.
 3. **Officer learning loop.** Officer labels on "not sure" photos refit the small head on the phone, pulled toward the original weights. The update is a few KB.
-4. **Cooperative early warning.** Village rust shares are shrunk toward the regional rate, so two of three photos does not raise an alarm. The officer gets a visit order.
-5. **Multi-leaf plot protocol.** Fifteen photos per plot. Nuru's study found checking six leaves per plant raised accuracy from 65% to 74-88%. That supports scoring a plot, not a single leaf.
+4. **Village ranking.** Village rust shares are shrunk toward the regional rate, so two of three photos does not raise an alarm. The officer gets a visit order. It ranks rust already seen; it does not predict outbreaks.
+5. **Multi-leaf plot protocol.** Fifteen photos per plot. Nuru's cassava study (not coffee) found checking six leaves per plant raised the app's accuracy from 65% to 74-88%. That supports scoring a plot, not a single leaf.
 6. **Fits an existing worker.** The relay farmer maps onto NAVCDP's agripreneurs, and plot cards use the cooperative member number.
 
 ## 6b. Is the name "Kahawa Check" taken?
@@ -136,16 +136,46 @@ Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not docum
 
 ## 7. Candidate problem statements (brief's template)
 
-**A. Relay farmer (recommended lead, matches the primary user in the spec)**
+*Update, 3 Oct, 7 PM ET: after the evidence review in section 8, the **recommended** statement is the one marked there. A to C below are kept for the record.*
+
+**A. Relay farmer (the earlier lead, matches the primary user in the spec)**
 Because of this tool, a cooperative relay farmer will record a checked leaf-health result for each plot they visit, and send the unclear cases to the officer, by the end of the plot visit that they would otherwise do late, at the officer's next visit; we know because Kenya has one public extension agent per 1,380 farmers against a 1:600 target (MoALD 2025), smallholder trees yield about 2 kg of cherry against a 2.53 kg living-wage level (MoALD 2024; Kenya Coffee Platform 2024), and two of the main varieties, SL28 and SL34, are susceptible to leaf rust (MoALD 2024).
 
 **B. Extension officer / cooperative agronomist**
 Because of this tool, the county extension officer will visit the villages with the strongest rust signal first, within the week the relay farmers' phones sync, that they would otherwise do worse, with no plot-level data to rank villages; we know because one Nyeri officer served about 2,500 crop farmers (The Star 2021), coffee agronomist posts were cut after the 2022-2023 marketing reforms (KNCCI 2025; USDA 2024), and the Ministry says most coffee data "is currently on estimates" (MoALD 2024).
 
-**C. Noor (via her daughter's phone or the relay farmer)**
+**C. Noor (via her daughter's phone or the relay farmer)** *(not used: the tool does not explain a yield drop and does not reach Noor directly; see [NEED_EVIDENCE.md](NEED_EVIDENCE.md), section 6)*
 Because of this tool, Noor will learn, by the next relay-farmer visit, whether her yield drop looks like a leaf problem for the officer or a cause a photo cannot see (old trees, no fertiliser, berry disease), that she would otherwise learn late, only when an officer comes; we know because only 27.5% of rural Kenyan women aged 15-49 own a smartphone (KDHS 2022), there is one extension agent per 1,380 farmers (MoALD 2025), and the Ministry lists soil fertility, input use, pests and diseases, and rainfall as causes of the yield fall (MoALD 2024).
 
 Simplification in all three: the evidence shows the gap is real. It does not show that our tool closes it. That needs a field pilot.
+
+## 8. What the evidence says about the need (Oct 3 review)
+
+On the evening of 3 Oct we asked a separate review to test our claim that farmers need help telling whether coffee is ill. The answer changed the pitch. Full table with every source, country, year and link: [NEED_EVIDENCE.md](NEED_EVIDENCE.md).
+
+**Key findings**
+- **Farmers mostly recognise visible rust, by their own report.** 83.8% of Ugandan farmers had knowledge of leaf rust (Luzinda et al. 2016: https://www.ajol.info/index.php/ujas/article/view/141754). In Ethiopia, 99% said they could identify coffee berry disease (Amente et al. 2026: https://pmc.ncbi.nlm.nih.gov/articles/PMC13440173/). A 2018 CFC/ICO/CABI project covering Kenya, Uganda, Rwanda, Zimbabwe and India says most smallholders could recognise rust but many lacked the knowledge to manage it (https://www.ico.org/documents/cy2017-18/Presentations/seminar-leaf-rust-cabi-e.pdf).
+- **No tested accuracy exists for coffee.** We found no study, in any country, that scores coffee farmers, lead farmers or officers against expert labels. The closest is cassava (farmers 18–31%, extension agents 40–58%; Kenya and Tanzania 2020: https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2020.590889/full), shown only as cassava.
+- **Early or mild symptoms, and severity, are hard.** Early rust is pale spots before the orange powder (Talhinhas et al. 2017: https://pubmed.ncbi.nlm.nih.gov/27885775/). Raters judging rust severity by eye were off by up to 38% (Brazil 2011: https://bsppjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3059.2011.02472.x).
+- **Losses continue although farmers know the disease.** In the Uganda study, rust cut Arabica income by 49.5% and only 20.8% sprayed. The documented gap is acting in time, not seeing.
+- **The system gap is stated by the government.** One Kenyan extension officer "typically serves 1,500–3,000 farmers", and paper-based reporting has caused "delayed information flows" (MoALD draft data policy, March 2026: https://kilimo.go.ke/wp-content/uploads/2026/03/Final-DRAFT-KENYA-AGRICULTURAL-DATA-INFORMATION-AND-DIGITAL-3.pdf). Coffee-specific extension has "collapsed" in places (Coffee Strategy 2024: link in row 4). A 2018 evaluation found "no official early warning processes" for crop pests (https://www.plantwise.org/wp-content/uploads/sites/4/2019/03/Air-Pw-K-Final-Report-1.pdf). Of 133 Kenyan plant doctors, 65% meant to send samples to a lab, 30% did, and 27% of those sent got no answer (2016: https://www.cabi.org/cabi-publications/diagnostic-support-to-plantwise-plant-doctors-in-kenya/).
+- **Kenya's coffee policy does not blame misidentified disease.** It explains the fall from 4 kg to 2 kg per tree by soil fertility, ageing trees and farmers, low reinvestment, climate and missing extension (2020: https://kilimo.go.ke/wp-content/uploads/2024/10/Final-Coffe-policy-July-2020-1-1.pdf).
+- **Central America answered its 2012–13 crisis with routine plot surveillance plus alerts to technicians.** Colombia inspects more than 4,500 plots four times a year; SATCAFE collects incidence by smartphone (Avelino et al. 2015: https://d-nb.info/1198124938/34). The losses (USD 499 million) had "multifactorial" causes, not only late detection (http://promecafe.net/documents/Publicaciones/coffee%20rust%20in%20central%20america.pdf).
+- **The brief's own AI example counts to decide timing.** Wadhwani AI's cotton tool counts pests in trap photos to advise "whether and when to spray" (KDD 2020: https://dl.acm.org/doi/pdf/10.1145/3394486.3403363).
+- **Registry: fit, do not build.** Cooperatives already keep member lists by grower/member number (rows 4–6). One cooperative in Nandi mapped 1,621 plots (FAO, July 2026: https://www.fao.org/transparent-supply-chains/detail/detail/from-one-cooperative-to-a-county--how-kenyan-coffee-farmers-are-taking-ownership-of-their-geodata-with-open-foris-ground-and-whisp/en). About 30% of coffee land was geo-mapped in July 2025 (32,688 of 109,384 ha; AFA via Business Daily: https://www.businessdailyafrica.com/bd/economy/kenya-in-2-month-dash-to-comply-with-eu-coffee-import-rules-5136340).
+
+**Recommended problem statement (use this one; replaces A as the lead)**
+
+> Because of this tool, the county extension officer or cooperative agronomist will send their next visits to the villages with the most leaf rust, by the week the relay farmers' plot checks reach the cooperative, that they would otherwise do late, after paper reports arrive; we know because one Kenyan extension officer typically serves 1,500–3,000 farmers and paper-based reporting has caused "delayed information flows" (MoALD draft data policy, 2026), and coffee-specific extension has "collapsed" in places (MoALD Coffee Strategy, 2024).
+
+Simplifications in this statement:
+- "The week the checks reach the cooperative" depends on how often relay farmers export their village totals. Each phone ranks only its own records today; combining several phones' exports is done by hand (not built into the app).
+- The evidence shows the gap is real. It does not show that our tool closes it.
+- The 1,500–3,000 figure is for all farmers, not coffee farmers only. The national figure in row 15 (1:1,380) comes from a different document.
+
+**Recommended framing in 4 sentences.** Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts. Kahawa Check turns each relay farmer's plot visit into a standard record keyed to the cooperative member number; the AI labels each leaf photo or says "not sure", so 15 photos become a rust count, and unclear photos go to a named officer whose labels improve the model. Village rust shares, adjusted for small samples, rank where the officer should go first, like the brief's cotton example, which counts pests to decide whether and when to act.
+
+**Claims we do not make** are listed in [NEED_EVIDENCE.md](NEED_EVIDENCE.md), section 6.
 
 ## Gaps: what we could not verify
 

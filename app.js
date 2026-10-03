@@ -69,7 +69,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v9'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v11'; // keep equal to VERSION in sw.js
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
 const WC_KEY = 'wording_corrections'; // meta record: { key, items: [...] }
 const WC_FIELDS = ['id', 'lang', 'shown_text', 'english', 'suggestion', 'who', 'note', 'created', 'app_version', 'head_version'];
@@ -1479,8 +1479,8 @@ async function renderCoop() {
     ? `Why "adjusted" differs from "raw": villages with few photos are pulled toward the average of all villages (${pct(priorMean)}); villages with many photos stay close to their own share.`
     : `Why "adjusted" differs from "raw": villages with few photos are pulled toward a starting guess of ${pct(priorMean)} (used until 3 villages have answered photos); villages with many photos stay close to their own share.`;
   root.replaceChildren(
-    card('', h('h2', null, 'Co-op early warning'),
-      h('p', null, `Leaf rust per village, from saved plot visits on this phone. Villages most likely above ${pct(ALERT_RATE)} rust come first.`),
+    card('', h('h2', null, 'Co-op: villages to visit first'),
+      h('p', null, `Leaf rust per village, from saved plot visits on this phone. Villages most likely above ${pct(ALERT_RATE)} rust come first. This ranks rust already seen in photos; it does not predict outbreaks.`),
       h('p', { class: 'small' }, `Alert when the chance that the rust rate is above ${pct(ALERT_RATE)} is more than ${pct(ALERT_PROB)}. ${plural(rows.length, 'village')}.`)),
     table,
     h('p', { class: 'notice' }, explain),
