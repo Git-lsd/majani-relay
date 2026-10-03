@@ -1,0 +1,167 @@
+{
+ "sw/result_healthy": {
+  "seconds": 13.54,
+  "bytes": 433452,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "kik/result_healthy": {
+  "seconds": 13.29,
+  "bytes": 425260,
+  "sr": 16000,
+  "dropped_chars": [],
+  "kik_part_s": 3.18
+ },
+ "sw/result_rust": {
+  "seconds": 15.86,
+  "bytes": 507692,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/result_miner": {
+  "seconds": 15.67,
+  "bytes": 501548,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/result_cercospora": {
+  "seconds": 15.19,
+  "bytes": 486188,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/result_phoma": {
+  "seconds": 16.3,
+  "bytes": 521516,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/result_not_sure": {
+  "seconds": 9.5,
+  "bytes": 303916,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "kik/result_not_sure": {
+  "seconds": 8.57,
+  "bytes": 274220,
+  "sr": 16000,
+  "dropped_chars": [],
+  "kik_part_s": 0.54
+ },
+ "sw/retake_photo": {
+  "seconds": 9.19,
+  "bytes": 294188,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "kik/retake_photo": {
+  "seconds": 8.65,
+  "bytes": 276780,
+  "sr": 16000,
+  "dropped_chars": [],
+  "kik_part_s": 1.7
+ },
+ "sw/action_healthy": {
+  "seconds": 10.9,
+  "bytes": 348972,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/action_rust": {
+  "seconds": 12.92,
+  "bytes": 413484,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/action_miner": {
+  "seconds": 14.12,
+  "bytes": 451884,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/action_cercospora": {
+  "seconds": 16.23,
+  "bytes": 519468,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/action_phoma": {
+  "seconds": 16.82,
+  "bytes": 538412,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/action_not_sure": {
+  "seconds": 10.6,
+  "bytes": 339244,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/plot_all_healthy": {
+  "seconds": 11.06,
+  "bytes": 354092,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/plot_some_problem": {
+  "seconds": 7.53,
+  "bytes": 241068,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/plot_officer_alert": {
+  "seconds": 11.7,
+  "bytes": 374572,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q1_old_trees": {
+  "seconds": 14.03,
+  "bytes": 448940,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q2_no_fertiliser": {
+  "seconds": 11.8,
+  "bytes": 377772,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q3_weeding": {
+  "seconds": 11.8,
+  "bytes": 377644,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q4_berry_spots": {
+  "seconds": 12.01,
+  "bytes": 384300,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q5_berry_holes": {
+  "seconds": 13.77,
+  "bytes": 440620,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/check_q6_dry_flowering": {
+  "seconds": 11.86,
+  "bytes": 379692,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/disclaimer_final_call": {
+  "seconds": 10.82,
+  "bytes": 346412,
+  "sr": 16000,
+  "dropped_chars": []
+ },
+ "sw/consent_photos": {
+  "seconds": 23.74,
+  "bytes": 759852,
+  "sr": 16000,
+  "dropped_chars": []
+ }
+}

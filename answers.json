@@ -1,0 +1,554 @@
+{
+ "result_healthy": {
+  "en": "These leaves look healthy. No sign of rust, leaf miner or leaf spot was seen. This check covers leaves only, not berries.",
+  "sw": "Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.",
+  "kik": "Mathangũ maya ma kahũa nĩ mega. Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.",
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "These leaves appear to be healthy. There are no signs of corrosion, insects dig up leaves or patches of disease. This examination is for the leaves only, not the fruits.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": "Mathangũ maya ma kahũa nĩ mega.",
+  "kik_backtranslation_en": "These coffee leaves are good. There are no signs of fever, germs, or disease. It's only the grass, not the fruit.",
+  "kik_backtranslation_match": "ok",
+  "kik_partial": true,
+  "audio_asr_check": {
+   "sw_cer": 0.048,
+   "sw_wer": 0.192,
+   "kik_phrase_cer": 0.133
+  },
+  "audio": {
+   "sw": "audio/sw/result_healthy.m4a",
+   "kik": "audio/kik/result_healthy.m4a"
+  },
+  "notes": "Not a disease result, so no final-call line; states the leaf-only limit instead. kik is a short phrase meaning 'These coffee leaves are good' (not 'healthy'); the rest falls back to Swahili. Back-translation check (NLLB-600M, swh->eng, machine only): 'kutu' came back as 'corrosion': same Swahili word as metal rust; NLLB lacks the plant sense. The kik field = a short Kikuyu phrase ('Mathangũ maya ma kahũa nĩ mega.') that replaces the first Swahili sentence, followed by the remaining Swahili sentences, so nothing is dropped. Kikuyu back-translation (NLLB kik->eng, FLORES chrF++ 42.9, weak evidence): 'These coffee leaves are good. There are no signs of fever, germs, or disease. It's only the grass, not the fruit.'."
+ },
+ "result_rust": {
+  "en": "This looks like coffee leaf rust. Rust shows as yellow-orange powder under the leaf. The extension officer makes the final call.",
+  "sw": "Hii inaonekana kama ugonjwa wa kutu ya majani ya kahawa. Kutu huonekana kama unga wa manjano au rangi ya chungwa chini ya jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "This looks like a disease of coffee leaf rust. The rash appears as a yellowish-colored powder or a peachy color underneath the leaf. The extension officer will make the final decision.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.04,
+   "sw_wer": 0.129,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/result_rust.m4a",
+   "kik": null
+  },
+  "notes": "Symptoms per KCS 8.4.2 (pale yellow spots on the underside turning to yellow/orange powdery masses). 'kutu' = rust. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept; 'kutu' rendered as 'rash' in sentence two (word-sense slip). Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "result_miner": {
+  "en": "This looks like leaf miner damage. It shows as dry brown patches on the leaf. The extension officer makes the final call.",
+  "sw": "Hii inaonekana kama uharibifu wa wadudu wachimba majani. Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "This looks like the destruction of insects digging for grass. They look like large brown spots that have dried up on the leaf. The extension officer will make the final decision.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.018,
+   "sw_wer": 0.16,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/result_miner.m4a",
+   "kik": null
+  },
+  "notes": "Symptoms per KCS 9.5.8 and INFONET (irregular brown blotches on the upper side of leaves). Simplification: the protocol photographs the underside; mines are clearest from above. Back-translation check (NLLB-600M, swh->eng, machine only): 'wadudu wachimba majani' came back as 'insects digging for grass' ('majani' = leaves or grass). Ask a reviewer for the usual Kenyan Swahili name for leaf miner. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | INFONET = Infonet-Biovision (Kenya), Coffee (Revised), https://infonet-biovision.org/crops-fruits-vegetables/coffee-revised"
+ },
+ "result_cercospora": {
+  "en": "This looks like brown eye spot. It shows as round brown spots with a pale centre. The extension officer makes the final call.",
+  "sw": "Hii inaonekana kama ugonjwa wa madoa ya kahawia. Huonekana kama madoa ya mviringo ya kahawia, yenye rangi nyeupe katikati. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "This looks like brown spots. They look like round brown spots, with a white color in the center. The extension officer will make the final decision.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.035,
+   "sw_wer": 0.296,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/result_cercospora.m4a",
+   "kik": null
+  },
+  "notes": "Brown eye spot = Cercospora coffeicola (PLANTWISE_BES, LUCID_BES). KCS lists it as a minor disease in Kenya. Swahili name is descriptive ('brown spot disease'), not a confirmed standard term. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept. The Swahili disease name is descriptive ('brown spot disease'). Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | PLANTWISE_BES = CABI PlantwisePlus Knowledge Bank, Cercospora coffeicola (brown eye spot), https://plantwiseplusknowledgebank.org/doi/full/10.1079/pwkb.20207800275 | LUCID_BES = Pacific Pests, Pathogens and Weeds fact sheet: Coffee brown-eye spot, https://apps.lucidcentral.org/ppp/text/web_full/entities/coffee_browneye_spot_142.htm"
+ },
+ "result_phoma": {
+  "en": "This looks like Phoma leaf spot. It shows as dark patches, often on young leaves after cold weather. The extension officer makes the final call.",
+  "sw": "Hii inaonekana kama ugonjwa wa Phoma. Huonekana kama madoa meusi, mara nyingi kwenye majani machanga baada ya baridi. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "This looks like Phoma's disease. It appears as black spots, often on young leaves after the cold. The extension officer will make the final decision.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.018,
+   "sw_wer": 0.115,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/result_phoma.m4a",
+   "kik": null
+  },
+  "notes": "Phoma (Ascochyta) tarda; favoured by cold wind at high altitude (PHOMA sources are mostly Brazilian). KCS lists 'leaf blight and stem die back' as minor in Kenya. 'Phoma' is spelled as in English; TTS may not pronounce it well. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | PHOMA = Phoma (Ascochyta) tarda leaf spot: Cultivar Magazine, https://revistacultivar.com/articles/phoma-spot-or-ascochyta-spot-of-coffee ; Wikipedia, https://en.wikipedia.org/wiki/Ascochyta_tarda"
+ },
+ "result_not_sure": {
+  "en": "Not sure. The tool cannot tell from this photo. The photo is saved for the officer to look at.",
+  "sw": "Sina uhakika. Siwezi kutambua kutoka kwenye picha hii. Picha imehifadhiwa ili afisa wa ugani aiangalie.",
+  "kik": "Ndiĩ. Siwezi kutambua kutoka kwenye picha hii. Picha imehifadhiwa ili afisa wa ugani aiangalie.",
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "I'm not sure. I can't tell from this picture. The picture has been saved for a fiction agent to look at.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": "Ndiĩ.",
+  "kik_backtranslation_en": "I do not know. I can't figure out where this picture came from. The images are hidden so that the fake agent can look at them.",
+  "kik_backtranslation_match": "ok",
+  "kik_partial": true,
+  "audio_asr_check": {
+   "sw_cer": 0.03,
+   "sw_wer": 0.267,
+   "kik_phrase_cer": 1.0
+  },
+  "audio": {
+   "sw": "audio/sw/result_not_sure.m4a",
+   "kik": "audio/kik/result_not_sure.m4a"
+  },
+  "notes": "kik phrase means 'I do not know'; the rest of the Swahili text follows it. The abstain lane (fail-safe required by the brief). Shown when confidence is low or the photo looks unlike the training data. Back-translation check (NLLB-600M, swh->eng, machine only): 'afisa wa ugani' came back as 'fiction agent' here only; the same phrase back-translates as 'extension officer' in other strings. The kik field = a short Kikuyu phrase ('Ndiĩ.') that replaces the first Swahili sentence, followed by the remaining Swahili sentences, so nothing is dropped. Kikuyu back-translation (NLLB kik->eng, FLORES chrF++ 42.9, weak evidence): 'I do not know. I can't figure out where this picture came from. The images are hidden so that the fake agent can look at them.'. Machine transcription of the 0.5 s Kikuyu clip failed (heard 'ĩe'); a recorded human clip would be better."
+ },
+ "retake_photo": {
+  "en": "Please take the photo again. Show the underside of one leaf, in daylight. Hold the phone still.",
+  "sw": "Tafadhali piga picha tena. Onyesha upande wa chini wa jani moja, kwenye mwanga wa mchana. Shika simu bila kutikisa.",
+  "kik": "Oya mbica ĩngĩ. Onyesha upande wa chini wa jani moja, kwenye mwanga wa mchana. Shika simu bila kutikisa.",
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Please take another picture. Point to the bottom of one leaf, in daylight. Hold the phone without shaking.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": "Oya mbica ĩngĩ.",
+  "kik_backtranslation_en": "Take another picture. Look at the bottom of one leaf, and see the light of day. Keep your phone on.",
+  "kik_backtranslation_match": "ok",
+  "kik_partial": true,
+  "audio_asr_check": {
+   "sw_cer": 0.027,
+   "sw_wer": 0.105,
+   "kik_phrase_cer": 0.071
+  },
+  "audio": {
+   "sw": "audio/sw/retake_photo.m4a",
+   "kik": "audio/kik/retake_photo.m4a"
+  },
+  "notes": "Protocol from SPEC (underside of 3 leaves on 5 trees). kik phrase means 'Take another photo'; the rest falls back to Swahili. Back-translation check (NLLB-600M, swh->eng, machine only): 'upande wa chini' came back as 'bottom' (= underside). The kik field = a short Kikuyu phrase ('Oya mbica ĩngĩ.') that replaces the first Swahili sentence, followed by the remaining Swahili sentences, so nothing is dropped. Kikuyu back-translation (NLLB kik->eng, FLORES chrF++ 42.9, weak evidence): 'Take another picture. Look at the bottom of one leaf, and see the light of day. Keep your phone on.'."
+ },
+ "action_healthy": {
+  "en": "Keep up good care. Prune on time, weed, and feed the trees as advised. Check again at the next visit.",
+  "sw": "Endelea kutunza vizuri. Pogoa kwa wakati, ondoa magugu, na weka mbolea kama ulivyoshauriwa. Kagua tena katika ziara ijayo.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Keep taking good care of them. Cut it in time, remove the weeds, and place the fertilizer as instructed. Review it again on your next visit.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.034,
+   "sw_wer": 0.278,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_healthy.m4a",
+   "kik": null
+  },
+  "notes": "General good practice per KCS modules 4, 6, 7. 'Feed as advised' avoids giving fertiliser types or rates. Back-translation check (NLLB-600M, swh->eng, machine only): 'Pogoa' came back as 'cut' (= prune). Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "action_rust": {
+  "en": "Mark this tree. Prune so air and light reach the leaves. Ask the extension officer about approved rust control before the rains.",
+  "sw": "Weka alama kwenye mti huu. Pogoa matawi ili hewa na mwanga vifikie majani. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti kutu kabla ya mvua.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Make a mark on this tree. Cut off the branches so that the air and light reach the leaves. Ask an expansion officer about approved methods for controlling corrosion before rain.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.064,
+   "sw_wer": 0.308,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_rust.m4a",
+   "kik": null
+  },
+  "notes": "KCS 8.4.2: cultural control by proper and timely pruning; control must start before the rains and follow the CRI programme with PCPB-registered products. CLR_REVIEW: pruning and shading are key cultural practices. No product, ingredient or dose is named on purpose. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept; 'kutu' rendered as 'corrosion'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | CLR_REVIEW = Coffee Leaf Rust (Hemileia vastatrix) in Kenya - A Review, Agronomy 2021, 11(12):2590, https://www.mdpi.com/2073-4395/11/12/2590"
+ },
+ "action_miner": {
+  "en": "Mark this tree. Small wasps kill many leaf miners, so do not spray without advice. Ask the extension officer what to do.",
+  "sw": "Weka alama kwenye mti huu. Nyigu wadogo huua wadudu wengi wa aina hii, kwa hiyo usinyunyize dawa bila ushauri. Muulize afisa wa ugani hatua za kuchukua.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Make a mark on this tree. Small ants kill many of these insects, so don't spray them without advice. Ask the extension officer what steps to take.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.047,
+   "sw_wer": 0.269,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_miner.m4a",
+   "kik": null
+  },
+  "notes": "INFONET: parasitic wasps and predatory mites give natural control of leaf miners. KCS 9.5.8: control products are specific registered types, so the choice is left to the officer. Simplification: 'kill' covers parasitism. Back-translation check (NLLB-600M, swh->eng, machine only): 'Nyigu' (wasp) came back as 'ants'. I believe 'nyigu' is correct; a reviewer should confirm. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | INFONET = Infonet-Biovision (Kenya), Coffee (Revised), https://infonet-biovision.org/crops-fruits-vegetables/coffee-revised"
+ },
+ "action_cercospora": {
+  "en": "Brown eye spot is common on weak, underfed trees. Ask the officer about a soil test and feeding. Mulch to keep soil moist.",
+  "sw": "Madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha. Muulize afisa wa ugani kuhusu kupima udongo na mbolea. Weka matandazo ili udongo ubaki na unyevu.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Brown spots are common on weak trees with insufficient fertilizer. Ask an expansion officer about measuring soil and fertilizer. Place nets so that the soil remains moist.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.012,
+   "sw_wer": 0.103,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_cercospora.m4a",
+   "kik": null
+  },
+  "notes": "PLANTWISE_BES: nitrogen and potassium shortage and plant stress raise susceptibility; do a soil analysis. KCS 4.6: soil samples go to CRI; KCS 3.7.1: mulch conserves moisture. Back-translation check (NLLB-600M, swh->eng, machine only): 'matandazo' (mulch) came back as 'nets'. Reviewer should confirm the farmer word for mulch. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | PLANTWISE_BES = CABI PlantwisePlus Knowledge Bank, Cercospora coffeicola (brown eye spot), https://plantwiseplusknowledgebank.org/doi/full/10.1079/pwkb.20207800275"
+ },
+ "action_phoma": {
+  "en": "Phoma is worse in cold, windy weather on high ground. Windbreak and shade trees can help. Ask the extension officer about approved control.",
+  "sw": "Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu. Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "The phoma thrives in winter and high winds. Windmills and shade trees can help. Ask a medical examiner about approved treatments for the disease.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.025,
+   "sw_wer": 0.091,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_phoma.m4a",
+   "kik": null
+  },
+  "notes": "PHOMA sources: cold wind and altitude above about 900 m favour the disease. Windbreak advice is general (KCS recommends windbreaks for bacterial blight on exposed sides). Weakest-sourced item for Kenya; a CRI agronomist should confirm. Back-translation check (NLLB-600M, swh->eng, machine only): Three slips: 'baridi' -> 'winter', 'miti ya kuzuia upepo' (windbreak trees) -> 'windmills', 'afisa wa ugani' -> 'medical examiner'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | PHOMA = Phoma (Ascochyta) tarda leaf spot: Cultivar Magazine, https://revistacultivar.com/articles/phoma-spot-or-ascochyta-spot-of-coffee ; Wikipedia, https://en.wikipedia.org/wiki/Ascochyta_tarda"
+ },
+ "action_not_sure": {
+  "en": "Mark the tree with a ribbon. The officer will review the saved photo. Do not spray because of this result.",
+  "sw": "Weka utepe kwenye mti huu. Afisa wa ugani ataangalia picha iliyohifadhiwa. Usinyunyize dawa kwa sababu ya jibu hili.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Put a stick on this tree. An extension officer will look at the saved image. Do not spray the medicine because of this answer.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.08,
+   "sw_wer": 0.222,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/action_not_sure.m4a",
+   "kik": null
+  },
+  "notes": "Abstain lane: no action is taken on an uncertain result; the photo waits in the officer queue. Back-translation check (NLLB-600M, swh->eng, machine only): 'utepe' (ribbon) came back as 'stick'."
+ },
+ "plot_all_healthy": {
+  "en": "All photos from this plot look healthy. Keep checking at each visit. Leaf photos cannot show berry problems.",
+  "sw": "Picha zote za shamba hili zinaonekana kuwa na afya. Endelea kukagua kila ziara. Picha za majani haziwezi kuonyesha matatizo ya matunda.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "All the pictures of this farm seem to be healthy. Keep reviewing each visit. Pictures of the leaves cannot reveal the problems of the fruit.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.045,
+   "sw_wer": 0.143,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/plot_all_healthy.m4a",
+   "kik": null
+  },
+  "notes": "Reminds that coffee berry disease and berry borer are not visible on leaves (see checklist). A Kikuyu phrase ('Mĩtĩ yothe nĩ mĩega', all the trees are good) was dropped: it claims more than the photos show. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept."
+ },
+ "plot_some_problem": {
+  "en": "Some photos show a possible problem. Please show this card to the extension officer.",
+  "sw": "Baadhi ya picha zinaonyesha tatizo linalowezekana. Tafadhali mwonyeshe afisa wa ugani kadi hii.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Some pictures point to a possible problem. Please show this card to the expansion officer.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.032,
+   "sw_wer": 0.231,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/plot_some_problem.m4a",
+   "kik": null
+  },
+  "notes": "Plot card when 1-2 photos on one tree show a disease answer (app rule). The user decides when to share; the app sends nothing by itself. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept."
+ },
+ "plot_officer_alert": {
+  "en": "There may be a problem on several trees in this plot. Please show this card to the extension officer soon. The officer decides what to do.",
+  "sw": "Huenda kuna tatizo kwenye miti kadhaa katika shamba hili. Tafadhali mwonyeshe afisa wa ugani kadi hii mapema. Afisa ndiye ataamua hatua za kuchukua.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "There may be a problem with some of the trees in this garden. Please show the expansion officer this card in advance. It is up to the official to decide what steps to take.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.062,
+   "sw_wer": 0.261,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/plot_officer_alert.m4a",
+   "kik": null
+  },
+  "notes": "Plot card when a disease answer appears on 2 or more trees or in 3 or more photos (app rule in app.js plotVerdict). It is a prompt to the user, not an automatic message to the officer. The disease may be any of the four, so rust is not named. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept; 'kadhaa' (several) came back as 'some', 'mapema' (soon) as 'in advance'."
+ },
+ "check_q1_old_trees": {
+  "en": "Are most trees old, with few new branches? If yes, ask the officer about stumping to renew them.",
+  "sw": "Je, miti mingi ni mizee, yenye matawi mapya machache? Kama ndiyo, muulize afisa wa ugani kuhusu kukata miti chini ili ichipue machipukizi mapya.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Are most trees old, with few new branches? If so, ask an expansion officer about cutting down trees to sprout new shoots.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.043,
+   "sw_wer": 0.217,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q1_old_trees.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist. KCS 3.8-3.9 and 6.6: rehabilitation by clean stumping or change of cycle renews aging, underproductive trees. Back-translation check (NLLB-600M, swh->eng, machine only): Came back as 'cutting down trees to sprout new shoots'. Reviewer should check that 'kukata miti chini' is heard as stumping, not felling. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "check_q2_no_fertiliser": {
+  "en": "Has the coffee gone without manure or fertiliser this year? If yes, ask the co-op about a soil test first.",
+  "sw": "Je, kahawa imekosa mbolea ya samadi au mbolea ya dukani mwaka huu? Kama ndiyo, uliza chama cha ushirika kuhusu kupima udongo kwanza.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Has there been a shortage of coffee fertilizer or store fertilizer this year? If so, ask a cooperative about the soil survey first.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.016,
+   "sw_wer": 0.091,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q2_no_fertiliser.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist. KCS 4.6: soil analysis every 2-3 years, samples sent to CRI; KCS warns against fertiliser use without soil analysis. Worded so that YES means a possible cause, like the other questions. Back-translation check (NLLB-600M, swh->eng, machine only): 'mbolea ya samadi' (manure) was lost; came back as 'coffee fertilizer or store fertilizer'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "check_q3_weeding": {
+  "en": "Are there many weeds under the coffee? If yes, weed before feeding the trees. Weeds take water and food.",
+  "sw": "Je, kuna magugu mengi chini ya kahawa? Kama ndiyo, ondoa magugu kabla ya kuweka mbolea. Magugu huchukua maji na chakula cha mimea.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Is there a lot of weeds underneath the coffee? If so, remove the weeds before fertilizing them. Weeds absorb water and nutrients from plants.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.016,
+   "sw_wer": 0.091,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q3_weeding.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist. KCS 7.4: weed before fertiliser is applied, so weeds do not take it up. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "check_q4_berry_spots": {
+  "en": "Do green berries have dark, sunken spots? This may be coffee berry disease. Show the extension officer soon.",
+  "sw": "Je, matunda mabichi yana madoa meusi yaliyozama ndani? Huenda ni ugonjwa wa matunda ya kahawa. Mwonyeshe afisa wa ugani mapema.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Do green fruits have deep black spots? It may be a disease of the coffee fruit. Show the expansion officer in advance.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.033,
+   "sw_wer": 0.2,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q4_berry_spots.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist; referral only. KCS 8.4.1: CBD shows as small dark sunken lesions on green berries and can cause total crop loss. The leaf model cannot see this. Back-translation check (NLLB-600M, swh->eng, machine only): 'yaliyozama ndani' (sunken) came back as 'deep'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "check_q5_berry_holes": {
+  "en": "Do berries have a small round hole near the tip? This may be berry borer. Collect fallen berries and tell the officer.",
+  "sw": "Je, matunda yana tundu dogo la mviringo karibu na ncha? Huenda ni mdudu anayetoboa matunda. Okota matunda yaliyoanguka na umwambie afisa wa ugani.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Does the fruit have a small round hole near the tip? It may be a fruit picking insect. Pick up the fallen fruit and tell the rumor officer.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.042,
+   "sw_wer": 0.261,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q5_berry_holes.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist. KCS 9.5.2 and INFONET: one or two small round holes near the tip of berries; collect infested fallen berries (field hygiene). The leaf model cannot see this. Back-translation check (NLLB-600M, swh->eng, machine only): 'mdudu anayetoboa matunda' (berry-boring insect) came back as 'fruit picking insect'; 'afisa wa ugani' -> 'rumor officer'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf | INFONET = Infonet-Biovision (Kenya), Coffee (Revised), https://infonet-biovision.org/crops-fruits-vegetables/coffee-revised"
+ },
+ "check_q6_dry_flowering": {
+  "en": "Was there a long dry spell during flowering? That can mean fewer berries. Mulch helps keep the soil moist.",
+  "sw": "Je, kulikuwa na kiangazi kirefu wakati wa kuchanua maua? Hilo linaweza kusababisha matunda machache. Matandazo husaidia udongo kubaki na unyevu.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Was there a long summer when flowers bloomed? This may result in little fruitage. Grids help the soil to stay moist.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.036,
+   "sw_wer": 0.2,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/check_q6_dry_flowering.m4a",
+   "kik": null
+  },
+  "notes": "Non-AI checklist. KCS 5.5: critical water periods include flower buds formed with no rain and early fruit (pinhead) stage; KCS 3.7.1: mulch conserves moisture. Simplification: weather is asked, not measured. Back-translation check (NLLB-600M, swh->eng, machine only): 'kiangazi' (dry season) came back as 'summer'; 'matandazo' (mulch) as 'grids'. Sources: KCS = Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf"
+ },
+ "disclaimer_final_call": {
+  "en": "This tool can be wrong. It gives a first look only. The extension officer makes the final call.",
+  "sw": "Programu hii inaweza kukosea. Inatoa mtazamo wa kwanza tu. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "This program can be wrong. It gives only a preliminary view. The extension officer will make the final decision.",
+  "sw_backtranslation_match": "ok",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.037,
+   "sw_wer": 0.118,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/disclaimer_final_call.m4a",
+   "kik": null
+  },
+  "notes": "Shown on every result screen and plot card. Back-translation check (NLLB-600M, swh->eng, machine only): Meaning kept."
+ },
+ "consent_photos": {
+  "en": "May I photograph some coffee leaves on your farm? The photos stay on this phone. We keep your co-op number in coded form, not your name. The officer may look at the photos. You can say no, or ask us to delete them later.",
+  "sw": "Je, naweza kupiga picha za majani ya kahawa shambani mwako? Picha zitabaki kwenye simu hii. Tunahifadhi namba yako ya chama cha ushirika kwa njia ya siri, si jina lako. Afisa wa ugani anaweza kuziangalia picha hizi. Unaweza kukataa, au kutuomba tuzifute baadaye.",
+  "kik": null,
+  "sw_verified": false,
+  "kik_verified": false,
+  "sw_backtranslation_en": "Can I take pictures of the coffee leaves in your field? The pictures will remain on this phone. We keep your company number confidential, not your name. An extension officer can look at these pictures. You may refuse, or you may ask us to delete it later.",
+  "sw_backtranslation_match": "check",
+  "kik_phrase": null,
+  "kik_backtranslation_en": null,
+  "kik_backtranslation_match": null,
+  "kik_partial": false,
+  "audio_asr_check": {
+   "sw_cer": 0.02,
+   "sw_wer": 0.095,
+   "kik_phrase_cer": null
+  },
+  "audio": {
+   "sw": "audio/sw/consent_photos.m4a",
+   "kik": null
+  },
+  "notes": "Read aloud by the relay farmer before the first photo. 'Coded form' = SHA-256 hash of the member number (pseudonymous, not anonymous). 'kwa njia ya siri' literally 'in a secret way'. Back-translation check (NLLB-600M, swh->eng, machine only): 'chama cha ushirika' (cooperative society) came back as 'company'. Consent text should be reviewed by a speaker before any real use."
+ }
+}

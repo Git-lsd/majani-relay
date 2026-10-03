@@ -1,0 +1,60 @@
+{
+ "samples": [
+  {
+   "file": "rocole_healthy_1.jpg",
+   "truth": "healthy",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnf5ealftjc0984n8uka3fs.jpeg"
+  },
+  {
+   "file": "rocole_rust_level_2_1.jpg",
+   "truth": "rust_level_2",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnf878wfzzd0838svwmv6gu.jpeg"
+  },
+  {
+   "file": "rocole_healthy_2.jpg",
+   "truth": "healthy",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnf89dsfy900795gjew8qoj.jpeg"
+  },
+  {
+   "file": "rocole_healthy_3.jpg",
+   "truth": "healthy",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnf8b7fg82s0a70ijp6fz1o.jpeg"
+  },
+  {
+   "file": "rocole_rust_level_3_1.jpg",
+   "truth": "rust_level_3",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnf8h50fvp30984cykakd0w.jpeg"
+  },
+  {
+   "file": "rocole_rust_level_1_1.jpg",
+   "truth": "rust_level_1",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnwptfpossk08287dh2lzh9.jpeg"
+  },
+  {
+   "file": "rocole_red_spider_mite_1.jpg",
+   "truth": "red_spider_mite",
+   "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photo",
+   "license": "CC BY 4.0",
+   "url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+   "original_file": "cjvnxxoqppi4v086689r0fmcr.jpeg"
+  }
+ ]
+}

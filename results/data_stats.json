@@ -1,0 +1,28 @@
+{
+ "jmuben": {
+  "healthy": {
+   "raw_images": 18984,
+   "sampled": 1500
+  },
+  "rust": {
+   "raw_images": 8336,
+   "sampled": 1500
+  },
+  "miner": {
+   "raw_images": 16978,
+   "sampled": 1500
+  },
+  "cercospora": {
+   "raw_images": 7681,
+   "sampled": 1500
+  },
+  "phoma": {
+   "raw_images": 6571,
+   "sampled": 1500
+  }
+ },
+ "n_selected_jmuben": 7500,
+ "n_bracol": 1342,
+ "n_rocole": 1552,
+ "cap": 1500
+}

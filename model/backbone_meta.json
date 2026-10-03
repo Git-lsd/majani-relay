@@ -1,0 +1,19 @@
+{
+ "backbone": "mobilenetv3_large_100",
+ "embed_dim": 1280,
+ "input_size": 224,
+ "resize_shorter": 256,
+ "mean": [
+  0.485,
+  0.456,
+  0.406
+ ],
+ "std": [
+  0.229,
+  0.224,
+  0.225
+ ],
+ "license": "apache-2.0",
+ "onnx_bytes": 16806461,
+ "standardised": true
+}

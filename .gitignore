@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+# internal team files (kept on this Mac, not published)
+SPEC.md
+docs/ONE_PAGER.md
+docs/VIDEO_SCRIPTS.md
+docs/HANDOFF.md
+docs/templates/

@@ -1,0 +1,19 @@
+{
+ "out_of_scope_pest_after_50_labels": {
+  "dataset": "RoCoLe red spider mite (167 photos)",
+  "not_sure_before": 1.0,
+  "not_sure_after_50": 0.222,
+  "answered_as_after_50": {
+   "rust": 81,
+   "healthy": 45,
+   "phoma": 4
+  },
+  "meaning": "Once field photos become familiar, the familiarity check no longer catches a pest the model was never taught. About half of the answered mite photos are still flagged as a problem (rust), about a third are wrongly called healthy.",
+  "mitigations": [
+   "Officer review screen offers \"different problem / not in list\"; those photos stay in the not-sure lane for similar photos.",
+   "Spot-check: 1 in 10 answered photos is also queued for the officer, so errors and drift are seen.",
+   "Plot card never says a plot is disease-free; the checklist covers what photos cannot see."
+  ]
+ },
+ "demo_samples_after_50": "before: 7/7 not sure; after the demo update: 3/3 healthy correct, 2/3 rust correct (1 not sure), the mite photo wrongly called healthy"
+}

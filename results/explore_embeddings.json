@@ -1,0 +1,97 @@
+{
+ "file": "embeddings.npz",
+ "acc": {
+  "val": 1.0,
+  "calib": 0.8422619047619048,
+  "field": 0.046209386281588445
+ },
+ "ood": {
+  "max_softmax": {
+   "auroc_field_vs_heldout": 0.36902827918170883,
+   "field_accept_rate": 0.9848375451263538,
+   "mite_accept_rate": 0.9760479041916168,
+   "heldout_accept_rate": 0.9494047619047619
+  },
+  "centroid_cos": {
+   "auroc_field_vs_heldout": 0.2634691421695031,
+   "field_accept_rate": 0.9855595667870036,
+   "mite_accept_rate": 0.9820359281437125,
+   "heldout_accept_rate": 0.9494047619047619
+  },
+  "knn10_cos": {
+   "auroc_field_vs_heldout": 0.9990351555784769,
+   "field_accept_rate": 0.0,
+   "mite_accept_rate": 0.0,
+   "heldout_accept_rate": 0.9494047619047619
+  }
+ },
+ "threshold": 0.6099999999999999,
+ "knn_cutoff": 0.5093826055526733,
+ "temperature": 0.9523078164285758,
+ "loop": {
+  "prior_adapt": {
+   "0": {
+    "acc_all": 0.04588744588744588,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "10": {
+    "acc_all": 0.7492063492063492,
+    "coverage": 0.49177489177489175,
+    "acc_answered": 0.7583821689832448
+   },
+   "20": {
+    "acc_all": 0.7503607503607503,
+    "coverage": 0.7419913419913421,
+    "acc_answered": 0.7650863827191163
+   },
+   "50": {
+    "acc_all": 0.8167388167388168,
+    "coverage": 0.8357864357864357,
+    "acc_answered": 0.8330863404091675
+   },
+   "100": {
+    "acc_all": 0.8421356421356421,
+    "coverage": 0.8914862914862915,
+    "acc_answered": 0.856948132339159
+   },
+   "200": {
+    "acc_all": 0.8568542568542569,
+    "coverage": 0.9116883116883118,
+    "acc_answered": 0.8758946148650135
+   }
+  },
+  "local_only": {
+   "0": {
+    "acc_all": 0.04588744588744588,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "10": {
+    "acc_all": 0.5743145743145742,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "20": {
+    "acc_all": 0.5743145743145742,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "50": {
+    "acc_all": 0.5743145743145742,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "100": {
+    "acc_all": 0.5743145743145742,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   },
+   "200": {
+    "acc_all": 0.5743145743145742,
+    "coverage": 0.0,
+    "acc_answered": NaN
+   }
+  }
+ }
+}

@@ -1,0 +1,339 @@
+{
+ "result_healthy": {
+  "sw_sents": [
+   "Majani haya yanaonekana kuwa na afya.",
+   "Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa.",
+   "Ukaguzi huu ni wa majani tu, si wa matunda."
+  ],
+  "sw_bt_sents": [
+   "These leaves appear to be healthy.",
+   "There are no signs of corrosion, insects dig up leaves or patches of disease.",
+   "This examination is for the leaves only, not the fruits."
+  ],
+  "sw_bt": "These leaves appear to be healthy. There are no signs of corrosion, insects dig up leaves or patches of disease. This examination is for the leaves only, not the fruits.",
+  "kik_bt": "These coffee leaves are good. There are no signs of fever, germs, or disease. It's only the grass, not the fruit."
+ },
+ "result_rust": {
+  "sw_sents": [
+   "Hii inaonekana kama ugonjwa wa kutu ya majani ya kahawa.",
+   "Kutu huonekana kama unga wa manjano au rangi ya chungwa chini ya jani.",
+   "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
+  ],
+  "sw_bt_sents": [
+   "This looks like a disease of coffee leaf rust.",
+   "The rash appears as a yellowish-colored powder or a peachy color underneath the leaf.",
+   "The extension officer will make the final decision."
+  ],
+  "sw_bt": "This looks like a disease of coffee leaf rust. The rash appears as a yellowish-colored powder or a peachy color underneath the leaf. The extension officer will make the final decision."
+ },
+ "result_miner": {
+  "sw_sents": [
+   "Hii inaonekana kama uharibifu wa wadudu wachimba majani.",
+   "Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani.",
+   "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
+  ],
+  "sw_bt_sents": [
+   "This looks like the destruction of insects digging for grass.",
+   "They look like large brown spots that have dried up on the leaf.",
+   "The extension officer will make the final decision."
+  ],
+  "sw_bt": "This looks like the destruction of insects digging for grass. They look like large brown spots that have dried up on the leaf. The extension officer will make the final decision."
+ },
+ "result_cercospora": {
+  "sw_sents": [
+   "Hii inaonekana kama ugonjwa wa madoa ya kahawia.",
+   "Huonekana kama madoa ya mviringo ya kahawia, yenye rangi nyeupe katikati.",
+   "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
+  ],
+  "sw_bt_sents": [
+   "This looks like brown spots.",
+   "They look like round brown spots, with a white color in the center.",
+   "The extension officer will make the final decision."
+  ],
+  "sw_bt": "This looks like brown spots. They look like round brown spots, with a white color in the center. The extension officer will make the final decision."
+ },
+ "result_phoma": {
+  "sw_sents": [
+   "Hii inaonekana kama ugonjwa wa Phoma.",
+   "Huonekana kama madoa meusi, mara nyingi kwenye majani machanga baada ya baridi.",
+   "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
+  ],
+  "sw_bt_sents": [
+   "This looks like Phoma's disease.",
+   "It appears as black spots, often on young leaves after the cold.",
+   "The extension officer will make the final decision."
+  ],
+  "sw_bt": "This looks like Phoma's disease. It appears as black spots, often on young leaves after the cold. The extension officer will make the final decision."
+ },
+ "result_not_sure": {
+  "sw_sents": [
+   "Sina uhakika.",
+   "Siwezi kutambua kutoka kwenye picha hii.",
+   "Picha imehifadhiwa ili afisa wa ugani aiangalie."
+  ],
+  "sw_bt_sents": [
+   "I'm not sure.",
+   "I can't tell from this picture.",
+   "The picture has been saved for a fiction agent to look at."
+  ],
+  "sw_bt": "I'm not sure. I can't tell from this picture. The picture has been saved for a fiction agent to look at.",
+  "kik_bt": "I do not know. I can't figure out where this picture came from. The images are hidden so that the fake agent can look at them."
+ },
+ "retake_photo": {
+  "sw_sents": [
+   "Tafadhali piga picha tena.",
+   "Onyesha upande wa chini wa jani moja, kwenye mwanga wa mchana.",
+   "Shika simu bila kutikisa."
+  ],
+  "sw_bt_sents": [
+   "Please take another picture.",
+   "Point to the bottom of one leaf, in daylight.",
+   "Hold the phone without shaking."
+  ],
+  "sw_bt": "Please take another picture. Point to the bottom of one leaf, in daylight. Hold the phone without shaking.",
+  "kik_bt": "Take another picture. Look at the bottom of one leaf, and see the light of day. Keep your phone on."
+ },
+ "action_healthy": {
+  "sw_sents": [
+   "Endelea kutunza vizuri.",
+   "Pogoa kwa wakati, ondoa magugu, na weka mbolea kama ulivyoshauriwa.",
+   "Kagua tena katika ziara ijayo."
+  ],
+  "sw_bt_sents": [
+   "Keep taking good care of them.",
+   "Cut it in time, remove the weeds, and place the fertilizer as instructed.",
+   "Review it again on your next visit."
+  ],
+  "sw_bt": "Keep taking good care of them. Cut it in time, remove the weeds, and place the fertilizer as instructed. Review it again on your next visit."
+ },
+ "action_rust": {
+  "sw_sents": [
+   "Weka alama kwenye mti huu.",
+   "Pogoa matawi ili hewa na mwanga vifikie majani.",
+   "Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti kutu kabla ya mvua."
+  ],
+  "sw_bt_sents": [
+   "Make a mark on this tree.",
+   "Cut off the branches so that the air and light reach the leaves.",
+   "Ask an expansion officer about approved methods for controlling corrosion before rain."
+  ],
+  "sw_bt": "Make a mark on this tree. Cut off the branches so that the air and light reach the leaves. Ask an expansion officer about approved methods for controlling corrosion before rain."
+ },
+ "action_miner": {
+  "sw_sents": [
+   "Weka alama kwenye mti huu.",
+   "Nyigu wadogo huua wadudu wengi wa aina hii, kwa hiyo usinyunyize dawa bila ushauri.",
+   "Muulize afisa wa ugani hatua za kuchukua."
+  ],
+  "sw_bt_sents": [
+   "Make a mark on this tree.",
+   "Small ants kill many of these insects, so don't spray them without advice.",
+   "Ask the extension officer what steps to take."
+  ],
+  "sw_bt": "Make a mark on this tree. Small ants kill many of these insects, so don't spray them without advice. Ask the extension officer what steps to take."
+ },
+ "action_cercospora": {
+  "sw_sents": [
+   "Madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha.",
+   "Muulize afisa wa ugani kuhusu kupima udongo na mbolea.",
+   "Weka matandazo ili udongo ubaki na unyevu."
+  ],
+  "sw_bt_sents": [
+   "Brown spots are common on weak trees with insufficient fertilizer.",
+   "Ask an expansion officer about measuring soil and fertilizer.",
+   "Place nets so that the soil remains moist."
+  ],
+  "sw_bt": "Brown spots are common on weak trees with insufficient fertilizer. Ask an expansion officer about measuring soil and fertilizer. Place nets so that the soil remains moist."
+ },
+ "action_phoma": {
+  "sw_sents": [
+   "Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu.",
+   "Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia.",
+   "Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu."
+  ],
+  "sw_bt_sents": [
+   "The phoma thrives in winter and high winds.",
+   "Windmills and shade trees can help.",
+   "Ask a medical examiner about approved treatments for the disease."
+  ],
+  "sw_bt": "The phoma thrives in winter and high winds. Windmills and shade trees can help. Ask a medical examiner about approved treatments for the disease."
+ },
+ "action_not_sure": {
+  "sw_sents": [
+   "Weka utepe kwenye mti huu.",
+   "Afisa wa ugani ataangalia picha iliyohifadhiwa.",
+   "Usinyunyize dawa kwa sababu ya jibu hili."
+  ],
+  "sw_bt_sents": [
+   "Put a stick on this tree.",
+   "An extension officer will look at the saved image.",
+   "Do not spray the medicine because of this answer."
+  ],
+  "sw_bt": "Put a stick on this tree. An extension officer will look at the saved image. Do not spray the medicine because of this answer."
+ },
+ "plot_all_healthy": {
+  "sw_sents": [
+   "Picha zote za shamba hili zinaonekana kuwa na afya.",
+   "Endelea kukagua kila ziara.",
+   "Picha za majani haziwezi kuonyesha matatizo ya matunda."
+  ],
+  "sw_bt_sents": [
+   "All the pictures of this farm seem to be healthy.",
+   "Keep reviewing each visit.",
+   "Pictures of the leaves cannot reveal the problems of the fruit."
+  ],
+  "sw_bt": "All the pictures of this farm seem to be healthy. Keep reviewing each visit. Pictures of the leaves cannot reveal the problems of the fruit."
+ },
+ "plot_some_problem": {
+  "sw_sents": [
+   "Baadhi ya picha zinaonyesha tatizo linalowezekana.",
+   "Tafadhali mwonyeshe afisa wa ugani kadi hii."
+  ],
+  "sw_bt_sents": [
+   "Some pictures point to a possible problem.",
+   "Please show this card to the expansion officer."
+  ],
+  "sw_bt": "Some pictures point to a possible problem. Please show this card to the expansion officer."
+ },
+ "plot_officer_alert": {
+  "sw_sents": [
+   "Huenda kuna tatizo kwenye miti kadhaa katika shamba hili.",
+   "Tafadhali mwonyeshe afisa wa ugani kadi hii mapema.",
+   "Afisa ndiye ataamua hatua za kuchukua."
+  ],
+  "sw_bt_sents": [
+   "There may be a problem with some of the trees in this garden.",
+   "Please show the expansion officer this card in advance.",
+   "It is up to the official to decide what steps to take."
+  ],
+  "sw_bt": "There may be a problem with some of the trees in this garden. Please show the expansion officer this card in advance. It is up to the official to decide what steps to take."
+ },
+ "check_q1_old_trees": {
+  "sw_sents": [
+   "Je, miti mingi ni mizee, yenye matawi mapya machache?",
+   "Kama ndiyo, muulize afisa wa ugani kuhusu kukata miti chini ili ichipue machipukizi mapya."
+  ],
+  "sw_bt_sents": [
+   "Are most trees old, with few new branches?",
+   "If so, ask an expansion officer about cutting down trees to sprout new shoots."
+  ],
+  "sw_bt": "Are most trees old, with few new branches? If so, ask an expansion officer about cutting down trees to sprout new shoots."
+ },
+ "check_q2_no_fertiliser": {
+  "sw_sents": [
+   "Je, kahawa imekosa mbolea ya samadi au mbolea ya dukani mwaka huu?",
+   "Kama ndiyo, uliza chama cha ushirika kuhusu kupima udongo kwanza."
+  ],
+  "sw_bt_sents": [
+   "Has there been a shortage of coffee fertilizer or store fertilizer this year?",
+   "If so, ask a cooperative about the soil survey first."
+  ],
+  "sw_bt": "Has there been a shortage of coffee fertilizer or store fertilizer this year? If so, ask a cooperative about the soil survey first."
+ },
+ "check_q3_weeding": {
+  "sw_sents": [
+   "Je, kuna magugu mengi chini ya kahawa?",
+   "Kama ndiyo, ondoa magugu kabla ya kuweka mbolea.",
+   "Magugu huchukua maji na chakula cha mimea."
+  ],
+  "sw_bt_sents": [
+   "Is there a lot of weeds underneath the coffee?",
+   "If so, remove the weeds before fertilizing them.",
+   "Weeds absorb water and nutrients from plants."
+  ],
+  "sw_bt": "Is there a lot of weeds underneath the coffee? If so, remove the weeds before fertilizing them. Weeds absorb water and nutrients from plants."
+ },
+ "check_q4_berry_spots": {
+  "sw_sents": [
+   "Je, matunda mabichi yana madoa meusi yaliyozama ndani?",
+   "Huenda ni ugonjwa wa matunda ya kahawa.",
+   "Mwonyeshe afisa wa ugani mapema."
+  ],
+  "sw_bt_sents": [
+   "Do green fruits have deep black spots?",
+   "It may be a disease of the coffee fruit.",
+   "Show the expansion officer in advance."
+  ],
+  "sw_bt": "Do green fruits have deep black spots? It may be a disease of the coffee fruit. Show the expansion officer in advance."
+ },
+ "check_q5_berry_holes": {
+  "sw_sents": [
+   "Je, matunda yana tundu dogo la mviringo karibu na ncha?",
+   "Huenda ni mdudu anayetoboa matunda.",
+   "Okota matunda yaliyoanguka na umwambie afisa wa ugani."
+  ],
+  "sw_bt_sents": [
+   "Does the fruit have a small round hole near the tip?",
+   "It may be a fruit picking insect.",
+   "Pick up the fallen fruit and tell the rumor officer."
+  ],
+  "sw_bt": "Does the fruit have a small round hole near the tip? It may be a fruit picking insect. Pick up the fallen fruit and tell the rumor officer."
+ },
+ "check_q6_dry_flowering": {
+  "sw_sents": [
+   "Je, kulikuwa na kiangazi kirefu wakati wa kuchanua maua?",
+   "Hilo linaweza kusababisha matunda machache.",
+   "Matandazo husaidia udongo kubaki na unyevu."
+  ],
+  "sw_bt_sents": [
+   "Was there a long summer when flowers bloomed?",
+   "This may result in little fruitage.",
+   "Grids help the soil to stay moist."
+  ],
+  "sw_bt": "Was there a long summer when flowers bloomed? This may result in little fruitage. Grids help the soil to stay moist."
+ },
+ "disclaimer_final_call": {
+  "sw_sents": [
+   "Programu hii inaweza kukosea.",
+   "Inatoa mtazamo wa kwanza tu.",
+   "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
+  ],
+  "sw_bt_sents": [
+   "This program can be wrong.",
+   "It gives only a preliminary view.",
+   "The extension officer will make the final decision."
+  ],
+  "sw_bt": "This program can be wrong. It gives only a preliminary view. The extension officer will make the final decision."
+ },
+ "consent_photos": {
+  "sw_sents": [
+   "Je, naweza kupiga picha za majani ya kahawa shambani mwako?",
+   "Picha zitabaki kwenye simu hii.",
+   "Tunahifadhi namba yako ya chama cha ushirika kwa njia ya siri, si jina lako.",
+   "Afisa wa ugani anaweza kuziangalia picha hizi.",
+   "Unaweza kukataa, au kutuomba tuzifute baadaye."
+  ],
+  "sw_bt_sents": [
+   "Can I take pictures of the coffee leaves in your field?",
+   "The pictures will remain on this phone.",
+   "We keep your company number confidential, not your name.",
+   "An extension officer can look at these pictures.",
+   "You may refuse, or you may ask us to delete it later."
+  ],
+  "sw_bt": "Can I take pictures of the coffee leaves in your field? The pictures will remain on this phone. We keep your company number confidential, not your name. An extension officer can look at these pictures. You may refuse, or you may ask us to delete it later."
+ },
+ "probe_yes_no": {
+  "kik": "Ĩĩ kana aca?",
+  "kik_bt": "Yes or no?"
+ },
+ "probe_thanks": {
+  "kik": "Nĩ wega.",
+  "kik_bt": "That is fine."
+ },
+ "probe_dontknow": {
+  "kik": "Ndiĩ.",
+  "kik_bt": "I do not know."
+ },
+ "probe_take1": {
+  "kik": "Oya mbica ĩngĩ.",
+  "kik_bt": "Take another picture."
+ },
+ "probe_leaves_plain": {
+  "kik": "Mathangũ maya nĩ mega.",
+  "kik_bt": "These pages are good."
+ },
+ "probe_officer": {
+  "kik": "Ũria afisa wa ũrimi.",
+  "kik_bt": "Ask the farmer."
+ }
+}
