@@ -1,9 +1,9 @@
 {
  "sw/result_healthy": {
-  "ref": "majani haya yanaonekana kuwa na afya hakuna dalili ya kutu wadudu wachimba majani wala madoa ya ugonjwa ukaguzi huu ni wa majani tu si wa matunda",
-  "hyp": "majali haya yanaonekana kuwa na asia hakuna dalili ya kuto wadudu wakimba majani wala madoa ya ugonjwa ukaaguzi huu ni wa majani tu si wa matunda",
-  "cer": 0.048,
-  "wer": 0.192
+  "ref": "majani haya yanaonekana kuwa na afya hakuna dalili ya kutu wadudu wanaochimba ndani ya majani wala madoa ya ugonjwa ukaguzi huu ni wa majani tu si wa matunda",
+  "hyp": "majali haya yanaonekana kuwa na asia hakuna dalili ya kutu wadudu wanaochimba ndani ya majani wala madoa ya uonjwa ukaguzi huu ni wamajani tu si wamatunda",
+  "cer": 0.038,
+  "wer": 0.25
  },
  "sw/result_rust": {
   "ref": "hii inaonekana kama ugonjwa wa kutu ya majani ya kahawa kutu huonekana kama unga wa manjano au rangi ya chungwa chini ya jani afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
@@ -12,10 +12,10 @@
   "wer": 0.129
  },
  "sw/result_miner": {
-  "ref": "hii inaonekana kama uharibifu wa wadudu wachimba majani huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
-  "hyp": "hii inaonekana kama uharibifu wa wadudu wa chimba majani huonekana kamba madoa makubwa ya kahawia yaliyokauka kwenye jani afisa wa ulani ndiye atakayefanya uamuzi wa mwisho",
-  "cer": 0.018,
-  "wer": 0.16
+  "ref": "hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani huonekana kama sehemu kubwa kavu za rangi ya kahawia kwenye jani afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
+  "hyp": "hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani huonekana kama sehemu kubwa kavuza ranji yakahawia kwenye jani afisa wa udrani ndiye atakayefanya uamuzi wa mwisho",
+  "cer": 0.027,
+  "wer": 0.207
  },
  "sw/result_cercospora": {
   "ref": "hii inaonekana kama ugonjwa wa madoa ya kahawia huonekana kama madoa ya mviringo ya kahawia yenye rangi nyeupe katikati afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
@@ -60,34 +60,34 @@
   "wer": 0.269
  },
  "sw/action_cercospora": {
-  "ref": "madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha muulize afisa wa ugani kuhusu kupima udongo na mbolea weka matandazo ili udongo ubaki na unyevu",
-  "hyp": "madoa yakahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha mulize afisa wa ugani kuhusu kupima udongo na mbolea weka matandazo ili udongo ubaki na unyevu",
-  "cer": 0.012,
-  "wer": 0.103
- },
- "sw/action_phoma": {
-  "ref": "phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu",
-  "hyp": "voma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia mulizi afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huo",
-  "cer": 0.025,
+  "ref": "ugonjwa wa madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha muulize afisa wa ugani kuhusu kupima udongo na kuhusu mbolea inayofaa weka matandazo ili udongo ubaki na unyevu",
+  "hyp": "ugonjwa wa madoa yakahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha mulize afisa wa ugani kuhusu kupima udongo na kuhusu mbolea inayofaa weka matandazo ili udongo ubaki na unyevu",
+  "cer": 0.01,
   "wer": 0.091
  },
+ "sw/action_phoma": {
+  "ref": "ugonjwa wa phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu",
+  "hyp": "ugonjwa wa poma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia mulizi afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huo",
+  "cer": 0.019,
+  "wer": 0.086
+ },
  "sw/action_not_sure": {
-  "ref": "weka utepe kwenye mti huu afisa wa ugani ataangalia picha iliyohifadhiwa usinyunyize dawa kwa sababu ya jibu hili",
-  "hyp": "wakaotepa kwenye mti huo afisa wa ugani ataangalia picha iliyohifadhiwa kusininize dawa kwa sababu ya jibu hili",
-  "cer": 0.08,
-  "wer": 0.222
+  "ref": "weka alama kwenye mti huu afisa wa ugani ataangalia picha iliyohifadhiwa usinyunyize dawa kwa sababu ya matokeo haya subiri ushauri wa afisa kwanza",
+  "hyp": "wakaalama kwenye mti huo afisa wa ugani ataangalia picha iliyohifadhiwa usinyinyize dawa kwa sababu ya matokeo haya subiri ushauri wa afisa kwanza",
+  "cer": 0.027,
+  "wer": 0.174
  },
  "sw/plot_all_healthy": {
-  "ref": "picha zote za shamba hili zinaonekana kuwa na afya endelea kukagua kila ziara picha za majani haziwezi kuonyesha matatizo ya matunda",
-  "hyp": "picha zote za shamba hili zinaamnikana kuona afya endelea kukagua kila ziara picha za majani haziwezi kuonyesha matatizo ya matunda",
-  "cer": 0.045,
-  "wer": 0.143
+  "ref": "majani katika picha zote za shamba hili yanaonekana kuwa na afya endelea kukagua katika kila ziara picha za majani haziwezi kuonyesha matatizo ya matunda",
+  "hyp": "majani katika picha zote za shamba hili yinaonekana kuwa na afya endelea kukagua katika kila ziaa picha za majani haziwezi kuonyesha matatizo ya matunda",
+  "cer": 0.013,
+  "wer": 0.083
  },
  "sw/plot_some_problem": {
-  "ref": "baadhi ya picha zinaonyesha tatizo linalowezekana tafadhali mwonyeshe afisa wa ugani kadi hii",
-  "hyp": "baadhi ya picha zinaonyesha tatizo linalowezekana tefadhali mwonyeshe afisa wa udani kari hii",
-  "cer": 0.032,
-  "wer": 0.231
+  "ref": "baadhi ya picha zinaonyesha kwamba huenda kuna tatizo tafadhali mwonyeshe afisa wa ugani kadi hii",
+  "hyp": "baadhi ya picha zinaonyesha kwamba hwenda kuna tatizo tefadhali mwonyeshe afisa waudani kali hii",
+  "cer": 0.052,
+  "wer": 0.333
  },
  "sw/plot_officer_alert": {
   "ref": "huenda kuna tatizo kwenye miti kadhaa katika shamba hili tafadhali mwonyeshe afisa wa ugani kadi hii mapema afisa ndiye ataamua hatua za kuchukua",
@@ -96,10 +96,10 @@
   "wer": 0.261
  },
  "sw/check_q1_old_trees": {
-  "ref": "je miti mingi ni mizee yenye matawi mapya machache kama ndiyo muulize afisa wa ugani kuhusu kukata miti chini ili ichipue machipukizi mapya",
-  "hyp": "je miki mingi ni mizee yenye matawi mapya machache kama ndio muulize afisa wa udeani kuhusu kukata miti chini ili ichipoe machipokizi mapya",
-  "cer": 0.043,
-  "wer": 0.217
+  "ref": "je miti mingi imezeeka na ina matawi mapya machache kama ndiyo muulize afisa wa ugani kuhusu kukata mashina ili miti ichipue upya",
+  "hyp": "je miki mingi imezeka na ina matawi mapya machache kama ndio muulize afisa wa ugani kuhusu kukata mashina ili miti ichipue upya",
+  "cer": 0.023,
+  "wer": 0.136
  },
  "sw/check_q2_no_fertiliser": {
   "ref": "je kahawa imekosa mbolea ya samadi au mbolea ya dukani mwaka huu kama ndiyo uliza chama cha ushirika kuhusu kupima udongo kwanza",
@@ -132,22 +132,22 @@
   "wer": 0.2
  },
  "sw/disclaimer_final_call": {
-  "ref": "programu hii inaweza kukosea inatoa mtazamo wa kwanza tu afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
-  "hyp": "pokamu hii inaweza kukosea inatoa mtazamo wa kwanza tu afisa wa ulani ndiye atakayefanya uamuzi wa mwisho",
-  "cer": 0.037,
-  "wer": 0.118
+  "ref": "programu hii inaweza kukosea inatoa jibu la awali tu afisa wa ugani ndiye atakayefanya uamuzi wa mwisho",
+  "hyp": "pokamu hii inaweza kukosea inatoalibu la awali tu afisa wa ulani ndiye atakayefanya uamuzi wa mwisho",
+  "cer": 0.058,
+  "wer": 0.235
  },
  "sw/consent_photos": {
-  "ref": "je naweza kupiga picha za majani ya kahawa shambani mwako picha zitabaki kwenye simu hii tunahifadhi namba yako ya chama cha ushirika kwa njia ya siri si jina lako afisa wa ugani anaweza kuziangalia picha hizi unaweza kukataa au kutuomba tuzifute baadaye",
-  "hyp": "je naweza kupiga picha za majani akahawa shambani mwako picha zitabaki kwenye simu hii tunahifati namba yako ya chama cha ushirika kwa njia ya sili si jina lako afisa wa ugani anaweza kuziangalia picha hizi unaweza kukataa au kutuomba tuzifute baadaye",
-  "cer": 0.02,
-  "wer": 0.095
+  "ref": "je naweza kupiga picha za majani ya kahawa shambani mwako picha zitabaki kwenye simu hii hatuhifadhi jina lako tunahifadhi namba yako ya uanachama katika chama cha ushirika tu na tunaiweka kuwa siri afisa wa ugani anaweza kuziangalia picha hizi unaweza kukataa au kutuomba tuzifute baadaye",
+  "hyp": "je naweza kupiga picha za majani akahawa shambani mwako picha zitabaki kwenye simu hii hatuhifadhi jina lako tunahifadhi namba yako ya wanachama katika chama cha ushirika tu na tunaiweka kuwa siri afisa wa ugani anaweza kuziangalia piche hizi unaweza kukataa au kutuumba tuzifute baadaye",
+  "cer": 0.017,
+  "wer": 0.111
  },
  "sw/_overall": {
-  "cer": 0.035,
-  "wer": 0.179,
-  "n_chars": 3468,
-  "n_words": 565
+  "cer": 0.031,
+  "wer": 0.182,
+  "n_chars": 3611,
+  "n_words": 589
  },
  "kik/result_healthy": {
   "ref": "mathangũ maya ma kahũa nĩ mega",

@@ -1,13 +1,13 @@
 {
  "sw/result_healthy": {
-  "seconds": 13.54,
-  "bytes": 433452,
+  "seconds": 14.58,
+  "bytes": 466732,
   "sr": 16000,
   "dropped_chars": []
  },
  "kik/result_healthy": {
-  "seconds": 13.29,
-  "bytes": 425260,
+  "seconds": 14.33,
+  "bytes": 458540,
   "sr": 16000,
   "dropped_chars": [],
   "kik_part_s": 3.18
@@ -19,8 +19,8 @@
   "dropped_chars": []
  },
  "sw/result_miner": {
-  "seconds": 15.67,
-  "bytes": 501548,
+  "seconds": 15.78,
+  "bytes": 505132,
   "sr": 16000,
   "dropped_chars": []
  },
@@ -81,32 +81,32 @@
   "dropped_chars": []
  },
  "sw/action_cercospora": {
-  "seconds": 16.23,
-  "bytes": 519468,
+  "seconds": 18.66,
+  "bytes": 597292,
   "sr": 16000,
   "dropped_chars": []
  },
  "sw/action_phoma": {
-  "seconds": 16.82,
-  "bytes": 538412,
+  "seconds": 17.26,
+  "bytes": 552236,
   "sr": 16000,
   "dropped_chars": []
  },
  "sw/action_not_sure": {
-  "seconds": 10.6,
-  "bytes": 339244,
+  "seconds": 15.09,
+  "bytes": 482988,
   "sr": 16000,
   "dropped_chars": []
  },
  "sw/plot_all_healthy": {
-  "seconds": 11.06,
-  "bytes": 354092,
+  "seconds": 12.6,
+  "bytes": 403244,
   "sr": 16000,
   "dropped_chars": []
  },
  "sw/plot_some_problem": {
-  "seconds": 7.53,
-  "bytes": 241068,
+  "seconds": 7.88,
+  "bytes": 252332,
   "sr": 16000,
   "dropped_chars": []
  },
@@ -117,8 +117,8 @@
   "dropped_chars": []
  },
  "sw/check_q1_old_trees": {
-  "seconds": 14.03,
-  "bytes": 448940,
+  "seconds": 11.95,
+  "bytes": 382380,
   "sr": 16000,
   "dropped_chars": []
  },
@@ -159,8 +159,8 @@
   "dropped_chars": []
  },
  "sw/consent_photos": {
-  "seconds": 23.74,
-  "bytes": 759852,
+  "seconds": 27.55,
+  "bytes": 881580,
   "sr": 16000,
   "dropped_chars": []
  }

@@ -1,5 +1,6 @@
 # Usage (from kahawa-check/audio/tools): ../../../.venv/bin/python build_answers.py ../..
-"""Assemble kahawa-check/answers.json from content.py + bt.json (NLLB back-translations) + my own meaning comparison."""
+"""Assemble kahawa-check/answers.json from content.py + bt.json (NLLB back-translations) + my own meaning comparison.
+Audio paths point to the AAC files the app plays (audio/<lang>/<id>.m4a); see tts.py for the WAV -> m4a step."""
 import json, os, re, sys
 sys.path.insert(0, ".")
 import content
@@ -11,9 +12,9 @@ bt = json.load(open("bt.json"))
 # "ok"    = the back-translation keeps the meaning (word-sense slips I checked are listed).
 # "check" = the back-translation changes a word that matters; a native speaker must confirm the Swahili.
 CMP = {
- "result_healthy": ("ok", "'kutu' came back as 'corrosion': same Swahili word as metal rust; NLLB lacks the plant sense."),
+ "result_healthy": ("ok", "re-check of the revised line (Oct 3): meaning kept ('pests digging in the leaves'); 'kutu' still came back as 'corrosion', the same Swahili word as metal rust."),
  "result_rust": ("ok", "Meaning kept; 'kutu' rendered as 'rash' in sentence two (word-sense slip)."),
- "result_miner": ("check", "'wadudu wachimba majani' came back as 'insects digging for grass' ('majani' = leaves or grass). Ask a reviewer for the usual Kenyan Swahili name for leaf miner."),
+ "result_miner": ("ok", "re-check of the revised line (Oct 3): meaning kept ('insects that dig into the leaves', 'a large dry brownish patch on the leaf')."),
  "result_cercospora": ("ok", "Meaning kept. The Swahili disease name is descriptive ('brown spot disease')."),
  "result_phoma": ("ok", "Meaning kept."),
  "result_not_sure": ("ok", "'afisa wa ugani' came back as 'fiction agent' here only; the same phrase back-translates as 'extension officer' in other strings."),
@@ -21,22 +22,25 @@ CMP = {
  "action_healthy": ("ok", "'Pogoa' came back as 'cut' (= prune)."),
  "action_rust": ("ok", "Meaning kept; 'kutu' rendered as 'corrosion'."),
  "action_miner": ("check", "'Nyigu' (wasp) came back as 'ants'. I believe 'nyigu' is correct; a reviewer should confirm."),
- "action_cercospora": ("check", "'matandazo' (mulch) came back as 'nets'. Reviewer should confirm the farmer word for mulch."),
- "action_phoma": ("check", "Three slips: 'baridi' -> 'winter', 'miti ya kuzuia upepo' (windbreak trees) -> 'windmills', 'afisa wa ugani' -> 'medical examiner'."),
- "action_not_sure": ("check", "'utepe' (ribbon) came back as 'stick'."),
- "plot_all_healthy": ("ok", "Meaning kept."),
- "plot_some_problem": ("ok", "Meaning kept."),
+ "action_cercospora": ("check", "re-check of the revised line (Oct 3): the soil test and the fertiliser advice now come back as two separate points. Two key words still come back wrong: 'afisa wa ugani' as 'land surveyor' and 'matandazo' (mulch) as 'nets'. Published Kenyan and Tanzanian sources use both words (docs/SWAHILI_CHECK.md section 6), so we kept them; a speaker should confirm."),
+ "action_phoma": ("check", "re-check of the revised line (Oct 3): 'Ugonjwa wa Phoma' now comes back as a disease ('Phoma's disease'). Two key words still come back wrong: 'miti ya kuzuia upepo' (windbreak trees) as 'windmills' and 'afisa wa ugani' as 'medical examiner'. Sources confirm both terms (docs/SWAHILI_CHECK.md section 6); a speaker should confirm."),
+ "action_not_sure": ("ok", "re-check of the revised line (Oct 3): meaning kept ('Make a mark on this tree', 'Do not spray', 'Wait for the officer's advice first'); 'matokeo' (results) came back as 'effects'."),
+ "plot_all_healthy": ("ok", "re-check of the revised line (Oct 3): meaning kept; the line now says the leaves look healthy, not the photos."),
+ "plot_some_problem": ("ok", "re-check of the revised line (Oct 3): meaning kept ('there may be a problem'); 'afisa wa ugani' came back as 'expansion officer'."),
  "plot_officer_alert": ("ok", "Meaning kept; 'kadhaa' (several) came back as 'some', 'mapema' (soon) as 'in advance'."),
- "check_q1_old_trees": ("check", "Came back as 'cutting down trees to sprout new shoots'. Reviewer should check that 'kukata miti chini' is heard as stumping, not felling."),
+ "check_q1_old_trees": ("ok", "re-check of the revised line (Oct 3): 'kukata mashina' came back as 'cutting the stems', no longer 'cutting down trees'; 'afisa wa ugani' came back as 'expansion officer'."),
  "check_q2_no_fertiliser": ("check", "'mbolea ya samadi' (manure) was lost; came back as 'coffee fertilizer or store fertilizer'."),
  "check_q3_weeding": ("ok", "Meaning kept."),
  "check_q4_berry_spots": ("ok", "'yaliyozama ndani' (sunken) came back as 'deep'."),
  "check_q5_berry_holes": ("check", "'mdudu anayetoboa matunda' (berry-boring insect) came back as 'fruit picking insect'; 'afisa wa ugani' -> 'rumor officer'."),
  "check_q6_dry_flowering": ("check", "'kiangazi' (dry season) came back as 'summer'; 'matandazo' (mulch) as 'grids'."),
- "disclaimer_final_call": ("ok", "Meaning kept."),
- "consent_photos": ("check", "'chama cha ushirika' (cooperative society) came back as 'company'. Consent text should be reviewed by a speaker before any real use."),
+ "disclaimer_final_call": ("ok", "re-check of the revised line (Oct 3): meaning kept ('It gives only a preliminary answer')."),
+ "consent_photos": ("ok", "re-check of the revised line (Oct 3): meaning kept; 'namba yako ya uanachama' came back as 'membership number' and 'chama cha ushirika' as 'association'. Consent text should still be reviewed by a speaker before any real use."),
 }
 KIK_CMP = {"result_healthy": "ok", "result_not_sure": "ok", "retake_photo": "ok"}
+# Lines whose Swahili was rewritten on Oct 3 after the machine cross-check (docs/SWAHILI_CHECK.md).
+REVISED = {"result_healthy", "result_miner", "action_cercospora", "action_phoma", "action_not_sure", "plot_all_healthy",
+           "plot_some_problem", "check_q1_old_trees", "disclaimer_final_call", "consent_photos"}
 asr = json.load(open("asr_check.json"))  # MMS-1b-all transcription of the generated audio
 
 out = {}
@@ -53,6 +57,8 @@ for k, v in content.C.items():
             notes += " Machine transcription of the 0.5 s Kikuyu clip failed (heard 'ĩe'); a recorded human clip would be better."
     if cited:
         notes += " Sources: " + " | ".join(f"{s} = {content.SOURCES[s]}" for s in cited)
+    if k in REVISED:
+        notes += " Revised Oct 3 after the machine cross-check; see docs/SWAHILI_CHECK.md."
     out[k] = {
         "en": v["en"],
         "sw": v["sw"],
@@ -70,8 +76,8 @@ for k, v in content.C.items():
             "kik_phrase_cer": asr[f"kik/{k}"]["cer"] if v["kik"] else None,
         },
         "audio": {
-            "sw": f"audio/sw/{k}.wav" if os.path.exists(os.path.join(ROOT, "audio", "sw", f"{k}.wav")) else None,
-            "kik": f"audio/kik/{k}.wav" if v["kik"] and os.path.exists(os.path.join(ROOT, "audio", "kik", f"{k}.wav")) else None,
+            "sw": f"audio/sw/{k}.m4a" if os.path.exists(os.path.join(ROOT, "audio", "sw", f"{k}.m4a")) else None,
+            "kik": f"audio/kik/{k}.m4a" if v["kik"] and os.path.exists(os.path.join(ROOT, "audio", "kik", f"{k}.m4a")) else None,
         },
         "notes": notes,
     }

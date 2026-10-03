@@ -1,4 +1,7 @@
 # Usage (from kahawa-check/audio/tools): ../../../.venv/bin/python tts.py ..   (writes ../sw/*.wav, ../kik/*.wav)
+# Only some lines: ONLY_IDS=id1,id2 ../../../.venv/bin/python tts.py <out_dir>   (other lines and their log entries are kept)
+# The app plays AAC, not WAV. Convert each clip with: afconvert -f m4af -d aac -b 32000 in.wav ../sw/<id>.m4a
+# (and ../kik/<id>.m4a), then move the WAVs out of the repo (we keep them in ../../../data_work/audio_wav_backup/).
 """Synthesize audio for every sw string (facebook/mms-tts-swh) and every non-null kik string (facebook/mms-tts-kik).
 Each sentence is synthesized separately and joined with a short silence (the MMS vocab has no punctuation, so
 sentence pauses would otherwise be lost). Output: 16-bit PCM mono WAV at the model sampling rate (16 kHz).
@@ -33,7 +36,8 @@ def synth(model, tok, text, seed=0):
     y = y / max(1e-6, np.abs(y).max()) * 0.9  # peak-normalise to -0.9 dBFS
     return sr, (y * 32767).astype(np.int16)
 
-log = {}
+ONLY = set(filter(None, os.environ.get("ONLY_IDS", "").split(",")))
+log = json.load(open("tts_log.json")) if ONLY and os.path.exists("tts_log.json") else {}
 M = {}
 for lang, repo in [("sw", "facebook/mms-tts-swh"), ("kik", "facebook/mms-tts-kik")]:
     M[lang] = (VitsModel.from_pretrained(repo).eval(), AutoTokenizer.from_pretrained(repo))
@@ -50,6 +54,8 @@ def write(lang, k, sr, y, note):
     print(lang, k, log[f"{lang}/{k}"], flush=True)
 
 for k, v in content.C.items():
+    if ONLY and k not in ONLY:
+        continue
     m, t = M["sw"]
     sr, y = synth(m, t, v["sw"])
     write("sw", k, sr, y, {"dropped_chars": dropped(t, v["sw"])})

@@ -67,13 +67,6 @@ const CHAIN = { sw: ['sw', 'en'], en: ['en'], kik: ['kik', 'sw', 'en'] }; // fal
 // (marked "Audio in Swahili"): the relay farmer can read English and play Swahili to the farmer.
 const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en'] };
 
-// Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
-// phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v8'; // keep equal to VERSION in sw.js
-const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
-const WC_KEY = 'wording_corrections'; // meta record: { key, items: [...] }
-const WC_FIELDS = ['id', 'lang', 'shown_text', 'english', 'suggestion', 'who', 'note', 'created', 'app_version', 'head_version'];
-
 // ---------------------------------------------------------------- 2. Helpers
 const $ = (sel) => document.querySelector(sel);
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -112,14 +105,14 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
 
 let toastTimer = 0;
-function toast(msg, action, ms) {
+function toast(msg, action) {
   const t = $('#toast');
   const kids = [h('span', null, msg)];
   if (action) kids.push(h('button', { type: 'button', onclick: () => { t.hidden = true; action.fn(); } }, action.label));
   t.replaceChildren(...kids);
   t.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.hidden = true; }, ms || (action ? 7000 : 3500));
+  toastTimer = setTimeout(() => { t.hidden = true; }, action ? 7000 : 3500);
 }
 
 function download(name, text, type) {
@@ -361,87 +354,9 @@ function answerBlock(id) {
   const tagsEl = h('div', { class: 'tags', hidden: !tags.length }, tags);
   const btn = h('button', { class: 'play', type: 'button', disabled: true, title: 'Looking for audio', 'aria-label': 'Looking for audio' }, icon('play'));
   wireAudio(btn, id, a.lang, tagsEl);
-  const fix = h('button', { class: 'link-btn', type: 'button', lang: 'en', onclick: () => openWordingSheet(id) }, 'Wording wrong?');
   return h('div', { class: 'answer', 'data-answer': id, 'data-text-lang': a.lang },
-    h('div', { class: 'txt', lang: HTML_LANG[a.lang] }, h('p', null, a.text), tagsEl, fix),
+    h('div', { class: 'txt', lang: HTML_LANG[a.lang] }, h('p', null, a.text), tagsEl),
     btn);
-}
-
-// ----- Wording corrections (stored in the meta store, record key 'wording_corrections')
-async function wordingList() {
-  try { const m = await DB.get('meta', WC_KEY); return (m && Array.isArray(m.items)) ? m.items : []; } catch (e) { return []; }
-}
-const wcKey = (c) => [c.id, c.lang, c.suggestion, c.created].join('\u0001'); // same item = same id, language, suggestion and time
-// Keep only the known fields, as short strings (records can come from files made on other phones).
-function wcClean(c) {
-  if (!c || typeof c !== 'object') return null;
-  const out = {};
-  for (const f of WC_FIELDS) out[f] = c[f] == null ? null : String(c[f]).slice(0, 2000);
-  return (out.id && out.lang && out.suggestion && out.created) ? out : null;
-}
-// Add records, skipping ones already saved. Returns how many were added.
-async function mergeWordingCorrections(list) {
-  if (!Array.isArray(list) || !list.length) return 0;
-  const items = await wordingList();
-  const seen = new Set(items.map(wcKey));
-  let added = 0;
-  for (const raw of list) {
-    const c = wcClean(raw);
-    if (!c || seen.has(wcKey(c))) continue;
-    seen.add(wcKey(c));
-    items.push(c);
-    added += 1;
-  }
-  if (added) await DB.put('meta', { key: WC_KEY, items });
-  return added;
-}
-
-function openWordingSheet(id) {
-  const a = answerText(id); // the text as shown right now
-  const entry = answers[id];
-  const english = (entry && typeof entry.en === 'string' && entry.en.trim()) || EN[id] || id;
-  const s = $('#sheet');
-  const sugg = h('textarea', { id: 'wc-suggestion', rows: 4, required: true, lang: HTML_LANG[a.lang], autocomplete: 'off', spellcheck: 'false' });
-  sugg.value = a.text; // start from the current text: changing one word is easier than typing it all on a phone
-  const who = h('select', { id: 'wc-who' }, Object.entries(WHO).map(([k, label]) => h('option', { value: k }, label)));
-  who.value = WHO[store.get('wcWho')] ? store.get('wcWho') : 'relay_farmer';
-  const note = h('textarea', { id: 'wc-note', rows: 2, autocomplete: 'off' });
-  const err = h('p', { class: 'notice', role: 'alert', hidden: true });
-  const save = async () => {
-    const text = sugg.value.trim();
-    const problem = !text ? 'Please write how it should say this.' : (text === a.text.trim() ? 'The text is the same as now. Change it first, or tap Cancel.' : null);
-    if (problem) { err.textContent = problem; err.hidden = false; sugg.focus(); return; }
-    store.set('wcWho', who.value);
-    const rec = {
-      id, lang: a.lang, shown_text: a.text, english, suggestion: text, who: who.value, note: note.value.trim() || null,
-      created: new Date().toISOString(), app_version: APP_VERSION, head_version: Model.active ? Model.active.version : null,
-    };
-    try {
-      const items = await wordingList();
-      items.push(rec);
-      await DB.put('meta', { key: WC_KEY, items });
-    } catch (e) { toast('Could not save: ' + (e.message || e)); return; }
-    closeSheet();
-    toast('Saved on this phone. It goes out with the officer\'s next update file or corrections CSV. The app\'s wording does not change until someone reviews it.', null, 8000);
-    if (currentTab !== 'visit') renderCurrent(); // the Officer and About screens show the count
-  };
-  s.replaceChildren(h('div', { class: 'sheet-body', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'wc-title' },
-    h('div', { class: 'row' }, h('h3', { class: 'grow', id: 'wc-title', style: 'margin:0' }, 'Wording wrong?'),
-      h('button', { class: 'btn secondary small', type: 'button', onclick: closeSheet }, icon('close'), 'Close')),
-    h('p', { class: 'small' }, 'Report a wrong or unnatural phrase. It is saved on this phone for the team to review. The app keeps showing the current text until then.'),
-    h('div', { class: 'stack' },
-      h('div', null, h('span', { class: 'small' }, `${LANG_LABEL[a.lang]} text now shown · sentence ${id}`),
-        h('blockquote', { class: 'wc-quote', lang: HTML_LANG[a.lang] }, a.text)),
-      a.lang !== 'en' ? h('div', null, h('span', { class: 'small' }, 'English meaning'), h('blockquote', { class: 'wc-quote', lang: 'en' }, english)) : null,
-      h('label', { class: 'field' }, h('span', null, 'How should it say this? (required)'), sugg),
-      h('label', { class: 'field' }, h('span', null, 'Who is correcting?'), who),
-      h('label', { class: 'field' }, h('span', null, 'Note (optional). Please do not write names.'), note),
-      err,
-      h('div', { class: 'btn-grid' },
-        h('button', { class: 'btn', type: 'button', id: 'wc-save', onclick: save }, icon('check'), 'Save'),
-        h('button', { class: 'btn secondary', type: 'button', id: 'wc-cancel', onclick: closeSheet }, 'Cancel')))));
-  s.hidden = false;
-  s.onclick = null; // typed text is not thrown away by a tap outside the sheet
 }
 
 // ---------------------------------------------------------------- 5. Model
@@ -882,9 +797,8 @@ function quantRow(v) {
   const scale = mx / 127 || 1;
   return { q: Array.from(v, (x) => Math.round(x / scale)), scale };
 }
-async function buildUpdate() {
+function exportUpdate() {
   const base = Model.shipped, ad = Model.adapted;
-  const corrections = await wordingList();
   const rows = (ad.ref_add || []).map(quantRow);
   const W = base.classes.map((c, k) => Array.from(ad.W.subarray(k * base.D, (k + 1) * base.D), (v) => +v.toFixed(6)));
   const out = {
@@ -893,15 +807,10 @@ async function buildUpdate() {
     W, b: Array.from(ad.b, (v) => +v.toFixed(6)),
     reference_add: { int8: rows.map((r) => r.q), scale: rows.map((r) => r.scale) },
     labels: ad.labels || [],
-    wording_corrections: corrections, // reports of wrong wording, for review (they change nothing by themselves)
   };
-  return out;
-}
-async function exportUpdate() {
-  const out = await buildUpdate();
   const text = JSON.stringify(out);
-  download(`kahawa-update-${out.base_version}-${out.n_labels}labels.json`, text, 'application/json');
-  return { size: text.length, corrections: out.wording_corrections.length };
+  download(`kahawa-update-${base.version}-${ad.n_labels}labels.json`, text, 'application/json');
+  return text.length;
 }
 async function importUpdateJSON(j, sourceNote) {
   const base = Model.shipped;
@@ -1353,46 +1262,7 @@ async function renderReview() {
       h('button', { class: 'btn danger', type: 'button', onclick: () => setOfficerLabel(p, 'skip') }, 'Skip (cannot tell)'))));
   }
   out.push(learningCard(labelled));
-  out.push(wordingCard(await wordingList()));
   root.replaceChildren(...out);
-}
-
-// Wording corrections saved on this phone (newest first), with delete and CSV export.
-function wordingCard(items) {
-  const list = items.slice().sort((p, q) => String(q.created).localeCompare(String(p.created)));
-  const del = async (c) => {
-    const k = wcKey(c);
-    const all = await wordingList();
-    await DB.put('meta', { key: WC_KEY, items: all.filter((x) => wcKey(x) !== k) });
-    renderReview();
-    toast('Correction deleted.', { label: 'Undo', fn: async () => { await mergeWordingCorrections([c]); renderReview(); } });
-  };
-  return card('', h('h3', null, icon('list'), ` Wording corrections (${items.length})`),
-    h('p', { class: 'small' }, 'Wrong or unnatural phrases reported on this phone. The app\'s text does not change by itself: the team reviews these and ships a corrected answer list. They also go out with the model update file above.'),
-    list.length
-      ? h('ul', { class: 'wc-list' }, list.map((c) => h('li', null,
-        h('div', { class: 'small' }, `${c.id} · ${LANG_LABEL[c.lang] || c.lang} · ${WHO[c.who] || c.who || '–'} · ${fmtDate(c.created)}`),
-        h('p', { class: 'wc-sugg', lang: HTML_LANG[c.lang] || c.lang }, c.suggestion),
-        c.note ? h('p', { class: 'small' }, 'Note: ', c.note) : null,
-        h('button', { class: 'btn danger small', type: 'button', onclick: () => del(c) }, icon('trash'), 'Delete'))))
-      : h('p', null, 'None yet. Tap "Wording wrong?" under any sentence to report one.'),
-    h('button', { class: 'btn secondary block', type: 'button', id: 'wc-export', disabled: !items.length, onclick: () => exportWordingCsv(items) }, icon('download'), 'Export corrections (CSV)'));
-}
-
-// CSV with a byte-order mark so Excel reads Swahili and Kikuyu letters (ĩ, ũ) correctly.
-// Cells that start with = + - @ get a leading apostrophe so a spreadsheet does not run them as formulas.
-function wordingCsv(items) {
-  const esc = (v) => {
-    let s = v == null ? '' : String(v);
-    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
-    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-  };
-  const rows = items.map((c) => WC_FIELDS.map((f) => c[f]));
-  return '﻿' + [WC_FIELDS.join(',')].concat(rows.map((r) => r.map(esc).join(','))).join('\r\n') + '\r\n';
-}
-function exportWordingCsv(items) {
-  download(`kahawa-wording-corrections-${new Date().toISOString().slice(0, 10)}.csv`, wordingCsv(items), 'text/csv;charset=utf-8');
-  toast(`Saved ${plural(items.length, 'correction')} as a CSV file.`);
 }
 
 function learningCard(labelled) {
@@ -1408,13 +1278,7 @@ function learningCard(labelled) {
     const f = importInput.files && importInput.files[0];
     importInput.value = '';
     if (!f) return;
-    let j, added = 0;
-    try { j = JSON.parse(await f.text()); } catch (e) { toast('Could not load the update: this is not a Kahawa Check update file'); return; }
-    // Wording corrections do not depend on the model, so they are kept even if the model part cannot be used.
-    if (j && j.kind === 'kahawa-head-update') { try { added = await mergeWordingCorrections(j.wording_corrections); } catch (e) { /* storage problem */ } }
-    const wc = Array.isArray(j && j.wording_corrections) ? ` ${plural(added, 'new wording correction')} added.` : '';
-    try { const a = await importUpdateJSON(j, 'shared file'); toast(`Update loaded: ${a.version}.${wc}`); } catch (e) { toast('Could not load the update: ' + e.message + '.' + wc); }
-    renderReview();
+    try { const a = await importUpdateJSON(JSON.parse(await f.text()), 'shared file'); toast(`Update loaded: ${a.version}.`); renderReview(); } catch (e) { toast('Could not load the update: ' + e.message); }
   });
   const ready = Model.ready;
   return card('', h('h3', null, icon('refresh'), ' Update the model on this phone'),
@@ -1431,10 +1295,7 @@ function learningCard(labelled) {
         renderReview();
       } }, icon('refresh'), 'Update the model on this phone'),
       result,
-      h('button', { class: 'btn secondary block', type: 'button', disabled: !ad, onclick: async () => {
-        const r = await exportUpdate();
-        toast(`Update file saved (${(r.size / 1024).toFixed(0)} KB${r.corrections ? `, with ${plural(r.corrections, 'wording correction')}` : ''}).`);
-      } }, icon('download'), 'Share this update with other relay farmers'),
+      h('button', { class: 'btn secondary block', type: 'button', disabled: !ad, onclick: () => { const size = exportUpdate(); toast(`Update file saved (${(size / 1024).toFixed(0)} KB).`); } }, icon('download'), 'Share this update with other relay farmers'),
       h('label', { class: 'btn secondary block', 'aria-disabled': ready ? null : 'true' }, icon('upload'), 'Load an update from another phone', importInput),
       h('button', { class: 'btn secondary block', type: 'button', disabled: !ready, onclick: loadDemoUpdate }, icon('grid'), 'Load demo update (50 labels, demo only)'),
       h('button', { class: 'btn danger block', type: 'button', disabled: !ad, onclick: async () => {
@@ -1554,7 +1415,6 @@ async function renderAbout() {
     const [pl, ph] = await Promise.all([DB.all('plots'), DB.all('photos')]);
     counts = { plots: pl.filter((p) => !p.synthetic).length, photos: ph.length, labels: ph.filter((p) => p.officer_label).length };
   } catch (e) { /* ignore */ }
-  const nWc = (await wordingList()).length;
   let usage = '';
   try { if (navigator.storage && navigator.storage.estimate) { const e = await navigator.storage.estimate(); usage = `App files and records use ${e.usage < 1e6 ? 'less than 1' : 'about ' + Math.round(e.usage / 1e6)} MB on this phone.`; } } catch (e) { /* ignore */ }
   root.replaceChildren(
@@ -1576,12 +1436,10 @@ async function renderAbout() {
       h('p', null, 'The member number is saved only as a scrambled code (SHA-256 hash). Short numbers can still be guessed by someone who has this phone.'),
       h('p', { class: 'small' }, `On this phone now: ${counts.plots} plot visits, ${counts.photos} photos, ${counts.labels} officer labels. ${usage}`),
       h('button', { class: 'btn danger block', type: 'button', onclick: deleteAll }, icon('trash'), 'Delete all data on this phone'),
-      h('p', { class: 'small' }, 'This removes plot records, photos, officer labels, wording corrections and the local model update. The app itself stays saved so it still works offline.')),
+      h('p', { class: 'small' }, 'This removes plot records, photos, officer labels and the local model update. The app itself stays saved so it still works offline.')),
     card('', h('h2', null, 'Languages'),
       h('p', null, 'Swahili: fixed answer list as text and audio. English: on screen. Kikuyu: fixed phrase list only, shown as a less-supported language.'),
-      ...langStatus(),
-      h('p', null, h('span', { class: 'tag' }, 'Corrections'), ' ',
-        `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`)),
+      ...langStatus()),
     card('', h('h2', null, 'Model card'),
       kv([['Head version', hr.version], ['Model in use', Model.active && Model.active.version], ['Classes', (hr.classes || []).join(', ')],
         ['Embedding size', hr.embed_dim], ['Temperature', hr.temperature], ['Confidence line (threshold)', hr.threshold],
@@ -1612,7 +1470,7 @@ async function renderAbout() {
 }
 
 async function deleteAll() {
-  if (!confirm('Delete all plot records, photos, officer labels, wording corrections and the local model update from this phone? This cannot be undone.')) return;
+  if (!confirm('Delete all plot records, photos, officer labels and the local model update from this phone? This cannot be undone.')) return;
   await DB.deleteAll();
   store.clear();
   location.reload();
@@ -1715,7 +1573,6 @@ window.__kahawa = {
     return Array.from(r.embedding);
   },
   stats: { villageStats, villageRows },
-  wording: { list: wordingList, csv: async () => wordingCsv(await wordingList()), merge: mergeWordingCorrections, buildUpdate },
   refitHead, predictHead,
   model: Model,
 };

@@ -126,6 +126,17 @@ label.field { display: block; font-weight: 700; }
 label.field span { display: block; margin-bottom: 4px; }
 input[type=text], input[type=search], input:not([type]) { width: 100%; min-height: 54px; font: inherit; padding: 10px 12px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--fg); }
 input:focus { border-color: var(--primary); }
+textarea, select { display: block; width: 100%; min-height: 54px; font: inherit; font-weight: 400; padding: 10px 12px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); color: var(--fg); }
+textarea { resize: vertical; line-height: 1.4; }
+textarea:focus, select:focus { border-color: var(--primary); }
+
+/* Wording corrections: a quiet text button under each sentence, the report sheet, the officer list */
+.link-btn { display: inline-flex; align-items: center; min-height: 44px; margin: 2px 0 -8px; padding: 0 2px; border: 0; background: none; color: var(--muted); font: inherit; font-size: .86rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.wc-quote { margin: 4px 0 0; padding: 8px 12px; border-left: 4px solid var(--line); background: var(--card); border-radius: 0 8px 8px 0; font-weight: 600; }
+.wc-list { list-style: none; margin: 8px 0 12px; padding: 0; }
+.wc-list li { border-top: 1.5px solid var(--line); padding: 10px 0; }
+.wc-list li:first-child { border-top: 0; }
+.wc-sugg { font-weight: 600; overflow-wrap: anywhere; }
 
 /* Progress */
 .progress { height: 14px; background: var(--line); border-radius: 999px; overflow: hidden; }

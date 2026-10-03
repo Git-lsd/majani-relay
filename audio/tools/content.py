@@ -22,7 +22,7 @@ def add(i, en, sw, kik=None, notes=""):
 # ---------- single-photo results ----------
 add("result_healthy",
     "These leaves look healthy. No sign of rust, leaf miner or leaf spot was seen. This check covers leaves only, not berries.",
-    "Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.",
+    "Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wanaochimba ndani ya majani, wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.",
     kik="Mathangũ maya ma kahũa nĩ mega.",
     notes="Not a disease result, so no final-call line; states the leaf-only limit instead. "
           "kik is a short phrase meaning 'These coffee leaves are good' (not 'healthy'); the rest falls back to Swahili.")
@@ -34,7 +34,7 @@ add("result_rust",
 
 add("result_miner",
     "This looks like leaf miner damage. It shows as dry brown patches on the leaf. " + FINAL_EN,
-    "Hii inaonekana kama uharibifu wa wadudu wachimba majani. Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani. " + FINAL_SW,
+    "Hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani. Huonekana kama sehemu kubwa kavu za rangi ya kahawia kwenye jani. " + FINAL_SW,
     notes="Symptoms per KCS 9.5.8 and INFONET (irregular brown blotches on the upper side of leaves). "
           "Simplification: the protocol photographs the underside; mines are clearest from above.")
 
@@ -82,30 +82,32 @@ add("action_miner",
 
 add("action_cercospora",
     "Brown eye spot is common on weak, underfed trees. Ask the officer about a soil test and feeding. Mulch to keep soil moist.",
-    "Madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha. Muulize afisa wa ugani kuhusu kupima udongo na mbolea. Weka matandazo ili udongo ubaki na unyevu.",
+    "Ugonjwa wa madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha. Muulize afisa wa ugani kuhusu kupima udongo, na kuhusu mbolea inayofaa. Weka matandazo ili udongo ubaki na unyevu.",
     notes="PLANTWISE_BES: nitrogen and potassium shortage and plant stress raise susceptibility; do a soil analysis. "
           "KCS 4.6: soil samples go to CRI; KCS 3.7.1: mulch conserves moisture.")
 
 add("action_phoma",
     "Phoma is worse in cold, windy weather on high ground. Windbreak and shade trees can help. Ask the extension officer about approved control.",
-    "Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu. Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu.",
+    "Ugonjwa wa Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu. Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu.",
     notes="PHOMA sources: cold wind and altitude above about 900 m favour the disease. Windbreak advice is general (KCS recommends windbreaks "
           "for bacterial blight on exposed sides). Weakest-sourced item for Kenya; a CRI agronomist should confirm.")
 
 add("action_not_sure",
-    "Mark the tree with a ribbon. The officer will review the saved photo. Do not spray because of this result.",
-    "Weka utepe kwenye mti huu. Afisa wa ugani ataangalia picha iliyohifadhiwa. Usinyunyize dawa kwa sababu ya jibu hili.",
-    notes="Abstain lane: no action is taken on an uncertain result; the photo waits in the officer queue.")
+    "Put a mark on this tree. The officer will review the saved photo. Do not spray because of this result. Wait for the officer's advice first.",
+    "Weka alama kwenye mti huu. Afisa wa ugani ataangalia picha iliyohifadhiwa. Usinyunyize dawa kwa sababu ya matokeo haya. Subiri ushauri wa afisa kwanza.",
+    notes="Abstain lane: no action is taken on an uncertain result; the photo waits in the officer queue. "
+          "The Swahili says 'put a mark' (not 'ribbon'), as the other two action lines do, and adds "
+          "'Wait for the officer's advice first'. The English was updated on Oct 3 to match (mark the tree; wait for the officer's advice).")
 
 # ---------- plot card ----------
 add("plot_all_healthy",
     "All photos from this plot look healthy. Keep checking at each visit. Leaf photos cannot show berry problems.",
-    "Picha zote za shamba hili zinaonekana kuwa na afya. Endelea kukagua kila ziara. Picha za majani haziwezi kuonyesha matatizo ya matunda.",
+    "Majani katika picha zote za shamba hili yanaonekana kuwa na afya. Endelea kukagua katika kila ziara. Picha za majani haziwezi kuonyesha matatizo ya matunda.",
     notes="Reminds that coffee berry disease and berry borer are not visible on leaves (see checklist). A Kikuyu phrase ('Mĩtĩ yothe nĩ mĩega', all the trees are good) was dropped: it claims more than the photos show.")
 
 add("plot_some_problem",
     "Some photos show a possible problem. Please show this card to the extension officer.",
-    "Baadhi ya picha zinaonyesha tatizo linalowezekana. Tafadhali mwonyeshe afisa wa ugani kadi hii.",
+    "Baadhi ya picha zinaonyesha kwamba huenda kuna tatizo. Tafadhali mwonyeshe afisa wa ugani kadi hii.",
     notes="Plot card when 1-2 photos on one tree show a disease answer (app rule). The user decides when to share; the app sends nothing by itself.")
 
 add("plot_officer_alert",
@@ -117,7 +119,7 @@ add("plot_officer_alert",
 # ---------- non-AI checklist (YES = possible cause) ----------
 add("check_q1_old_trees",
     "Are most trees old, with few new branches? If yes, ask the officer about stumping to renew them.",
-    "Je, miti mingi ni mizee, yenye matawi mapya machache? Kama ndiyo, muulize afisa wa ugani kuhusu kukata miti chini ili ichipue machipukizi mapya.",
+    "Je, miti mingi imezeeka, na ina matawi mapya machache? Kama ndiyo, muulize afisa wa ugani kuhusu kukata mashina ili miti ichipue upya.",
     notes="Non-AI checklist. KCS 3.8-3.9 and 6.6: rehabilitation by clean stumping or change of cycle renews aging, underproductive trees.")
 
 add("check_q2_no_fertiliser",
@@ -152,7 +154,7 @@ add("check_q6_dry_flowering",
 # ---------- safety and consent ----------
 add("disclaimer_final_call",
     "This tool can be wrong. It gives a first look only. " + FINAL_EN,
-    "Programu hii inaweza kukosea. Inatoa mtazamo wa kwanza tu. " + FINAL_SW,
+    "Programu hii inaweza kukosea. Inatoa jibu la awali tu. " + FINAL_SW,
     notes="Shown on every result screen and plot card.")
 
 add("consent_photos",
@@ -160,10 +162,12 @@ add("consent_photos",
     "We keep your co-op number in coded form, not your name. The officer may look at the photos. "
     "You can say no, or ask us to delete them later.",
     "Je, naweza kupiga picha za majani ya kahawa shambani mwako? Picha zitabaki kwenye simu hii. "
-    "Tunahifadhi namba yako ya chama cha ushirika kwa njia ya siri, si jina lako. Afisa wa ugani anaweza kuziangalia picha hizi. "
+    "Hatuhifadhi jina lako. Tunahifadhi namba yako ya uanachama katika chama cha ushirika tu, na tunaiweka kuwa siri. "
+    "Afisa wa ugani anaweza kuziangalia picha hizi. "
     "Unaweza kukataa, au kutuomba tuzifute baadaye.",
     notes="Read aloud by the relay farmer before the first photo. 'Coded form' = SHA-256 hash of the member number "
-          "(pseudonymous, not anonymous). 'kwa njia ya siri' literally 'in a secret way'.")
+          "(pseudonymous, not anonymous). The Swahili says 'We do not keep your name. We keep only your membership number "
+          "in the cooperative, and we keep it confidential' ('tunaiweka kuwa siri'); it has no separate word for 'coded'.")
 
 
 # Kikuyu tier: a short phrase replaces the FIRST Swahili sentence; the remaining Swahili sentences follow it,

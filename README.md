@@ -165,7 +165,7 @@ English on screen. Swahili for the 24 fixed answers, as text and audio. Kikuyu a
 | Text-to-speech voice | Meta MMS | Meta MMS |
 | In the app | All 24 answers, text and audio | 3 answers start with a Kikuyu phrase; the rest is Swahili, marked as fallback |
 
-No one on the team speaks Swahili or Kikuyu. So the tool uses a fixed list a speaker can check in about 30 minutes, and every local-language string is marked unverified until then.
+No one on the team speaks Swahili or Kikuyu. So the tool uses a fixed list a speaker can check in about 30 minutes, and every local-language string is marked unverified until then. Without a speaker, we cross-checked every phrase four ways (two translation models, a blind back-translation by a separate AI agent, and key terms against published Swahili farm material) and rewrote 10 weak phrases ([docs/SWAHILI_CHECK.md](docs/SWAHILI_CHECK.md)). Under every spoken answer, a **"Wording wrong?"** button lets the relay farmer or officer report a better phrasing; reports are saved on the phone, travel with the officer's update or as a CSV, and never change the app's text until someone reviews them. On the English screen, the play button plays the Swahili audio (tagged "Audio in Swahili").
 
 ## Run it
 

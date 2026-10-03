@@ -90,6 +90,9 @@ Every check below is done by a machine or by us. None of them replaces a native 
 4. **Benchmarks.** We report the published scores in section 3 instead of claiming quality ourselves.
 5. **Labelled unverified.** Every string carries `sw_verified: false` and `kik_verified: false` until a speaker signs off. The app shows this to the user.
 
+6. **Second round (Oct 3 evening).** A second machine translation model (NLLB-1.3B), a blind back-translation by a separate AI agent that never saw our English, and a check of key terms against published Swahili agricultural sources. 10 phrases were rewritten in simpler, better-attested Swahili and their audio regenerated; after the rewrite, 18 of 24 come back "ok" and 6 "check" (mostly model errors on attested words such as *matandazo*, mulch). Details: [SWAHILI_CHECK.md](SWAHILI_CHECK.md). Review sheet for a speaker: [SWAHILI_REVIEW_SHEET.md](SWAHILI_REVIEW_SHEET.md).
+7. **Corrections from the field.** Every spoken answer in the app has a "Wording wrong?" button. The relay farmer (who reads the English beside the Swahili) or the officer types a better phrasing. Reports stay on the phone, travel with the officer's update file or a CSV export, and do not change the app's text until someone reviews them.
+
 What these checks can miss. A wrong word that NLLB maps back to the "right" English word passes the back-translation check. The register (too formal, too blunt) is not tested at all. The pronunciation of the technical name "Phoma" was not checked by ear.
 
 ## 5. What a 30-minute native-speaker review would check

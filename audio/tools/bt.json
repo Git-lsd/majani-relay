@@ -2,16 +2,16 @@
  "result_healthy": {
   "sw_sents": [
    "Majani haya yanaonekana kuwa na afya.",
-   "Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa.",
+   "Hakuna dalili ya kutu, wadudu wanaochimba ndani ya majani, wala madoa ya ugonjwa.",
    "Ukaguzi huu ni wa majani tu, si wa matunda."
   ],
   "sw_bt_sents": [
    "These leaves appear to be healthy.",
-   "There are no signs of corrosion, insects dig up leaves or patches of disease.",
+   "There are no signs of corrosion, pests digging in the leaves, or patches of disease.",
    "This examination is for the leaves only, not the fruits."
   ],
-  "sw_bt": "These leaves appear to be healthy. There are no signs of corrosion, insects dig up leaves or patches of disease. This examination is for the leaves only, not the fruits.",
-  "kik_bt": "These coffee leaves are good. There are no signs of fever, germs, or disease. It's only the grass, not the fruit."
+  "sw_bt": "These leaves appear to be healthy. There are no signs of corrosion, pests digging in the leaves, or patches of disease. This examination is for the leaves only, not the fruits.",
+  "kik_bt": "These coffee leaves are good. There are no signs of fever, no worms in the grass, no spots of disease. It's only the grass, not the fruit."
  },
  "result_rust": {
   "sw_sents": [
@@ -28,16 +28,16 @@
  },
  "result_miner": {
   "sw_sents": [
-   "Hii inaonekana kama uharibifu wa wadudu wachimba majani.",
-   "Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani.",
+   "Hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani.",
+   "Huonekana kama sehemu kubwa kavu za rangi ya kahawia kwenye jani.",
    "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
   ],
   "sw_bt_sents": [
-   "This looks like the destruction of insects digging for grass.",
-   "They look like large brown spots that have dried up on the leaf.",
+   "This looks like the destruction of insects that dig into the leaves.",
+   "It looks like a large dry brownish patch on the leaf.",
    "The extension officer will make the final decision."
   ],
-  "sw_bt": "This looks like the destruction of insects digging for grass. They look like large brown spots that have dried up on the leaf. The extension officer will make the final decision."
+  "sw_bt": "This looks like the destruction of insects that dig into the leaves. It looks like a large dry brownish patch on the leaf. The extension officer will make the final decision."
  },
  "result_cercospora": {
   "sw_sents": [
@@ -134,66 +134,68 @@
  },
  "action_cercospora": {
   "sw_sents": [
-   "Madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha.",
-   "Muulize afisa wa ugani kuhusu kupima udongo na mbolea.",
+   "Ugonjwa wa madoa ya kahawia hutokea sana kwenye miti dhaifu isiyo na mbolea ya kutosha.",
+   "Muulize afisa wa ugani kuhusu kupima udongo, na kuhusu mbolea inayofaa.",
    "Weka matandazo ili udongo ubaki na unyevu."
   ],
   "sw_bt_sents": [
-   "Brown spots are common on weak trees with insufficient fertilizer.",
-   "Ask an expansion officer about measuring soil and fertilizer.",
+   "Brown spot disease occurs most commonly on weak trees with insufficient fertilizer.",
+   "Ask the land surveyor about soil measurement, and about suitable fertilizer.",
    "Place nets so that the soil remains moist."
   ],
-  "sw_bt": "Brown spots are common on weak trees with insufficient fertilizer. Ask an expansion officer about measuring soil and fertilizer. Place nets so that the soil remains moist."
+  "sw_bt": "Brown spot disease occurs most commonly on weak trees with insufficient fertilizer. Ask the land surveyor about soil measurement, and about suitable fertilizer. Place nets so that the soil remains moist."
  },
  "action_phoma": {
   "sw_sents": [
-   "Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu.",
+   "Ugonjwa wa Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu.",
    "Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia.",
    "Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu."
   ],
   "sw_bt_sents": [
-   "The phoma thrives in winter and high winds.",
+   "Phoma's disease is more common in the cold and high winds.",
    "Windmills and shade trees can help.",
    "Ask a medical examiner about approved treatments for the disease."
   ],
-  "sw_bt": "The phoma thrives in winter and high winds. Windmills and shade trees can help. Ask a medical examiner about approved treatments for the disease."
+  "sw_bt": "Phoma's disease is more common in the cold and high winds. Windmills and shade trees can help. Ask a medical examiner about approved treatments for the disease."
  },
  "action_not_sure": {
   "sw_sents": [
-   "Weka utepe kwenye mti huu.",
+   "Weka alama kwenye mti huu.",
    "Afisa wa ugani ataangalia picha iliyohifadhiwa.",
-   "Usinyunyize dawa kwa sababu ya jibu hili."
+   "Usinyunyize dawa kwa sababu ya matokeo haya.",
+   "Subiri ushauri wa afisa kwanza."
   ],
   "sw_bt_sents": [
-   "Put a stick on this tree.",
+   "Make a mark on this tree.",
    "An extension officer will look at the saved image.",
-   "Do not spray the medicine because of this answer."
+   "Do not spray medication because of these effects.",
+   "Wait for the officer's advice first."
   ],
-  "sw_bt": "Put a stick on this tree. An extension officer will look at the saved image. Do not spray the medicine because of this answer."
+  "sw_bt": "Make a mark on this tree. An extension officer will look at the saved image. Do not spray medication because of these effects. Wait for the officer's advice first."
  },
  "plot_all_healthy": {
   "sw_sents": [
-   "Picha zote za shamba hili zinaonekana kuwa na afya.",
-   "Endelea kukagua kila ziara.",
+   "Majani katika picha zote za shamba hili yanaonekana kuwa na afya.",
+   "Endelea kukagua katika kila ziara.",
    "Picha za majani haziwezi kuonyesha matatizo ya matunda."
   ],
   "sw_bt_sents": [
-   "All the pictures of this farm seem to be healthy.",
+   "The leaves in all the pictures of this garden seem healthy.",
    "Keep reviewing each visit.",
    "Pictures of the leaves cannot reveal the problems of the fruit."
   ],
-  "sw_bt": "All the pictures of this farm seem to be healthy. Keep reviewing each visit. Pictures of the leaves cannot reveal the problems of the fruit."
+  "sw_bt": "The leaves in all the pictures of this garden seem healthy. Keep reviewing each visit. Pictures of the leaves cannot reveal the problems of the fruit."
  },
  "plot_some_problem": {
   "sw_sents": [
-   "Baadhi ya picha zinaonyesha tatizo linalowezekana.",
+   "Baadhi ya picha zinaonyesha kwamba huenda kuna tatizo.",
    "Tafadhali mwonyeshe afisa wa ugani kadi hii."
   ],
   "sw_bt_sents": [
-   "Some pictures point to a possible problem.",
+   "Some pictures suggest that there may be a problem.",
    "Please show this card to the expansion officer."
   ],
-  "sw_bt": "Some pictures point to a possible problem. Please show this card to the expansion officer."
+  "sw_bt": "Some pictures suggest that there may be a problem. Please show this card to the expansion officer."
  },
  "plot_officer_alert": {
   "sw_sents": [
@@ -210,14 +212,14 @@
  },
  "check_q1_old_trees": {
   "sw_sents": [
-   "Je, miti mingi ni mizee, yenye matawi mapya machache?",
-   "Kama ndiyo, muulize afisa wa ugani kuhusu kukata miti chini ili ichipue machipukizi mapya."
+   "Je, miti mingi imezeeka, na ina matawi mapya machache?",
+   "Kama ndiyo, muulize afisa wa ugani kuhusu kukata mashina ili miti ichipue upya."
   ],
   "sw_bt_sents": [
-   "Are most trees old, with few new branches?",
-   "If so, ask an expansion officer about cutting down trees to sprout new shoots."
+   "Are many trees old, with few new branches?",
+   "If so, ask an expansion officer about cutting the stems so that the trees can bloom again."
   ],
-  "sw_bt": "Are most trees old, with few new branches? If so, ask an expansion officer about cutting down trees to sprout new shoots."
+  "sw_bt": "Are many trees old, with few new branches? If so, ask an expansion officer about cutting the stems so that the trees can bloom again."
  },
  "check_q2_no_fertiliser": {
   "sw_sents": [
@@ -285,32 +287,34 @@
  "disclaimer_final_call": {
   "sw_sents": [
    "Programu hii inaweza kukosea.",
-   "Inatoa mtazamo wa kwanza tu.",
+   "Inatoa jibu la awali tu.",
    "Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho."
   ],
   "sw_bt_sents": [
    "This program can be wrong.",
-   "It gives only a preliminary view.",
+   "It gives only a preliminary answer.",
    "The extension officer will make the final decision."
   ],
-  "sw_bt": "This program can be wrong. It gives only a preliminary view. The extension officer will make the final decision."
+  "sw_bt": "This program can be wrong. It gives only a preliminary answer. The extension officer will make the final decision."
  },
  "consent_photos": {
   "sw_sents": [
    "Je, naweza kupiga picha za majani ya kahawa shambani mwako?",
    "Picha zitabaki kwenye simu hii.",
-   "Tunahifadhi namba yako ya chama cha ushirika kwa njia ya siri, si jina lako.",
+   "Hatuhifadhi jina lako.",
+   "Tunahifadhi namba yako ya uanachama katika chama cha ushirika tu, na tunaiweka kuwa siri.",
    "Afisa wa ugani anaweza kuziangalia picha hizi.",
    "Unaweza kukataa, au kutuomba tuzifute baadaye."
   ],
   "sw_bt_sents": [
    "Can I take pictures of the coffee leaves in your field?",
    "The pictures will remain on this phone.",
-   "We keep your company number confidential, not your name.",
+   "We will not preserve your name.",
+   "We only keep your membership number in the association, and we keep it confidential.",
    "An extension officer can look at these pictures.",
    "You may refuse, or you may ask us to delete it later."
   ],
-  "sw_bt": "Can I take pictures of the coffee leaves in your field? The pictures will remain on this phone. We keep your company number confidential, not your name. An extension officer can look at these pictures. You may refuse, or you may ask us to delete it later."
+  "sw_bt": "Can I take pictures of the coffee leaves in your field? The pictures will remain on this phone. We will not preserve your name. We only keep your membership number in the association, and we keep it confidential. An extension officer can look at these pictures. You may refuse, or you may ask us to delete it later."
  },
  "probe_yes_no": {
   "kik": "Ĩĩ kana aca?",
