@@ -1,6 +1,6 @@
 <!--
 Generated from docs/templates/README.tmpl.md by ml/fill_docs.py (numbers come from results/numbers.json).
-Left for the team to fill: {{APP_URL}}, {{REPO_URL}}, {{VIDEO_URL}}, {{TEAMMATE}}, {{CODE_LICENCE}}. Delete this comment after filling.
+Left for the team to fill: https://git-lsd.github.io/kahawa-check/, https://github.com/git-lsd/kahawa-check, {{VIDEO_URL}}, {{TEAMMATE}}, MIT (see LICENSE). Delete this comment after filling.
 -->
 
 # Kahawa Check
@@ -9,7 +9,7 @@ Left for the team to fill: {{APP_URL}}, {{REPO_URL}}, {{VIDEO_URL}}, {{TEAMMATE}
 
 *Kahawa* is Swahili for coffee. "Kahawa Check" is a working name.
 
-Live app: {{APP_URL}} · Code: {{REPO_URL}} · Video: {{VIDEO_URL}}
+Live app: https://git-lsd.github.io/kahawa-check/ · Code: https://github.com/git-lsd/kahawa-check · Video: {{VIDEO_URL}}
 
 Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agriculture sector, 3–4 October 2026.
 
@@ -169,7 +169,7 @@ No one on the team speaks Swahili or Kikuyu. So the tool uses a fixed list a spe
 
 ## Run it
 
-**On a phone (GitHub Pages).** Open {{APP_URL}} once with internet. The chip at the top right shows "Saving for offline", then "Model ready". From then on it works in airplane mode. Use "Add to Home Screen" from the browser menu so it opens like an app (on iPhone this also stops Safari from clearing its data after 7 days without use).
+**On a phone (GitHub Pages).** Open https://git-lsd.github.io/kahawa-check/ once with internet. The chip at the top right shows "Saving for offline", then "Model ready". From then on it works in airplane mode. Use "Add to Home Screen" from the browser menu so it opens like an app (on iPhone this also stops Safari from clearing its data after 7 days without use).
 
 **Locally.** The app is plain HTML, CSS and JavaScript, with no build step. It needs a local web server, because browsers block the model and the offline cache on `file://` pages.
 
@@ -224,7 +224,7 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | Swahili and Kikuyu audio (made with Meta MMS TTS, `facebook/mms-tts-swh`, `facebook/mms-tts-kik`) | CC-BY-NC 4.0 | Meta AI. Non-commercial: fine for this hackathon and a non-commercial pilot. A paid service would need recorded human clips. |
 | NLLB-200 and MMS-1b-all (used on a laptop to check text and audio; not shipped) | CC-BY-NC 4.0 | Meta AI |
 | Advice text in `answers.json` | – | Written from Kenyan extension material, mainly the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute), Infonet-Biovision and CABI Plantwise. Sources per answer in `answers.json`. |
-| Our code and documents | {{CODE_LICENCE}} | The team |
+| Our code and documents | MIT (see LICENSE) | The team |
 
 ## Limitations
 
