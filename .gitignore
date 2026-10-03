@@ -8,3 +8,5 @@ docs/ONE_PAGER.md
 docs/VIDEO_SCRIPTS.md
 docs/HANDOFF.md
 docs/templates/
+*.orig
+*.rej
