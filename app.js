@@ -69,7 +69,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v8'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v9'; // keep equal to VERSION in sw.js
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
 const WC_KEY = 'wording_corrections'; // meta record: { key, items: [...] }
 const WC_FIELDS = ['id', 'lang', 'shown_text', 'english', 'suggestion', 'who', 'note', 'created', 'app_version', 'head_version'];
@@ -1628,6 +1628,8 @@ function renderCurrent() {
 function setTab(name) {
   currentTab = name;
   document.querySelectorAll('.tab').forEach((s) => { s.hidden = s.id !== 'tab-' + name; });
+  // The language choice only changes the farmer-facing answers on the Plot visit screens.
+  document.querySelectorAll('.lang').forEach((g) => { g.hidden = name !== 'visit'; });
   document.querySelectorAll('.tabbar button').forEach((b) => {
     if (b.dataset.tab === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
   });
