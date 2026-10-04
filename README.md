@@ -234,7 +234,7 @@ Summary below. The full account (privacy, consent, deletion, Kenya Data Protecti
 - **No advice that can hurt:** no pesticide names, no doses, no prices. Fixed answers only.
 - **Privacy:** no names, phone numbers or locations. The member number is saved only as a SHA-256 code (short numbers can still be guessed by someone with the phone). Photos are kept as 160-pixel thumbnails. Data stays on the phone until a person exports it. The co-op export holds village totals only. The plot-records export, for the officer, holds one row per plot (village, date, counts, farm details, checklist) without member numbers, member codes or photos. The model update file holds no photos, villages or member codes.
 - **Consent:** asked aloud at the start of every visit. The visit cannot start without it.
-- **Deletion:** "Delete all data on this phone" in the About screen.
+- **Deletion:** "Delete all data on this phone" in the About screen; "Discard this visit" for an unfinished visit.
 - **Known gaps, each with a next step in [docs/RESPONSIBLE_AI.md](docs/RESPONSIBLE_AI.md):** no per-farm delete button, no app PIN, no native-speaker check yet.
 
 ## Languages

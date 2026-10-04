@@ -7,7 +7,7 @@ Edit the template, not docs/RESPONSIBLE_AI.md.
 
 The brief makes this a pass/fail criterion. It asks whether the limits are respected, and whether our account of privacy, consent, bias and human oversight is credible. The health annex also asks three questions that apply to any tool on a shared phone: where the data sits, who can read it, and what happens when the phone is lost or shared. This page answers all of them for Majani Relay (earlier name: Kahawa Check).
 
-Facts about the app below were checked against `app.js` (app cache version `kahawa-v16`) and the shipped head (v3-2026-10-03-lab+field+other) on the night of 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
+Facts about the app below were checked against `app.js` (app cache version `kahawa-v18`) and the shipped head (v3-2026-10-03-lab+field+other) on the night of 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
 
 ## 1. The fail-safe in one paragraph
 
@@ -31,6 +31,7 @@ The tool reads a leaf photo and gives one of five answers (healthy, leaf rust, l
 | Consent | Yes | A flag on the plot record. The visit cannot start without it. |
 | Officer labels | Yes | Per reviewed photo: one of the five answers, "Different problem (not in list)" or "Skip (cannot tell)". |
 | Locally updated model | Yes | The refitted small head, after officer labels. |
+| Wording corrections | Yes | From "Wording wrong?": which sentence, the language, the suggested wording, the person's role (relay farmer, officer, farmer, other) and an optional note. No farm data. |
 
 ### Where it sits
 
@@ -96,8 +97,9 @@ Rules:
 
 ## 5. Deletion
 
-- **Everything on the phone:** "Delete all data on this phone" (About tab) removes plot records, photos, officer labels and the local model update, after a confirmation. The app itself stays installed.
+- **Everything on the phone:** "Delete all data on this phone" (About tab) removes plot records, photos, officer labels, wording corrections and the local model update, after a confirmation. The app itself stays installed.
 - **Clearing the browser's site data** has the same effect.
+- **An unfinished visit:** "Discard this visit" (Plot visit tab) deletes that visit's plot record and its photos, after a confirmation.
 - **One farmer only:** gap. The app can delete one photo (when a photo is retaken) but has no "delete this farm's records" button yet. Today a farmer's request to delete means deleting all data on that phone after exporting the others' village totals. **Next step:** add a "delete this farm's records" button (section 11). Who: app lead. Metric: works offline on the pilot phones. When: before the pilot starts.
 - **Exported files** are outside the app. The co-op must delete them by hand.
 
@@ -109,7 +111,7 @@ We are not lawyers. This is how we read the Act's relevance. A real deployment s
 - **Who is responsible?** In a real deployment, the cooperative (or the county extension service) would be the data controller. The relay farmer collects data on its behalf. The cooperative should check whether it must register with the ODPC under the 2021 registration regulations.
 - **Principles (section 25).** Collect only what is needed, for a stated purpose, keep it accurate, keep it no longer than needed, keep it secure. Our design: minimal fields, on-device storage, delete after export.
 - **Lawful basis and consent (sections 30 and 32).** We rely on consent. Section 32 puts the burden of proving consent on the controller and lets the person withdraw it at any time. The consent flag on each plot record is the proof in the app. Withdrawal means deletion (section 5 above).
-- **Rights (sections 26 and 40).** A farmer can ask to see, correct or delete their data. Today only "delete all" exists on the phone (gap).
+- **Rights (sections 26 and 40).** A farmer can ask to see, correct or delete their data. Today the phone can delete everything ("Delete all data on this phone") or an unfinished visit ("Discard this visit"), but not one saved visit on its own (gap).
 - **Impact assessment (section 31).** Required for high-risk processing. Plot-level disease data has commercial risk (a buyer could use it), so we suggest the cooperative run a short impact assessment before a pilot.
 - **Transfer abroad.** None. Data stays on the phone.
 

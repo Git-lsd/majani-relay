@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v17'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v18'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -1119,8 +1119,9 @@ function viewConsent() {
     const u = visit.unfinished;
     out.push(card('warn', h('div', { class: 'card-head' }, icon('flag'), 'Unfinished visit'),
       h('p', null, `${u.village}, ${fmtDate(u.created)}: ${plural(u.photo_ids.length, 'photo')}.`),
-      h('button', { class: 'btn block', type: 'button', onclick: () => resumeVisit(u) }, 'Continue this visit'),
-      h('button', { class: 'btn secondary block', type: 'button', onclick: () => discardVisit(u) }, icon('trash'), 'Discard this visit')));
+      h('div', { class: 'stack' },
+        h('button', { class: 'btn block', type: 'button', onclick: () => resumeVisit(u) }, 'Continue this visit'),
+        h('button', { class: 'btn secondary block', type: 'button', onclick: () => discardVisit(u) }, icon('trash'), 'Discard this visit'))));
   }
   out.push(card('', h('h2', null, 'Plot visit'), h('p', { class: 'small' }, 'Step 1 of 3: ask the farmer first.'),
     answerBlock('consent_photos'),
@@ -1411,7 +1412,12 @@ async function discardVisit(plot) {
     const photos = (await DB.all('photos')).filter((p) => p.plot_id === plot.id);
     for (const p of photos) await DB.del('photos', p.id);
     await DB.del('plots', plot.id);
-  } catch (e) { /* storage unavailable */ }
+  } catch (e) {
+    toast('Could not discard the visit: ' + (e.message || e));
+    await refreshVisitContext();
+    renderVisit();
+    return;
+  }
   visit.unfinished = null;
   await refreshVisitContext();
   updateQueueBadge();
@@ -1586,7 +1592,7 @@ async function renderReview() {
           : h('div', { class: 'tags' },
             p.disputed ? h('span', { class: 'tag warn' }, `Relay farmer disagrees: AI said ${className(p.label)} (${pct(p.max_prob)})`) : null,
             p.spot_check ? h('span', { class: 'tag syn' }, p.disputed ? 'Also a spot check' : `Spot check: AI said ${className(p.label)} (${pct(p.max_prob)})`) : null),
-        farm ? h('div', { class: 'small farm-line' }, `${farm}. ${FARM_NOTE}.`) : null)),
+        h('div', { class: 'small farm-line' }, h('b', null, 'Farm details: '), farm || 'none tapped', farm ? ' (the AI does not use these)' : ''))),
     h('div', { class: 'label-btns' },
       answerClasses().map((c) => h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, c) }, className(c))),
       h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, otherLabel()) }, 'Different problem (not in list)'),
@@ -1845,37 +1851,53 @@ async function renderAbout() {
   try { if (navigator.storage && navigator.storage.estimate) { const e = await navigator.storage.estimate(); usage = `App files and records use ${e.usage < 1e6 ? 'less than 1' : 'about ' + Math.round(e.usage / 1e6)} MB on this phone.`; } } catch (e) { /* ignore */ }
   root.replaceChildren(
     card('', h('h2', null, `About ${APP_NAME}`),
-      h('p', null, `${APP_NAME} (say mah-JAH-nee; "majani" is Swahili for leaves) turns a relay farmer's plot visit into a standard leaf-check record for the extension officer, offline on this phone.`),
-      h('p', { class: 'small' }, `Earlier versions were called Kahawa Check. Records saved on this phone and update files shared by those versions still work.`)),
-    card('', h('h2', null, 'What the AI does'),
-      h('ul', null,
+      h('p', null, `${APP_NAME} helps a relay farmer check coffee leaves on a plot visit, offline on this phone, and passes unclear cases to the extension officer. "Majani" (say mah-JAH-nee) is Swahili for leaves.`),
+      h('ol', { class: 'how' },
+        h('li', null, h('span', null, h('b', null, 'Photograph. '), 'The relay farmer photographs coffee leaves on a plot visit.')),
+        h('li', null, h('span', null, h('b', null, 'Check. '), 'The AI names the leaf problem, or says "not sure".')),
+        h('li', null, h('span', null, h('b', null, 'Review. '), 'The extension officer labels the unclear photos. The labels teach the AI on this phone.')),
+        h('li', null, h('span', null, h('b', null, 'Plan. '), 'The Co-op tab shows which villages to visit first.'))),
+      h('p', { class: 'small' }, 'Tip: use "Add to Home Screen" in the browser menu to open the app like any other app.')),
+    card('', h('h2', null, 'Good to know'),
+      h('ul', { class: 'facts' },
+        h('li', null, icon('check'), h('span', null, 'It runs on this phone. No internet is needed after the first visit.')),
+        h('li', null, icon('question'), h('span', null, 'When the AI is not sure, it says so, and the photo goes to the officer.')),
+        h('li', null, icon('officer'), h('span', null, 'The extension officer makes the final call. The app never names a spray, product or dose.')),
+        h('li', null, icon('leaf'), h('span', null, 'It learned from close-up leaf photos (Kenya, Brazil) and photos of leaves on the plant (Ecuador). It has not yet seen Kenyan photos taken the way relay farmers take them; officer labels teach it local leaves.'))),
+      h('details', { class: 'more' }, h('summary', null, 'More: what the AI does and does not do'),
+      h('h3', null, 'What the AI does'),
+      h('ul', { class: 'small' },
         h('li', null, 'Looks at one photo of the underside of a coffee leaf.'),
         h('li', null, `Picks one of ${(Model.shipped ? answerClasses() : Object.keys(CLASS_NAMES).filter((c) => c !== 'other')).map(className).join(', ')}, or says "not sure".`),
         h('li', null, 'Says "not sure" when its best guess is below a confidence line, when the photo looks unlike the photos it learned from' +
           (toOfficer.length ? ', or when the photo looks like a different problem (one not in the list)' : '') + '. Those photos wait for the officer.'),
         h('li', null, 'If the relay farmer taps "I think it\'s something else", the photo goes to the officer and counts in the village numbers only after the officer labels it.'),
         h('li', null, 'Runs on this phone. No internet is needed after the first visit.'),
-        h('li', null, 'Every answer comes from a fixed list of texts. It never writes new text.'))),
-    card('', h('h2', null, 'What it does not do'),
-      h('ul', null,
+        h('li', null, 'Every answer comes from a fixed list of texts. It never writes new text.')),
+      h('h3', null, 'What it does not do'),
+      h('ul', { class: 'small' },
         h('li', null, 'It does not make the final call. The extension officer does.'),
         h('li', null, 'It does not name any spray, product or dose.'),
         h('li', null, 'It does not check berries, roots or the whole farm. Other causes of low yield are in the checklist, which is not AI.'),
-        h('li', null, 'It has not yet seen photos from Kenyan farms. It learned from lab leaf photos (Kenya, Brazil) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
+        h('li', null, 'It has not yet seen Kenyan photos taken the way relay farmers take them. It learned from close-up photos of leaf spots (Kenya, Brazil; the Kenyan ones from a farm in Kirinyaga, cropped to the spot) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
         h('li', null, toOfficer.length
           ? `It can give only the ${answerClasses().length} answers above. Its "different problem" check learned one pest (red spider mite, from field photos in Ecuador); it sends many such photos to the officer, but it still gives some of them a wrong answer, and other problems outside the list can get a wrong answer too. The officer's 1-in-10 spot check finds such photos, and the officer's "Different problem" label teaches the AI on this phone.`
-          : `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem".`))),
+          : `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem".`)))),
     card('', h('h2', null, icon('lock'), ' Privacy and your data'),
-      h('p', null, 'Plot records (with the optional farm details), leaf photos (small 160-pixel copies) and officer labels stay on this phone (browser storage) until someone exports them. Nothing is sent anywhere by the app.'),
-      h('p', null, 'The member number is saved only as a scrambled code (SHA-256 hash). Short numbers can still be guessed by someone who has this phone.'),
+      h('p', null, 'Plot records, small copies of the leaf photos and officer labels stay on this phone until someone exports them. The app sends nothing anywhere.'),
+      h('p', null, 'The member number is saved only as a scrambled code. Short numbers can still be guessed by someone who has this phone.'),
       h('p', { class: 'small' }, `On this phone now: ${plural(counts.plots, 'plot visit')}, ${plural(counts.photos, 'photo')}, ${plural(counts.labels, 'officer label')}. ${usage}`),
       h('button', { class: 'btn danger block', type: 'button', onclick: deleteAll }, icon('trash'), 'Delete all data on this phone'),
       h('p', { class: 'small' }, 'This removes plot records, photos, officer labels, wording corrections and the local model update. The app itself stays saved so it still works offline.')),
     card('', h('h2', null, 'Languages'),
-      h('p', null, 'Swahili: fixed answer list as text and audio. English: on screen. Kikuyu: fixed phrase list only, shown as a less-supported language.'),
-      ...langStatus(),
-      h('p', null, h('span', { class: 'tag' }, 'Corrections'), ' ',
-        `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`)),
+      h('dl', { class: 'langs' },
+        h('dt', null, 'Kiswahili'), h('dd', null, 'Answers on screen and as audio'),
+        h('dt', null, 'English'), h('dd', null, 'On screen'),
+        h('dt', null, 'Gĩkũyũ'), h('dd', null, 'A shorter list of phrases; the rest shows in Swahili')),
+      h('p', { class: 'small' }, 'Wording wrong or unnatural? Tap "Wording wrong?" under any sentence.'),
+      h('details', { class: 'more' }, h('summary', null, 'Translation status'),
+        ...langStatus(),
+        h('p', { class: 'small' }, `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`))),
     h('details', { class: 'card tech' }, h('summary', null, 'Technical details (model card, simplifications)'),
       h('p', { class: 'small' }, 'For evaluators and technical staff. Relay farmers and officers do not need this to use the app.'),
       h('h3', null, 'Model card'), h('div', null,
@@ -1906,10 +1928,12 @@ async function renderAbout() {
         h('li', null, 'The co-op dashboard treats photos as independent and AI answers as correct.'))),
     ),
     card('', h('h2', null, 'Credits'),
+      h('p', null, 'Made by Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS) for the World Bank Small AI for Development challenge, 2026.'),
       h('ul', { class: 'small' },
         h('li', null, 'Sample photos: RoCoLe dataset (Parraga-Alava et al. 2019), CC BY 4.0.'),
+        h('li', null, 'Swahili and Kikuyu audio: made with Meta MMS text-to-speech, CC BY-NC 4.0.'),
         h('li', null, 'Backbone: MobileNetV3 (timm), Apache-2.0. Runtime: onnxruntime-web, MIT.'),
-        h('li', null, 'Tip: use "Add to Home Screen" in the browser menu to open the app like any other app.'))));
+        h('li', null, 'App code: MIT License.'))));
 }
 
 async function deleteAll() {
