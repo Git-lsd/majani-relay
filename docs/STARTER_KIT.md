@@ -4,8 +4,24 @@
 
 **Go/no-go: 11:00 PM ET.** If your method is not clearly better on the dev part by then, we keep the current one. The videos do not depend on this.
 
+## On your own laptop (one-time setup, about 5 minutes)
+
+1. Accept the GitHub invite, then get the code into a new folder, for example `~/kahawa`:
+   ```bash
+   mkdir -p ~/kahawa && cd ~/kahawa && git clone https://github.com/git-lsd/kahawa-check.git
+   ```
+2. Get `starter_data_for_Yicong.zip` (52 MB) from Sidian by AirDrop and unzip it **inside `~/kahawa`**, so you have `~/kahawa/data_work/embeddings.npz` next to `~/kahawa/kahawa-check/`.
+3. Make a Python environment next to them:
+   ```bash
+   cd ~/kahawa && python3 -m venv .venv && .venv/bin/pip install -r kahawa-check/ml/requirements.txt
+   ```
+4. Run it from `~/kahawa/kahawa-check` with `../.venv/bin/python ml/starter_kit.py`.
+
+The zip holds only precomputed image descriptions (MobileNetV3 for all ~10,000 images, plus DINOv2-small for a subset). `embed_images()` (real image augmentation) also needs the raw photos (~3 GB, `data_raw/` on Sidian's Mac): copy them over if you need them, or run that part on Sidian's Mac. Commit your changes to a branch and push; tell the assistant when a method is ready.
+
 ## Run it
 
+On Sidian's Mac:
 ```bash
 cd "/Users/sylvialin/Desktop/MISS/World Bank Challenge/kahawa-check" && ../.venv/bin/python ml/starter_kit.py
 ```
