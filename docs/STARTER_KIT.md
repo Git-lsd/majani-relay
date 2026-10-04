@@ -24,7 +24,7 @@ The zip holds only precomputed image descriptions (MobileNetV3 for all ~10,000 i
 
 On Sidian's Mac:
 ```bash
-cd "/Users/sylvialin/Desktop/MISS/World Bank Challenge/kahawa-check" && ../.venv/bin/python ml/starter_kit.py
+cd kahawa-check && ../.venv/bin/python ml/starter_kit.py
 ```
 
 It takes about 4 seconds. It prints two tables: `baseline` (what the app does today) and `my_method` (your function, which starts as a copy of the baseline). Edit `my_method()` in [`ml/starter_kit.py`](../ml/starter_kit.py) and rerun.
