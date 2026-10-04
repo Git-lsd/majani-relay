@@ -1,6 +1,5 @@
 <!--
 Generated from docs/templates/README.tmpl.md by ml/fill_docs.py (numbers come from results/numbers.json).
-Left for the team to fill: {{VIDEO_URL}}. Delete this comment after filling.
 -->
 
 # Majani Relay
@@ -9,7 +8,7 @@ Left for the team to fill: {{VIDEO_URL}}. Delete this comment after filling.
 
 *Majani* is Swahili for "leaves"; say it **mah-JAH-nee**. Earlier versions were called Kahawa Check (*kahawa* = coffee). Like all our Swahili, the name still needs a check by a native speaker.
 
-Live app: https://git-lsd.github.io/majani-relay/ · Code: https://github.com/git-lsd/majani-relay · Video: {{VIDEO_URL}}
+Live app: https://git-lsd.github.io/majani-relay/ · Code: https://github.com/git-lsd/majani-relay · Videos: Demo, Tech and Team videos are in the hackathon submission and will be added here after judging.
 
 Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every phone; see [Run it](#run-it)).
 
