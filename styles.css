@@ -271,3 +271,74 @@ details.more p { font-size: .9rem; }
 .pin-row label.field span { display: block; margin-bottom: 8px; }
 .pin-row .pin-input { display: block; width: 100%; max-width: 220px; min-height: 60px; font-size: 1.6rem; letter-spacing: .5em; text-align: center; -webkit-text-security: disc; }
 .pin-row p { margin: 0; }
+
+/* ===================== Re-skin: "field notebook" =====================
+   Paper background, coffee-ink text and main buttons, leaf green and amber as accents only.
+   Fraunces (headings) + IBM Plex Sans (text), both OFL, self-hosted in fonts/ so they work offline. */
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/fraunces-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/fraunces-latin-ext-600-normal.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "IBM Plex Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "IBM Plex Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/ibm-plex-sans-latin-ext-400-normal.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "IBM Plex Sans"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "IBM Plex Sans"; font-style: normal; font-weight: 600; font-display: swap; src: url(fonts/ibm-plex-sans-latin-ext-600-normal.woff2) format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+:root {
+  --bg: #f6f1e7; --fg: #231c15; --muted: #685b4e; --card: #fffcf6; --line: #dcd1be;
+  --primary: #2a2019; --primary-fg: #f8f3ea; --accent: #2f5d3e; --amber: #a8681a;
+  --ok: #2f6b3a; --ok-bg: #edf3e5; --bad: #9a3412; --bad-bg: #fbebe2; --unsure: #2b4f7e; --unsure-bg: #e9eff6;
+  --warn: #855600; --warn-bg: #fbefd6; --focus: #c07a1a; --radius: 10px;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-text: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17130f; --fg: #f1eadf; --muted: #c2b5a4; --card: #211b15; --line: #3f352b;
+    --primary: #efe6d6; --primary-fg: #1a1510; --accent: #8fc79a; --amber: #e5a64a;
+    --ok: #8fc79a; --ok-bg: #1d2a1f; --bad: #f2a07b; --bad-bg: #3a2016; --unsure: #9dbbe6; --unsure-bg: #1c2633; --warn: #f0c46e; --warn-bg: #352a14;
+  }
+}
+body { font-family: var(--font-text); }
+h1, h2, h3, .brand, .card-head, .steps, details.tech > summary { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; }
+.btn, .seg button, .lang button, .tabbar button, details.more > summary, .chip, .label-btns .btn, .toast { font-family: var(--font-text); font-weight: 600; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.16rem; }
+.brand { font-size: 1.3rem; font-weight: 600; }
+.top { border-bottom: 1px solid var(--line); }
+.chip { border-width: 1px; font-size: .74rem; letter-spacing: .02em; padding: 3px 9px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(60, 40, 20, .05); }
+.card.ok, .card.bad, .card.unsure, .card.warn { border-width: 1px; border-left-width: 6px; }
+.card-head { font-size: 1.3rem; }
+.btn { border-width: 1.5px; border-radius: 10px; }
+.btn.secondary { background: transparent; }
+.btn.danger { background: transparent; }
+.lang button, .seg button { border-width: 1.5px; border-radius: 8px; }
+.play { border-width: 1.5px; background: transparent; }
+input[type=text], input[type=search], input:not([type]), textarea, select { border-width: 1.5px; border-radius: 8px; background: var(--card); }
+.thumb { border-width: 1px; border-radius: 8px; }
+.tag { border-width: 1px; border-radius: 4px; font-weight: 600; }
+.progress { height: 10px; background: var(--line); }
+.progress > div { background: var(--accent); }
+.tabbar { border-top: 1px solid var(--line); }
+.tabbar button { color: var(--muted); }
+.tabbar button[aria-current="page"] { color: var(--fg); box-shadow: inset 0 3px 0 var(--accent); }
+a, details.more > summary { color: var(--accent); }
+.how li::before { background: var(--accent); font-family: var(--font-display); }
+.facts li .ic { color: var(--accent); }
+.table-wrap { border-width: 1px; background: var(--card); }
+th { background: transparent; font-weight: 600; color: var(--muted); }
+.sample-row { background: var(--card); border-width: 1px; }
+.sheet-body { background: var(--bg); }
+.sent-box, .confirm-box { border-width: 1px; border-left-width: 5px; border-radius: 8px; }
+.notice { border-left-width: 4px; }
+
+/* The relay, on the first screen: who does what */
+.relay { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: start; gap: 4px; padding: 12px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+.relay-step { display: grid; justify-items: center; text-align: center; gap: 6px; font-size: .78rem; line-height: 1.25; color: var(--muted); }
+.relay-step b { display: block; font-family: var(--font-display); font-weight: 600; font-size: .98rem; color: var(--fg); }
+.relay-step .ic { width: 28px; height: 28px; color: var(--accent); }
+.relay-step:nth-child(3) .ic { color: var(--fg); }
+.relay-step:nth-child(5) .ic { color: var(--amber); }
+.relay-arrow { align-self: center; color: var(--line); font-size: 1.2rem; padding-top: 4px; }
+.relay-step { font-size: .74rem; }
+.relay-step b { font-size: .9rem; }
+.relay { padding: 10px 8px; gap: 2px; }

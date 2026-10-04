@@ -4,11 +4,13 @@
      the background when online, so the next visit gets updates. The backbone, the wasm runtime,
      photos and audio are only re-downloaded when VERSION changes.
    - Bump VERSION whenever backbone.onnx, audio or the vendor files change (safest: on every deploy). */
-const VERSION = 'kahawa-v21';
+const VERSION = 'kahawa-v22';
 
 // Files the app cannot work without. Install fails (and the page falls back to the network) if one is missing.
 const CORE = [
   './', 'index.html', 'app.js', 'styles.css', 'manifest.webmanifest',
+  'fonts/fraunces-latin-600-normal.woff2', 'fonts/fraunces-latin-ext-600-normal.woff2', 'fonts/ibm-plex-sans-latin-400-normal.woff2',
+  'fonts/ibm-plex-sans-latin-ext-400-normal.woff2', 'fonts/ibm-plex-sans-latin-600-normal.woff2', 'fonts/ibm-plex-sans-latin-ext-600-normal.woff2',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png', 'icons/favicon-32.png',
   'vendor/ort/ort.wasm.min.js', 'vendor/ort/ort-wasm-simd-threaded.mjs',

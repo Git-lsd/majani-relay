@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v21'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v22'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -1131,6 +1131,13 @@ function renderVisit() {
 
 function viewConsent() {
   const out = [];
+  // Who does what, at a glance (first screen only)
+  out.push(h('div', { class: 'relay', role: 'img', 'aria-label': 'Relay farmer photographs leaves, the AI on the phone counts rust and flags unclear photos, the extension officer reviews and decides.' },
+    h('div', { class: 'relay-step' }, icon('camera'), h('span', null, h('b', null, 'Relay farmer'), 'photographs leaves')),
+    h('span', { class: 'relay-arrow', 'aria-hidden': 'true' }, '\u2192'),
+    h('div', { class: 'relay-step' }, icon('leaf'), h('span', null, h('b', null, 'AI on the phone'), 'counts rust, flags unclear photos')),
+    h('span', { class: 'relay-arrow', 'aria-hidden': 'true' }, '\u2192'),
+    h('div', { class: 'relay-step' }, icon('officer'), h('span', null, h('b', null, 'Officer'), 'reviews and decides'))));
   if (visit.unfinished) {
     const u = visit.unfinished;
     out.push(card('warn', h('div', { class: 'card-head' }, icon('flag'), 'Unfinished visit'),
