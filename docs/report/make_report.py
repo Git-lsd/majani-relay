@@ -95,11 +95,8 @@ li.amber::before { background: var(--amber); }
 .tile .src { display: block; font-size: 8.2pt; color: var(--muted); margin-top: 1pt; }
 
 .bottom { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 0 0.26in; align-items: start; }
-.take { background: var(--ink); color: var(--paper); padding: 6pt 9pt 7pt; }
-.take h2 { color: var(--paper); border-bottom-color: #4a3f34; }
-.take h2 .n { color: #e5a64a; }
-.take p { font-size: 9.9pt; line-height: 1.32; }
-.take b { color: #f0d9a8; }
+.take p { background: var(--card); border-left: 3px solid var(--leaf); padding: 5pt 8pt; font-size: 9.9pt; line-height: 1.32; }
+.take b { color: var(--ink); }
 
 footer { position: absolute; left: 0.42in; right: 0.42in; bottom: 0.24in; white-space: nowrap; border-top: 1px solid var(--line); padding-top: 3pt; font-size: 7.8pt; color: var(--muted); display: flex; justify-content: space-between; gap: 16pt; }
 </style>

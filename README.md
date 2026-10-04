@@ -23,8 +23,6 @@ Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every
 3. The extension officer labels the unclear photos and makes the final call. The labels teach the model on the phone.
 4. The co-op screen ranks villages by rust, so the officer knows where to go first.
 
-[![Majani Relay system design: plot visit, AI check, not-sure gate, answer, records, officer queue and on-phone learning, co-op screen](docs/system_design/system_design.png)](docs/system_design/system_design.png)
-
 ### Results at a glance
 
 | Test | Result |
@@ -123,7 +121,10 @@ Simplifications: the evidence shows the gap is real; it does not show that this 
 
 </details>
 
-<details><summary><a name="how-it-works"></a><b>How it works</b> — a diagram of the plot visit, the officer visit and the co-op screen</summary>
+<details><summary><a name="how-it-works"></a><b>How it works</b> — the system design diagram, and the plot visit, officer visit and co-op screen step by step</summary>
+
+[![Majani Relay system design](docs/system_design/system_design.png)](docs/system_design/system_design.png)
+
 
 ```
  Plot visit (relay farmer's phone, offline)
@@ -445,6 +446,4 @@ The brief warns that AI built where there is no farmer registry will be hard to 
 
 Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agriculture sector, 3–4 October 2026.
 
-Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS).
-
-Built with Claude Code.
+Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS). <sub>Built with Claude Code.</sub>
