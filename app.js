@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v20'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v21'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -334,14 +334,28 @@ function recheckAudio() {
   });
 }
 let player = null;
+let playerBtn = null;
+// Stop whatever is playing and reset the buttons (also used when the tab or the language changes).
+function stopAudio() {
+  if (player) { player.pause(); player = null; }
+  playerBtn = null;
+  document.querySelectorAll('.play.playing').forEach((b) => {
+    b.classList.remove('playing');
+    if (b.dataset.label) { b.title = b.dataset.label; b.setAttribute('aria-label', b.dataset.label); }
+  });
+}
+// A second tap on the playing button stops it.
 function playAudio(src, btn) {
-  if (player) { player.pause(); document.querySelectorAll('.play.playing').forEach((b) => b.classList.remove('playing')); }
-  player = new Audio(src);
+  if (player && playerBtn === btn) { stopAudio(); return; }
+  stopAudio();
+  const me = new Audio(src);
+  player = me; playerBtn = btn;
   btn.classList.add('playing');
-  const stop = () => btn.classList.remove('playing');
-  player.onended = stop;
-  player.onerror = () => { stop(); toast('Could not play this audio.'); };
-  player.play().catch(() => { stop(); toast('Could not play this audio.'); });
+  btn.title = 'Stop audio'; btn.setAttribute('aria-label', 'Stop audio');
+  const stop = () => { if (player === me) stopAudio(); };
+  me.onended = stop;
+  me.onerror = () => { stop(); toast('Could not play this audio.'); };
+  me.play().catch(() => { stop(); toast('Could not play this audio.'); });
 }
 // textLang: language of the text shown beside the button. When the audio is in another language, the
 // block gets a visible "Audio in ..." marker so nobody mistakes it for a reading of the text on screen.
@@ -357,6 +371,7 @@ async function wireAudio(btn, id, textLang, tagsEl) {
     const label = l === textLang ? 'Play audio' : `Play ${LANG_LABEL[l]} audio`;
     btn.title = label;
     btn.setAttribute('aria-label', label);
+    btn.dataset.label = label;
     btn.onclick = () => playAudio(audioBlob.get(url) || url, btn); // offline copy if saved, else the server
     if (l !== textLang && tagsEl && !tagsEl.querySelector('.tag-audio')) {
       tagsEl.append(h('span', { class: 'tag tag-audio' }, `Audio in ${LANG_LABEL[l]}`));
@@ -1983,6 +1998,7 @@ function renderCurrent() {
 }
 
 function setTab(name) {
+  stopAudio();
   currentTab = name;
   document.querySelectorAll('.tab').forEach((s) => { s.hidden = s.id !== 'tab-' + name; });
   // The language choice only changes the farmer-facing answers on the Plot visit screens.
@@ -2034,6 +2050,7 @@ async function setupServiceWorker() {
 
 async function boot() {
   document.querySelectorAll('.lang button').forEach((b) => b.addEventListener('click', () => {
+    stopAudio();
     lang = b.dataset.lang;
     store.set('lang', lang);
     document.documentElement.lang = HTML_LANG[lang];

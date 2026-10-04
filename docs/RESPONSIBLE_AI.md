@@ -7,7 +7,7 @@ Edit the template, not docs/RESPONSIBLE_AI.md.
 
 The brief makes this a pass/fail criterion. It asks whether the limits are respected, and whether our account of privacy, consent, bias and human oversight is credible. The health annex also asks three questions that apply to any tool on a shared phone: where the data sits, who can read it, and what happens when the phone is lost or shared. This page answers all of them for Majani Relay (earlier name: Kahawa Check).
 
-Facts about the app below were checked against `app.js` (app cache version `kahawa-v20`; v20 only changes the PIN screen layout) and the shipped head (v3-2026-10-03-lab+field+other) on 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
+Facts about the app below were checked against `app.js` (app cache version `kahawa-v21`; v20 and v21 change only the PIN screen layout and let a second tap stop the audio) and the shipped head (v3-2026-10-03-lab+field+other) on 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
 
 ## 1. The fail-safe in one paragraph
 
