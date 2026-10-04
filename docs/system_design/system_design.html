@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>Majani Relay system design</title>
+<style>
+@font-face { font-family: "Fraunces"; font-weight: 600; src: url(../../fonts/fraunces-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url(../../fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url(../../fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2"); }
+:root {
+  --bg: #f6f1e7; --fg: #231c15; --muted: #685b4e; --card: #fffcf6; --line: #dcd1be;
+  --ink: #2a2019; --green: #2f5d3e; --green-bg: #e6eee3; --amber: #a8681a; --amber-bg: #f6e7cf;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1280px; height: 866px; background: var(--bg); color: var(--fg); overflow: hidden; }
+body { font-family: "IBM Plex Sans", sans-serif; font-size: 14px; line-height: 1.35; position: relative; }
+.abs { position: absolute; }
+h1 { font-family: "Fraunces", serif; font-weight: 600; font-size: 31px; letter-spacing: -0.01em; line-height: 1.1; }
+.sub { font-size: 15.5px; color: var(--muted); margin-top: 5px; }
+.lab { font-size: 12.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
+.card { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--ink); padding: 9px 12px 10px; }
+.card h2 { font-family: "Fraunces", serif; font-weight: 600; font-size: 18px; line-height: 1.15; display: flex; align-items: baseline; gap: 8px; }
+.num { font-family: "IBM Plex Sans", sans-serif; font-weight: 600; font-size: 13px; color: var(--card); background: var(--ink);
+  min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; transform: translateY(-2px); }
+.who { font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin: 3px 0 6px; }
+.who.rf { color: var(--green); } .who.of { color: var(--amber); } .who.co { color: var(--ink); }
+.card ul { list-style: none; }
+.card li { padding-left: 13px; position: relative; margin-top: 3px; }
+.card li::before { content: ""; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; background: var(--muted); }
+.muted { color: var(--muted); }
+.pill { display: inline-block; border: 1px solid var(--line); background: var(--bg); padding: 0 6px; margin: 2px 2px 0 0; font-size: 13.5px; }
+.pill.o { border-color: var(--amber); color: var(--amber); }
+.notsure { background: var(--amber-bg); border-left: 3px solid var(--amber); padding: 4px 8px; font-weight: 600; margin-top: 6px; }
+.actor { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--ink); padding: 7px 12px; }
+.actor b { font-weight: 600; font-size: 15px; white-space: nowrap; flex-shrink: 0; }
+.actor span { color: var(--muted); }
+.actor.rf { border-left-color: var(--green); } .actor.of { border-left-color: var(--amber); }
+.boundary { border: 2px dashed var(--ink); }
+.boundary-lab { background: var(--bg); padding: 0 8px; }
+.mini { background: var(--bg); border: 1px solid var(--line); padding: 6px 9px; }
+.mini .lab { color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+.ship { border-top-color: var(--muted); }
+.loop { background: var(--amber-bg); border: 1px solid #e3c99b; border-top: 3px solid var(--amber); padding: 9px 12px; }
+.note { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="abs" style="left:28px; top:18px; width:720px;">
+  <h1>Majani Relay: system design</h1>
+  <p class="sub">Relay farmers' leaf photos become village rust counts, so the officer knows where to go first.</p>
+</div>
+<div class="abs note" style="left:800px; top:22px; width:452px; text-align:right;">
+  <div class="lab" style="color:var(--ink); font-size:12px;">Next on the roadmap</div>
+  Syncing records between phones (today the co-op combines each phone's CSV export) and a chat assistant.
+</div>
+
+<!-- Actors -->
+<div class="abs" style="left:28px; top:84px; width:1224px; display:flex; gap:14px;">
+  <div class="actor rf" style="flex:1"><b>Relay farmer</b><span>does the plot visit on their own smartphone</span></div>
+  <div class="actor of" style="flex:1"><b>Extension officer</b><span>labels the queue, makes the final call (demo PIN)</span></div>
+  <div class="actor" style="flex:1"><b>Co-op office</b><span>combines exports, plans the officer's visits</span></div>
+</div>
+
+<!-- Phone boundary -->
+<div class="abs boundary" style="left:64px; top:156px; width:1192px; height:504px;"></div>
+<div class="abs lab boundary-lab" style="left:80px; top:146px; font-size:13.5px;">On the phone — works offline after the first load</div>
+
+<!-- Row 1 -->
+<div class="abs card" style="left:84px; top:184px; width:258px; height:222px;">
+  <h2><span class="num">1</span>Plot visit</h2>
+  <div class="who rf">Relay farmer</div>
+  <ul>
+    <li>Consent read aloud (Swahili audio); the visit cannot start without it</li>
+    <li>15 leaf photos: 3 leaves × 5 trees, with a photo quality check</li>
+    <li class="muted">Optional: 3 farm taps and a 6-question checklist (not used by the AI)</li>
+  </ul>
+</div>
+
+<div class="abs card" style="left:382px; top:184px; width:258px; height:222px;">
+  <h2><span class="num">2</span>AI check, each photo</h2>
+  <div class="who rf">Runs in the browser</div>
+  <ul>
+    <li>MobileNetV3 backbone (ONNX, 16.8 MB, onnxruntime-web)</li>
+    <li>Small head (82 KB) gives one of:</li>
+  </ul>
+  <div style="margin-top:3px;">
+    <span class="pill">healthy</span><span class="pill">leaf rust</span><span class="pill">leaf miner</span><span class="pill">brown eye spot</span><span class="pill">Phoma</span><span class="pill o">other problem</span>
+  </div>
+</div>
+
+<div class="abs card" style="left:680px; top:184px; width:258px; height:222px; border-top-color:var(--amber);">
+  <h2><span class="num" style="background:var(--amber)">3</span>Not-sure gate</h2>
+  <div class="who of">Any one of these</div>
+  <ul>
+    <li>Confidence below the line</li>
+    <li>Photo unlike the 1,400 stored photos and not close to an officer-labelled one</li>
+    <li>"Other problem" on top</li>
+  </ul>
+  <div class="notsure">"Not sure — the officer will look"</div>
+</div>
+
+<div class="abs card" style="left:978px; top:184px; width:258px; height:222px; border-top-color:var(--green);">
+  <h2><span class="num" style="background:var(--green)">4</span>Answer</h2>
+  <div class="who rf">Read or played to the farmer</div>
+  <ul>
+    <li>From a fixed list of 24 answers, never free text</li>
+    <li>Swahili text and audio; Kikuyu partly</li>
+    <li>"The extension officer makes the final call." No spray names or doses</li>
+  </ul>
+</div>
+
+<!-- Row 2 -->
+<div class="abs card" style="left:84px; top:444px; width:258px; height:180px;">
+  <h2><span class="num">7</span>Co-op screen</h2>
+  <div class="who co">Co-op office</div>
+  <ul>
+    <li>Rust share per village, adjusted for small samples (empirical Bayes)</li>
+    <li>Alert if chance of rust share &gt; 25% is above 0.5</li>
+    <li>Ranked villages; CSV export</li>
+  </ul>
+</div>
+
+<div class="abs card" style="left:382px; top:444px; width:556px; height:180px; border-top-color:var(--amber);">
+  <h2><span class="num" style="background:var(--amber)">6</span>Officer queue and on-phone learning</h2>
+  <div class="who of">Extension officer, on the relay farmer's phone</div>
+  <div style="display:flex; gap:10px; align-items:stretch;">
+    <div class="mini" style="width:206px;">
+      <div class="lab">Queue</div>
+      "Not sure" photos, photos the relay farmer disputes, and 1 in 10 answers (spot check)
+    </div>
+    <div style="align-self:center; font-size:18px; color:var(--amber);">→</div>
+    <div class="mini" style="flex:1;">
+      <div class="lab">Labels teach the model</div>
+      Head refit on the phone, pulled toward the shipped model; labelled photos join the stored set.
+      <b>Update file</b> shared by Bluetooth, memory card or WhatsApp
+    </div>
+  </div>
+</div>
+
+<div class="abs card" style="left:978px; top:444px; width:258px; height:180px;">
+  <h2><span class="num">5</span>Records on the phone</h2>
+  <div class="who co">IndexedDB, no server</div>
+  <ul>
+    <li>Member number saved only as a SHA-256 code; no names</li>
+    <li>Photos kept as 160-pixel thumbnails</li>
+  </ul>
+</div>
+
+<!-- Bottom: loop -->
+<div class="abs loop" style="left:64px; top:690px; width:470px; height:156px;">
+  <div class="lab" style="color:var(--amber);">Back to the farms</div>
+  <p style="font-size:15px; margin-top:4px;">The ranking shows where rust was found. The officer visits those villages first; relay farmers keep checking plots, and each check feeds the same loop.</p>
+  <p class="note" style="margin-top:6px;">It ranks rust already seen; it does not predict outbreaks.</p>
+</div>
+
+<!-- Bottom: before shipping -->
+<div class="abs card ship" style="left:574px; top:690px; width:682px; height:156px;">
+  <div class="lab" style="color:var(--muted);">Before shipping — laptop, open data</div>
+  <div style="display:flex; gap:8px; margin-top:7px; align-items:stretch;">
+    <div class="mini" style="width:232px;">
+      <div class="lab">Open datasets, CC BY 4.0</div>
+      JMuBEN + JMuBEN2 (Kenya), BRACOL (Brazil), RoCoLe (Ecuador); Uganda set for testing only
+    </div>
+    <div style="align-self:center; color:var(--muted);">→</div>
+    <div class="mini" style="width:186px;">
+      <div class="lab">Train and export</div>
+      Train the head; export the backbone to ONNX
+    </div>
+    <div style="align-self:center; color:var(--muted);">→</div>
+    <div class="mini" style="flex:1;">
+      <div class="lab">GitHub Pages</div>
+      Static files; a service worker caches them on the phone
+    </div>
+  </div>
+</div>
+
+<!-- Arrows -->
+<svg class="abs" style="left:0; top:0;" width="1280" height="866" viewBox="0 0 1280 866">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2a2019"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#a8681a"/></marker>
+    <marker id="gm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#685b4e"/></marker>
+  </defs>
+  <g fill="none" stroke="#2a2019" stroke-width="2">
+    <!-- 1 -> 2 -> 3 -> 4 -->
+    <path d="M343,295 L380,295" marker-end="url(#a)"/>
+    <path d="M641,295 L678,295" marker-end="url(#a)"/>
+    <path d="M939,295 L976,295" marker-end="url(#a)"/>
+    <!-- 4 -> 5 -->
+    <path d="M1107,407 L1107,442" marker-end="url(#a)"/>
+    <!-- 5 -> 7 along the bottom -->
+    <path d="M1107,625 L1107,636 L213,636 L213,627" marker-end="url(#a)"/>
+  </g>
+  <g fill="none" stroke="#a8681a" stroke-width="2">
+    <!-- 3 -> 6 (not sure) -->
+    <path d="M840,407 L840,442" marker-end="url(#am)"/>
+    <!-- 4 -> 6 disagree -->
+    <!-- 6 -> 2 updated head -->
+    <path d="M480,442 L480,409" marker-end="url(#am)"/>
+    <!-- loop: 7 -> back to farms -> 1 -->
+    <path d="M150,625 L150,688" marker-end="url(#am)" stroke-width="2.5"/>
+    <path d="M64,768 L38,768 L38,300 L82,300" marker-end="url(#am)" stroke-width="2.5"/>
+  </g>
+  <g fill="none" stroke="#685b4e" stroke-width="2" stroke-dasharray="5 4">
+    <!-- shipping -> phone -->
+    <path d="M1196,688 L1196,662" marker-end="url(#gm)"/>
+  </g>
+  <g font-family="IBM Plex Sans, sans-serif" font-size="13" fill="#2a2019">
+    <text x="1116" y="430">saved</text>
+    <text x="660" y="652" text-anchor="middle" style="paint-order:stroke" stroke="#f6f1e7" stroke-width="6">rust counts per village ("not sure" and disputed photos stay out until the officer labels them)</text>
+    <text x="849" y="430" fill="#a8681a">to the officer</text>
+    <text x="489" y="430" fill="#a8681a">updated head</text>
+    <text x="1186" y="681" fill="#685b4e" text-anchor="end">first load about 36 MB, then offline</text>
+  </g>
+</svg>
+
+</body>
+</html>

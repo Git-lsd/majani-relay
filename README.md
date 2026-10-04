@@ -10,7 +10,7 @@ Live app: https://git-lsd.github.io/majani-relay/ · Code: https://github.com/gi
 
 **New here? Read [Why Majani Relay: the story on one page](docs/WHY.md)** (Noor, the situation in Kenya, the gap, and the pilot).
 
-**Quick links:** [One-page summary (PDF)](docs/Majani_Relay_1-page_report.pdf) · [In short](#short-description) · [Datasets](docs/DATA_CARD.md) · [Download the code (.zip)](https://github.com/Git-lsd/majani-relay/archive/refs/heads/main.zip) · [Our take on localizing AI](#our-take)
+**Quick links:** [One-page summary (PDF)](docs/Majani_Relay_1-page_report.pdf) · [System design](docs/system_design/system_design.png) · [In short](#short-description) · [Datasets](docs/DATA_CARD.md) · [Download the code (.zip)](https://github.com/Git-lsd/majani-relay/archive/refs/heads/main.zip) · [Our take on localizing AI](#our-take)
 
 Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every phone; see [Run it](#run-it)).
 
@@ -22,6 +22,8 @@ Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every
 2. The AI on the phone names the leaf problem or says **"not sure — the officer will look"**. Works offline after the first visit; answers in Swahili, as text and audio.
 3. The extension officer labels the unclear photos and makes the final call. The labels teach the model on the phone.
 4. The co-op screen ranks villages by rust, so the officer knows where to go first.
+
+[![Majani Relay system design: plot visit, AI check, not-sure gate, answer, records, officer queue and on-phone learning, co-op screen](docs/system_design/system_design.png)](docs/system_design/system_design.png)
 
 ### Results at a glance
 
