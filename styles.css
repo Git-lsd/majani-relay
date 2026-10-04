@@ -342,3 +342,26 @@ th { background: transparent; font-weight: 600; color: var(--muted); }
 .relay-step { font-size: .74rem; }
 .relay-step b { font-size: .9rem; }
 .relay { padding: 10px 8px; gap: 2px; }
+
+/* ===================== Shapes: "index card" =====================
+   Square corners, a dark ink rule along the top of each card, small capital labels. Status cards keep their tint,
+   with a thicker rule in the status colour on top. */
+:root { --radius: 2px; }
+.card { border-radius: 2px; border: 1px solid var(--line); border-top: 3px solid var(--fg); box-shadow: none; }
+.card.ok, .card.bad, .card.unsure, .card.warn { border-width: 1px; border-left-width: 1px; border-left-color: var(--line); border-right-color: var(--line); border-bottom-color: var(--line); border-top-width: 6px; }
+.card.ok { border-top-color: var(--ok); }
+.card.bad { border-top-color: var(--bad); }
+.card.unsure { border-top-color: var(--unsure); }
+.card.warn { border-top-color: var(--warn); }
+.relay { border-radius: 2px; border-top: 3px solid var(--fg); }
+.btn, .lang button, .seg button, .sample-row, .toast, .toast button, .link-btn { border-radius: 2px; }
+input[type=text], input[type=search], input:not([type]), textarea, select, .pin-row .pin-input { border-radius: 2px; }
+.thumb, .sample-row img, .review-item .thumb { border-radius: 0; }
+.tag { border-radius: 0; text-transform: uppercase; letter-spacing: .06em; font-size: .66rem; padding: 2px 6px; }
+.chip { border-radius: 2px; text-transform: uppercase; letter-spacing: .05em; font-size: .64rem; padding: 3px 7px; }
+.progress, .progress > div, .bar, .bar > div { border-radius: 0; }
+.table-wrap { border-radius: 2px; border-top: 3px solid var(--fg); }
+.sheet-body { border-radius: 2px 2px 0 0; border-top: 3px solid var(--fg); }
+.sent-box, .confirm-box { border-radius: 2px; border: 1px solid var(--line); border-top: 4px solid var(--unsure); }
+.notice { border-radius: 2px; }
+.label-nonai { text-transform: uppercase; letter-spacing: .05em; font-size: .72rem; }

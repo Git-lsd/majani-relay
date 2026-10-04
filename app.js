@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v22'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v23'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
