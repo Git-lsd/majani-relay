@@ -96,7 +96,7 @@ main { max-width: 640px; margin: 0 auto; padding: 12px 16px; }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .grow { flex: 1 1 0; min-width: 140px; } /* basis 0: long tag rows wrap inside, not below the photo */
 .notice { border-left: 5px solid var(--warn); background: var(--warn-bg); padding: 10px 12px; border-radius: 8px; font-size: .95rem; }
-.label-nonai { display: inline-block; font-size: .8rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: var(--warn); border: 2px solid var(--warn); border-radius: 6px; padding: 1px 6px; }
+.label-nonai { display: inline-block; font-size: .86rem; font-weight: 600; color: var(--muted); }
 
 /* Buttons: big and high contrast */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 10px 18px; border-radius: 12px; border: 2px solid var(--primary); background: var(--primary); color: var(--primary-fg); font: inherit; font-weight: 800; text-decoration: none; cursor: pointer; text-align: center; }
@@ -255,3 +255,16 @@ details.more > summary::before, details.tech > summary::before { content: "▸";
 details.more[open] > summary::before { transform: rotate(90deg); }
 details.more h3 { margin: 12px 0 4px; font-size: 1rem; }
 details.more p { font-size: .9rem; }
+
+/* Co-op table: fixed column widths so the village name gets the most room on a phone */
+.coop-table { table-layout: fixed; }
+.coop-table col.c-village { width: 37%; }
+.coop-table col.c-raw { width: 20%; }
+.coop-table col.c-adj { width: 22%; }
+.coop-table col.c-chance { width: 21%; }
+.coop-table th, .coop-table td { padding: 10px 6px; }
+.coop-table .alert-flag { white-space: normal; }
+.coop-table td:first-child { overflow-wrap: break-word; }
+.coop-table .alert-flag .ic { width: 16px; height: 16px; vertical-align: -2px; }
+.card > details.more:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+.pin-input { max-width: 200px; font-size: 1.6rem; letter-spacing: .5em; text-align: center; -webkit-text-security: disc; }

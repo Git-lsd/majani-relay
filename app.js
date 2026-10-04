@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v18'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v19'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -372,13 +372,14 @@ async function wireAudio(btn, id, textLang, tagsEl) {
 function answerBlock(id) {
   const a = answerText(id);
   const tags = [];
-  if (a.fallback) tags.push(h('span', { class: 'tag warn' }, `${LANG_LABEL[a.lang]} fallback`));
+  if (a.fallback) tags.push(h('span', { class: 'tag warn' }, `Not yet in ${LANG_LABEL[lang]}: shown in ${LANG_LABEL[a.lang]}`));
   if (a.partial) tags.push(h('span', { class: 'tag warn' }, 'Short Kikuyu phrase, rest in Swahili'));
   if (!a.verified) tags.push(h('span', { class: 'tag warn' }, 'Not yet checked by a native speaker'));
   const tagsEl = h('div', { class: 'tags', hidden: !tags.length }, tags);
   const btn = h('button', { class: 'play', type: 'button', disabled: true, title: 'Looking for audio', 'aria-label': 'Looking for audio' }, icon('play'));
   wireAudio(btn, id, a.lang, tagsEl);
-  const fix = h('button', { class: 'link-btn', type: 'button', lang: 'en', onclick: () => openWordingSheet(id) }, 'Wording wrong?');
+  // Reports are for Swahili and Kikuyu wording; the English text is the team's own source text.
+  const fix = a.lang === 'en' ? null : h('button', { class: 'link-btn', type: 'button', lang: 'en', onclick: () => openWordingSheet(id) }, 'Wording wrong?');
   return h('div', { class: 'answer', 'data-answer': id, 'data-text-lang': a.lang },
     h('div', { class: 'txt', lang: HTML_LANG[a.lang] }, h('p', null, a.text), tagsEl, fix),
     btn);
@@ -495,7 +496,7 @@ function openGuide(id) {
   const title = pickLang(g.title);
   const main = title.lang;
   const tagsFor = (l, fallback) => [
-    fallback ? h('span', { class: 'tag warn' }, `${LANG_LABEL[l]} fallback`) : null,
+    fallback ? h('span', { class: 'tag warn' }, `Not yet in ${LANG_LABEL[lang]}: shown in ${LANG_LABEL[l]}`) : null,
     l !== 'en' && !isVerified(g, l) ? h('span', { class: 'tag warn' }, 'Not yet checked by a native speaker') : null,
   ].filter(Boolean);
   const topTags = tagsFor(main, title.fallback);
@@ -509,7 +510,7 @@ function openGuide(id) {
       h('h3', { lang: HTML_LANG[hd.lang] }, hd.text),
       h('p', { lang: HTML_LANG[tx.lang] }, tx.text),
       own.length ? h('div', { class: 'tags' }, own) : null,
-      h('button', { class: 'link-btn', type: 'button', lang: 'en',
+      tx.lang === 'en' ? null : h('button', { class: 'link-btn', type: 'button', lang: 'en',
         onclick: () => openWordingSheet(`guide.${id}.${sec.key}`, { text: tx.text, lang: tx.lang, english, back: () => openGuide(id) }) }, 'Wording wrong?'));
   });
   const srcList = (guides.meta && Array.isArray(guides.meta.sources)) ? guides.meta.sources : [];
@@ -1479,8 +1480,7 @@ function viewSummary() {
     const refer = val === 'yes' && REFER_IDS.includes(id) ? h('p', { class: 'notice' }, 'Tell the officer about this.') : null;
     return h('div', { class: 'q' }, answerBlock(id), seg, refer);
   });
-  const checklist = card('', h('span', { class: 'label-nonai' }, 'Checklist - not AI'),
-    h('h3', { style: 'margin-top:8px' }, 'Things a leaf photo cannot show'),
+  const checklist = card('', h('h3', null, 'Things a leaf photo cannot show'),
     h('p', { class: 'small' }, 'Fixed questions about other causes of low yield. The AI does not use these answers.'), ...qs);
   const farmCard = card('', h('h3', null, 'Farm details'),
     farmBlock(visit.plot.farm, async () => {
@@ -1533,11 +1533,39 @@ function openSamples() {
   s.replaceChildren(h('div', { class: 'sheet-body', role: 'dialog', 'aria-label': 'Sample photos' },
     h('div', { class: 'row' }, h('h3', { class: 'grow', style: 'margin:0' }, 'Sample photos'),
       h('button', { class: 'btn secondary small', type: 'button', onclick: closeSheet }, icon('close'), 'Close')),
-    h('p', { class: 'small' }, 'Public field photos (RoCoLe dataset: Ecuador, robusta coffee). They are not from Kenya. The AI was not trained on these photos, so they are a fair check. The dataset label is shown so you can compare. A visit that uses them is marked "includes sample photos".'),
+    h('p', { class: 'small' }, 'Public field photos (RoCoLe dataset: Ecuador, robusta coffee). They are not from Kenya. The AI was not trained on these photos, so they are a fair check. The dataset label is shown so you can compare. A visit that uses them is marked "sample photos" on the Co-op tab.'),
     rows));
   s.hidden = false;
   s.onclick = (e) => { if (e.target === s) closeSheet(); };
 }
+
+// ----- 8a. Officer PIN (demo). The Officer and Co-op tabs open after the officer PIN; the unlock lasts until the app is
+// reloaded. Simplification (stated on the lock screen and in About): one fixed demo PIN for every phone, checked on the
+// phone. It keeps these screens out of casual reach; it is not real security. A pilot would let each officer set a PIN.
+const OFFICER_PIN = '2026';
+let officerUnlocked = false;
+function officerLock(root, tab) {
+  const input = h('input', { type: 'text', inputmode: 'numeric', pattern: '[0-9]*', maxlength: '4', autocomplete: 'off',
+    class: 'pin-input', 'aria-label': 'Officer PIN' });
+  const msg = h('p', { class: 'small', 'aria-live': 'polite' });
+  const tryOpen = () => {
+    if (input.value.trim() === OFFICER_PIN) { officerUnlocked = true; renderCurrent(); window.scrollTo(0, 0); return; }
+    msg.textContent = 'Wrong PIN. Try again.';
+    input.value = '';
+    input.focus();
+  };
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryOpen(); });
+  input.addEventListener('input', () => { if (input.value.length >= 4) tryOpen(); });
+  root.replaceChildren(card('', h('h2', null, icon('lock'), ' For the extension officer'),
+    h('p', null, tab === 'coop'
+      ? 'The co-op dashboard ranks villages from the plot records on this phone. Enter the officer PIN to open it.'
+      : 'Photo review, plot records and model updates are for the extension officer. Enter the officer PIN to open them.'),
+    h('label', { class: 'field' }, h('span', null, 'Officer PIN'), input),
+    h('button', { class: 'btn block', type: 'button', onclick: tryOpen }, 'Open'),
+    msg,
+    h('p', { class: 'small' }, `Demo PIN: ${OFFICER_PIN}. In a pilot, each officer would set their own PIN.`)));
+}
+function lockOfficer() { officerUnlocked = false; renderCurrent(); toast('Officer screens locked.'); }
 
 // ----- 8b. Officer review
 // Queue: "not sure" photos, spot-check photos and photos the relay farmer disputed, not yet labelled by the officer.
@@ -1569,6 +1597,7 @@ async function setOfficerLabel(p, label) {
 
 async function renderReview() {
   const root = $('#tab-review');
+  if (!officerUnlocked) { officerLock(root, 'review'); return; }
   const [photos, plots] = await Promise.all([DB.all('photos').catch(() => []), DB.all('plots').catch(() => [])]);
   const plotById = new Map(plots.map((pl) => [pl.id, pl]));
   const queue = photos.filter(inQueue).sort((a, b) => a.created - b.created);
@@ -1576,7 +1605,8 @@ async function renderReview() {
   const labelled = photos.filter((p) => classes.includes(p.officer_label) && p.embedding);
   const out = [card('', h('h2', null, 'Officer review'),
     h('p', null, 'Photos the AI was not sure about, photos the relay farmer thinks are something else, plus a random 1 in 10 of the AI\'s answers as a spot check. Tap the correct answer. You make the final call.'),
-    h('p', { class: 'small' }, `${queue.length} waiting · ${photos.filter((p) => p.officer_label).length} reviewed so far.`))];
+    h('p', { class: 'small' }, `${queue.length} waiting · ${photos.filter((p) => p.officer_label).length} reviewed so far.`),
+    h('button', { class: 'btn secondary small', type: 'button', onclick: lockOfficer }, icon('lock'), 'Lock officer screens'))];
   if (!queue.length) out.push(card('', h('p', null, 'No photos waiting.')));
   for (const p of queue) {
     const farm = farmLine((plotById.get(p.plot_id) || {}).farm);
@@ -1672,15 +1702,16 @@ function wordingCard(items) {
     toast('Correction deleted.', { label: 'Undo', fn: async () => { await mergeWordingCorrections([c]); renderReview(); } });
   };
   return card('', h('h3', null, icon('list'), ` Wording corrections (${items.length})`),
-    h('p', { class: 'small' }, 'Wrong or unnatural phrases reported on this phone. The app\'s text does not change by itself: the team reviews these and ships a corrected answer list. They also go out with the model update file above.'),
     list.length
       ? h('ul', { class: 'wc-list' }, list.map((c) => h('li', null,
         h('div', { class: 'small' }, `${c.id} · ${LANG_LABEL[c.lang] || c.lang} · ${WHO[c.who] || c.who || '–'} · ${fmtDate(c.created)}`),
         h('p', { class: 'wc-sugg', lang: HTML_LANG[c.lang] || c.lang }, c.suggestion),
         c.note ? h('p', { class: 'small' }, 'Note: ', c.note) : null,
         h('button', { class: 'btn danger small', type: 'button', onclick: () => del(c) }, icon('trash'), 'Delete'))))
-      : h('p', null, 'None yet. Tap "Wording wrong?" under any sentence to report one.'),
-    h('button', { class: 'btn secondary block', type: 'button', id: 'wc-export', disabled: !items.length, onclick: () => exportWordingCsv(items) }, icon('download'), 'Export corrections (CSV)'));
+      : h('p', null, 'None yet. Tap "Wording wrong?" under any Swahili or Kikuyu sentence to report one.'),
+    h('button', { class: 'btn secondary block', type: 'button', id: 'wc-export', disabled: !items.length, onclick: () => exportWordingCsv(items) }, icon('download'), 'Export corrections (CSV)'),
+    h('details', { class: 'more' }, h('summary', null, 'What happens to these reports'),
+      h('p', { class: 'small' }, 'Wrong or unnatural phrases reported on this phone. The app\'s text does not change by itself: the team reviews these and ships a corrected answer list. They also go out with the model update file above.')));
 }
 
 // CSV with a byte-order mark so Excel reads Swahili and Kikuyu letters (ĩ, ũ) correctly.
@@ -1741,44 +1772,48 @@ function learningCard(labelled) {
         toast('Back to the shipped model. Officer labels are kept.');
         renderReview();
       } }, icon('undo'), 'Reset to shipped model')),
-    h('p', { class: 'small' }, `How it works: the small last layer of the AI is refitted on this phone from the officer's labels (up to ${REFIT_STEPS} steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI's set of familiar photos, and a photo close to one labelled photo counts as familiar, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as ${(Model.shipped ? Model.shipped.D : 1280).toLocaleString('en')} numbers each (about 5 KB per photo as text); no pictures.`));
+    h('details', { class: 'more' }, h('summary', null, 'How the update works'), h('p', { class: 'small' }, `The small last layer of the AI is refitted on this phone from the officer's labels (up to ${REFIT_STEPS} steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI's set of familiar photos, and a photo close to one labelled photo counts as familiar, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as ${(Model.shipped ? Model.shipped.D : 1280).toLocaleString('en')} numbers each (about 5 KB per photo as text); no pictures.`)));
 }
 
 // ----- 8c. Co-op dashboard
 async function renderCoop() {
   const root = $('#tab-coop');
+  if (!officerUnlocked) { officerLock(root, 'coop'); return; }
   let rows = [];
   try { rows = await villageRows(); } catch (e) { /* storage unavailable */ }
   const st = villageStats(rows);
   const P = st.prior;
   const priorMean = P.a / (P.a + P.b);
   const hasDemo = rows.some((r) => r.synthetic);
-  const table = h('div', { class: 'table-wrap' }, h('table', null,
-    h('thead', null, h('tr', null, h('th', null, 'Village'), h('th', null, 'Rust / answered (raw)'), h('th', null, 'Adjusted'), h('th', null, `Chance rate > ${pct(ALERT_RATE)}`))),
+  const table = h('div', { class: 'table-wrap' }, h('table', { class: 'coop-table' },
+    h('colgroup', null, h('col', { class: 'c-village' }), h('col', { class: 'c-raw' }), h('col', { class: 'c-adj' }), h('col', { class: 'c-chance' })),
+    h('thead', null, h('tr', null, h('th', null, 'Village'), h('th', null, 'Rust (raw)'), h('th', null, 'Adjusted'), h('th', null, `Chance > ${pct(ALERT_RATE)}`))),
     h('tbody', null, st.rows.length ? st.rows.map((r) => h('tr', { class: r.alert ? 'alert' : null },
-      h('td', null, r.name, r.synthetic ? h('div', null, h('span', { class: 'tag syn' }, 'synthetic')) : null,
-        r.samples ? h('div', null, h('span', { class: 'tag' }, 'includes sample photos')) : null,
+      h('td', null, r.synthetic ? String(r.name).replace(/\s*\(synthetic\)$/, '') : r.name, // the tag below says "synthetic"
+        r.synthetic ? h('div', null, h('span', { class: 'tag syn' }, 'synthetic')) : null,
+        r.samples ? h('div', null, h('span', { class: 'tag' }, 'sample photos')) : null,
         r.waiting ? h('div', { class: 'small' }, `${r.waiting} waiting for officer`) : null),
       h('td', null, `${r.x} / ${r.n}`, h('div', { class: 'small' }, pct(r.raw))),
       h('td', null, h('b', null, pct(r.adjusted))),
       h('td', null, pctP(r.pAbove), r.alert ? h('div', { class: 'alert-flag' }, icon('flag'), ' Alert') : null)))
       : h('tr', null, h('td', { colspan: 4 }, 'No plot records yet. Save a plot visit, or load the demo villages.')))));
   const explain = P.source === 'fitted'
-    ? `Why "adjusted" differs from "raw": villages with few photos are pulled toward the average of all villages (${pct(priorMean)}); villages with many photos stay close to their own share.`
-    : `Why "adjusted" differs from "raw": villages with few photos are pulled toward a starting guess of ${pct(priorMean)} (used until 3 villages have answered photos); villages with many photos stay close to their own share.`;
+    ? `Villages with few photos are pulled toward the average of all villages (${pct(priorMean)}); villages with many photos stay close to their own share. So 2 rust photos out of 3 do not count as 67%.`
+    : `Villages with few photos are pulled toward a starting guess of ${pct(priorMean)} (used until 3 villages have answered photos); villages with many photos stay close to their own share. So 2 rust photos out of 3 do not count as 67%.`;
   root.replaceChildren(
     card('', h('h2', null, 'Co-op: villages to visit first'),
       h('p', null, `Leaf rust per village, from saved plot visits on this phone. Villages most likely above ${pct(ALERT_RATE)} rust come first. This ranks rust already seen in photos; it does not predict outbreaks.`),
       h('p', { class: 'small' }, `Alert when the chance that the rust rate is above ${pct(ALERT_RATE)} is more than ${pct(ALERT_PROB)}. ${plural(rows.length, 'village')}.`)),
     table,
-    h('p', { class: 'notice' }, explain),
-    card('', h('h3', null, 'How the numbers are made'),
+    card('',
+      h('details', { class: 'more' }, h('summary', null, 'Why "adjusted" differs from "raw"'), h('p', null, explain)),
+      h('details', { class: 'more' }, h('summary', null, 'How the numbers are made'),
       h('ul', { class: 'small' },
         h('li', null, 'Answered = photos with an AI answer or an officer label. "Not sure" photos, and photos the relay farmer sent to the officer ("I think it\'s something else"), count only after the officer labels them; an officer label replaces the AI answer. "Different problem" counts as answered, not rust; "skip" is left out.'),
         h('li', null, `Prior: Beta(${P.a.toFixed(2)}, ${P.b.toFixed(2)}), ${P.source === 'fitted' ? `fitted across ${P.k} villages by maximum likelihood (beta-binomial)${P.capped ? ', capped at the weight of 50 photos' : ''}` : 'fallback starting guess, used until 3 villages have answered photos'}; it counts like ${(P.a + P.b).toFixed(1)} photos.`),
-        h('li', null, `Adjusted = posterior mean (Beta-binomial). "Chance rate > ${pct(ALERT_RATE)}" = P(rate > ${pct(ALERT_RATE)}), computed from the posterior Beta distribution.`),
+        h('li', null, `Adjusted = posterior mean (Beta-binomial). "Chance > ${pct(ALERT_RATE)}" = P(rust rate > ${pct(ALERT_RATE)}), computed from the posterior Beta distribution.`),
         h('li', null, 'Simplification: photos are counted as independent. Leaves from the same tree or farm are alike, so the true uncertainty is larger than shown.'),
-        h('li', null, 'Simplification: the AI\'s answers are used as if correct. AI errors change the counts.'))),
+        h('li', null, 'Simplification: the AI\'s answers are used as if correct. AI errors change the counts.')))),
     h('div', { class: 'stack' },
       hasDemo
         ? h('button', { class: 'btn secondary block', type: 'button', onclick: removeDemo }, icon('trash'), 'Remove demo villages')
@@ -1804,7 +1839,7 @@ function exportCsv(st) {
   const P = st.prior;
   const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const head = ['rank', 'village', 'synthetic', 'includes_sample_photos', 'plots', 'photos_answered', 'rust_photos', 'waiting_for_officer',
-    'raw_share', 'adjusted_share', 'p_rate_above_0_2', 'alert', 'prior_a', 'prior_b', 'prior_source'];
+    'raw_share', 'adjusted_share', 'p_rate_above_' + String(ALERT_RATE).replace('.', '_'), 'alert', 'prior_a', 'prior_b', 'prior_source'];
   const lines = [head.join(',')].concat(st.rows.map((r, i) => [i + 1, r.name, r.synthetic, r.samples, r.plots, r.n, r.x, r.waiting,
     r.raw == null ? '' : r.raw.toFixed(4), r.adjusted == null ? '' : r.adjusted.toFixed(4), r.pAbove == null ? '' : r.pAbove.toFixed(4),
     r.alert, P.a.toFixed(4), P.b.toFixed(4), P.source].map(esc).join(',')));
@@ -1858,34 +1893,10 @@ async function renderAbout() {
         h('li', null, h('span', null, h('b', null, 'Review. '), 'The extension officer labels the unclear photos. The labels teach the AI on this phone.')),
         h('li', null, h('span', null, h('b', null, 'Plan. '), 'The Co-op tab shows which villages to visit first.'))),
       h('p', { class: 'small' }, 'Tip: use "Add to Home Screen" in the browser menu to open the app like any other app.')),
-    card('', h('h2', null, 'Good to know'),
-      h('ul', { class: 'facts' },
-        h('li', null, icon('check'), h('span', null, 'It runs on this phone. No internet is needed after the first visit.')),
-        h('li', null, icon('question'), h('span', null, 'When the AI is not sure, it says so, and the photo goes to the officer.')),
-        h('li', null, icon('officer'), h('span', null, 'The extension officer makes the final call. The app never names a spray, product or dose.')),
-        h('li', null, icon('leaf'), h('span', null, 'It learned from close-up leaf photos (Kenya, Brazil) and photos of leaves on the plant (Ecuador). It has not yet seen Kenyan photos taken the way relay farmers take them; officer labels teach it local leaves.'))),
-      h('details', { class: 'more' }, h('summary', null, 'More: what the AI does and does not do'),
-      h('h3', null, 'What the AI does'),
-      h('ul', { class: 'small' },
-        h('li', null, 'Looks at one photo of the underside of a coffee leaf.'),
-        h('li', null, `Picks one of ${(Model.shipped ? answerClasses() : Object.keys(CLASS_NAMES).filter((c) => c !== 'other')).map(className).join(', ')}, or says "not sure".`),
-        h('li', null, 'Says "not sure" when its best guess is below a confidence line, when the photo looks unlike the photos it learned from' +
-          (toOfficer.length ? ', or when the photo looks like a different problem (one not in the list)' : '') + '. Those photos wait for the officer.'),
-        h('li', null, 'If the relay farmer taps "I think it\'s something else", the photo goes to the officer and counts in the village numbers only after the officer labels it.'),
-        h('li', null, 'Runs on this phone. No internet is needed after the first visit.'),
-        h('li', null, 'Every answer comes from a fixed list of texts. It never writes new text.')),
-      h('h3', null, 'What it does not do'),
-      h('ul', { class: 'small' },
-        h('li', null, 'It does not make the final call. The extension officer does.'),
-        h('li', null, 'It does not name any spray, product or dose.'),
-        h('li', null, 'It does not check berries, roots or the whole farm. Other causes of low yield are in the checklist, which is not AI.'),
-        h('li', null, 'It has not yet seen Kenyan photos taken the way relay farmers take them. It learned from close-up photos of leaf spots (Kenya, Brazil; the Kenyan ones from a farm in Kirinyaga, cropped to the spot) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
-        h('li', null, toOfficer.length
-          ? `It can give only the ${answerClasses().length} answers above. Its "different problem" check learned one pest (red spider mite, from field photos in Ecuador); it sends many such photos to the officer, but it still gives some of them a wrong answer, and other problems outside the list can get a wrong answer too. The officer's 1-in-10 spot check finds such photos, and the officer's "Different problem" label teaches the AI on this phone.`
-          : `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem".`)))),
     card('', h('h2', null, icon('lock'), ' Privacy and your data'),
       h('p', null, 'Plot records, small copies of the leaf photos and officer labels stay on this phone until someone exports them. The app sends nothing anywhere.'),
       h('p', null, 'The member number is saved only as a scrambled code. Short numbers can still be guessed by someone who has this phone.'),
+      h('p', null, `The Officer and Co-op tabs open with the officer PIN (demo PIN: ${OFFICER_PIN}).`),
       h('p', { class: 'small' }, `On this phone now: ${plural(counts.plots, 'plot visit')}, ${plural(counts.photos, 'photo')}, ${plural(counts.labels, 'officer label')}. ${usage}`),
       h('button', { class: 'btn danger block', type: 'button', onclick: deleteAll }, icon('trash'), 'Delete all data on this phone'),
       h('p', { class: 'small' }, 'This removes plot records, photos, officer labels, wording corrections and the local model update. The app itself stays saved so it still works offline.')),
@@ -1894,7 +1905,7 @@ async function renderAbout() {
         h('dt', null, 'Kiswahili'), h('dd', null, 'Answers on screen and as audio'),
         h('dt', null, 'English'), h('dd', null, 'On screen'),
         h('dt', null, 'Gĩkũyũ'), h('dd', null, 'A shorter list of phrases; the rest shows in Swahili')),
-      h('p', { class: 'small' }, 'Wording wrong or unnatural? Tap "Wording wrong?" under any sentence.'),
+      h('p', { class: 'small' }, 'Swahili or Kikuyu wording wrong or unnatural? Tap "Wording wrong?" under the sentence.'),
       h('details', { class: 'more' }, h('summary', null, 'Translation status'),
         ...langStatus(),
         h('p', { class: 'small' }, `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`))),
@@ -1925,8 +1936,28 @@ async function renderAbout() {
         h('li', null, 'The plot card rule (2 or more trees, or 3 or more photos with a possible disease) is a simple fixed rule.'),
         h('li', null, 'The learning loop uses gradient descent with a step-size search; the team\'s Python evaluation uses L-BFGS on the same objective. Results should be close, not identical.'),
         h('li', null, 'Spot checks pick a random 1 in 10 answered photos on this phone.'),
+        h('li', null, `The officer PIN is one fixed demo PIN (${OFFICER_PIN}) for every phone, checked on the phone. It keeps the officer screens out of casual reach; it is not real security.`),
         h('li', null, 'The co-op dashboard treats photos as independent and AI answers as correct.'))),
     ),
+    h('details', { class: 'card tech' }, h('summary', null, 'What the AI can and cannot do'),
+      h('h3', null, 'What it does'),
+      h('ul', { class: 'small' },
+        h('li', null, 'Looks at one photo of the underside of a coffee leaf.'),
+        h('li', null, `Picks one of ${(Model.shipped ? answerClasses() : Object.keys(CLASS_NAMES).filter((c) => c !== 'other')).map(className).join(', ')}, or says "not sure".`),
+        h('li', null, 'Says "not sure" when its best guess is below a confidence line, when the photo looks unlike the photos it learned from' +
+          (toOfficer.length ? ', or when the photo looks like a different problem (one not in the list)' : '') + '. Those photos wait for the officer.'),
+        h('li', null, 'If the relay farmer taps "I think it\'s something else", the photo goes to the officer and counts in the village numbers only after the officer labels it.'),
+        h('li', null, 'Runs on this phone. No internet is needed after the first visit.'),
+        h('li', null, 'Every answer comes from a fixed list of texts. It never writes new text.')),
+      h('h3', null, 'What it does not do'),
+      h('ul', { class: 'small' },
+        h('li', null, 'It does not make the final call. The extension officer does.'),
+        h('li', null, 'It does not name any spray, product or dose.'),
+        h('li', null, 'It does not check berries, roots or the whole farm. Other causes of low yield are in the checklist, which is not AI.'),
+        h('li', null, 'It has not yet seen Kenyan photos taken the way relay farmers take them. It learned from close-up photos of leaf spots (Kenya, Brazil; the Kenyan ones from a farm in Kirinyaga, cropped to the spot) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
+        h('li', null, toOfficer.length
+          ? `It can give only the ${answerClasses().length} answers above. Its "different problem" check learned one pest (red spider mite, from field photos in Ecuador); it sends many such photos to the officer, but it still gives some of them a wrong answer, and other problems outside the list can get a wrong answer too. The officer's 1-in-10 spot check finds such photos, and the officer's "Different problem" label teaches the AI on this phone.`
+          : `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem".`))),
     card('', h('h2', null, 'Credits'),
       h('p', null, 'Made by Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS) for the World Bank Small AI for Development challenge, 2026.'),
       h('ul', { class: 'small' },
@@ -2006,6 +2037,7 @@ async function boot() {
     store.set('lang', lang);
     document.documentElement.lang = HTML_LANG[lang];
     renderCurrent();
+    if (lang === 'kik') toast('Gĩkũyũ: only a few short phrases are written so far. The rest is shown in Swahili.');
   }));
   document.querySelectorAll('.tabbar button').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
   window.addEventListener('online', updateNet);
