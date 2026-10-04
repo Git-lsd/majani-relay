@@ -7,8 +7,13 @@ Writes results/human_baseline.json. Run: ../.venv/bin/python ml/score_baseline.p
 Model, same decision rule as ml/train_eval.py and lib/kahawa-core.js:
   answered = (max softmax(logits / T) >= threshold) and (familiarity distance <= cutoff);
   familiarity distance = 1 - mean of the k largest cosine similarities to the stored reference rows.
-  (a) shipped: model/head.json + model/reference.bin
-  (b) after the demo update: W, b from model/update_demo_50.json, its reference rows added.
+  (a) the SHIPPED model (lab + field photos): model/head.json + model/reference.bin. It was never trained on these 60
+      photos, nor on any identical copy of them (RoCoLe holds some identical images; see ml/train_eval.py).
+  (b) context: the LAB-ONLY model of the new-region simulation: model/head_labonly.json + reference_labonly.bin.
+  (c) context: the lab-only model after its 50-label demo update: W, b from model/update_demo_50_labonly.json, its
+      reference rows added.
+"Right" means the dataset authors' label: every RoCoLe photo is labelled healthy or rust (level 1 to 4) by the
+dataset authors; "named rust correctly" = the answer "rust" on a photo they labelled rust.
 The model uses the stored embeddings of the original photos (data_work/embeddings.npz, the same numbers as all
 other results). People saw 900 px copies; as a check, the ONNX backbone is also run on those copies.
 """
@@ -62,7 +67,7 @@ def score(ans, key):
 
 
 def load_labellers(key, set_name):
-    files = sorted(glob.glob(os.path.join(SAVED, '*.json')))
+    files = sorted(p for p in glob.glob(os.path.join(SAVED, '*.json')) if os.path.basename(p) != 'aliases.json')
     stamp = lambda p: os.path.basename(p)[-27:-5]  # YYYYmmdd-HHMMSS-micro written by ml/serve.py
     latest, skipped = {}, []
     for p in files:
@@ -95,51 +100,81 @@ def load_labellers(key, set_name):
     return out, skipped
 
 
+MODELS = [  # (key, what it is, head file, update file or None)
+    ('shipped_v2_lab_field', 'AI as shipped (trained on lab + field photos; never trained on these 60)', 'head.json', None),
+    ('lab_only_as_shipped', 'Context: lab-only model (new-region simulation), no field labels', 'head_labonly.json', None),
+    ('lab_only_after_demo_update_50', 'Context: lab-only model after 50 officer-style field labels (demo update)',
+     'head_labonly.json', 'update_demo_50_labonly.json'),
+]
+
+
+def load_model(head_file, upd_file):
+    """W, b, reference rows and decision settings exactly as the phone would use them."""
+    head = json.load(open(os.path.join(REPO, 'model', head_file)))
+    ref = head['ood']['reference']; n, D = ref['n'], ref['dim']
+    raw = open(os.path.join(REPO, 'model', ref['file']), 'rb').read()
+    assert len(raw) == n * D + 4 * n, f"{ref['file']} does not match {head_file}"
+    R = unit(np.frombuffer(raw[:n * D], np.int8).reshape(n, D).astype(np.float32) * np.frombuffer(raw[n * D:], '<f4')[:, None])
+    m = {'W': np.asarray(head['W']), 'b': np.asarray(head['b']), 'R': R, 'R_added': None, 'classes': head['classes'],
+         'T': head['temperature'], 'thr': head['threshold'], 'cut': head['ood']['cutoff'], 'k': head['ood']['k'],
+         'settings': {'head_file': head_file, 'head_version': head.get('version'), 'threshold': head['threshold'],
+                      'familiarity_cutoff': head['ood']['cutoff'], 'knn': head['ood']['k'], 'temperature': head['temperature'],
+                      'reference_rows': int(n)}}
+    if upd_file:
+        upd = json.load(open(os.path.join(REPO, 'model', upd_file)))
+        assert upd['base_version'] == head['version'], f'{upd_file} was made for another head'
+        Ru = unit(np.array(upd['reference_add']['int8'], np.float32) * np.array(upd['reference_add']['scale'], np.float32)[:, None])
+        m.update(W=np.asarray(upd['W']), b=np.asarray(upd['b']), R=np.vstack([R, Ru]), R_added=Ru)
+        m['settings'].update(update_file=upd_file, update_base_version=upd['base_version'], reference_rows_added_by_update=int(len(Ru)))
+    return m
+
+
+def decide(Zx, m, ids):
+    P = softmax((Zx @ m['W'].T + m['b']) / m['T'], axis=1)
+    d = 1 - np.sort(unit(Zx) @ m['R'].T, axis=1)[:, -m['k']:].mean(1)
+    conf = P.max(1) >= m['thr']; fam = d <= m['cut']
+    pred = [m['classes'][j] for j in P.argmax(1)]
+    ans = {i: (p if c and f else 'not_sure') for i, p, c, f in zip(ids, pred, conf, fam)}
+    forced = {i: p for i, p in zip(ids, pred)}
+    why = Counter('answered' if c and f else ('unfamiliar' if not f else 'low_confidence') for c, f in zip(conf, fam))
+    return ans, forced, dict(why), d, P
+
+
 def model_answers(key):
     rows = list(csv.DictReader(open(os.path.join(RES, 'index.csv'))))
     E = np.load(os.path.join(WORK, 'embeddings.npz'))['E']
     st = np.load(os.path.join(WORK, 'standardisation.npz'))
+    p_lab = os.path.join(WORK, 'standardisation_labonly.npz')
+    if os.path.exists(p_lab):  # both heads use the one standardisation baked into backbone.onnx
+        assert all(np.array_equal(st[k], np.load(p_lab)[k]) for k in ('mu', 'sd'))
     ids = list(key)
     for i in ids:  # the key's rows must still be the same photos
         assert os.path.basename(rows[key[i]['index_row']]['path']) == key[i]['original_file'], i
     Z = (E[[key[i]['index_row'] for i in ids]] - st['mu']) / st['sd']
-    head = json.load(open(os.path.join(REPO, 'model', 'head.json')))
-    ref = head['ood']['reference']; n, D = ref['n'], ref['dim']
-    raw = open(os.path.join(REPO, 'model', ref['file']), 'rb').read()
-    R = unit(np.frombuffer(raw[:n * D], np.int8).reshape(n, D).astype(np.float32) * np.frombuffer(raw[n * D:n * D + 4 * n], '<f4')[:, None])
-    upd = json.load(open(os.path.join(REPO, 'model', 'update_demo_50.json')))
-    Ru = unit(np.array(upd['reference_add']['int8'], np.float32) * np.array(upd['reference_add']['scale'], np.float32)[:, None])
-    classes = head['classes']; T, thr, cut, k = head['temperature'], head['threshold'], head['ood']['cutoff'], head['ood']['k']
-
-    def decide(Zx, W, b, Rx):
-        P = softmax((Zx @ np.asarray(W).T + np.asarray(b)) / T, axis=1)
-        d = 1 - np.sort(unit(Zx) @ Rx.T, axis=1)[:, -k:].mean(1)
-        conf = P.max(1) >= thr; fam = d <= cut
-        pred = [classes[j] for j in P.argmax(1)]
-        ans = {i: (p if c and f else 'not_sure') for i, p, c, f in zip(ids, pred, conf, fam)}
-        forced = {i: p for i, p in zip(ids, pred)}
-        why = Counter('answered' if c and f else ('unfamiliar' if not f else 'low_confidence') for c, f in zip(conf, fam))
-        return ans, forced, dict(why), d, P
-
-    Rall = np.vstack([R, Ru])
-    shipped = decide(Z, head['W'], head['b'], R)
-    updated = decide(Z, upd['W'], upd['b'], Rall)
-    res = {}
-    for name, (ans, forced, why, d, P) in [('shipped', shipped), ('after_demo_update_50', updated)]:
+    met = json.load(open(os.path.join(RES, 'metrics.json')))
+    res, settings, loaded = {}, {}, {}
+    for name, what, hf, uf in MODELS:
+        m = load_model(hf, uf); loaded[name] = m
+        ans, forced, why, d, P = decide(Z, m, ids)
         s = score(ans, key)
         f = score(forced, key)
-        s.update(not_sure_reasons=why, forced_acc_all=f['correct_of_all'], forced_acc_healthy_vs_problem=sum(
+        # photos among the 60 with an identical copy (cosine > 0.98) in what this model learned from
+        if name == 'shipped_v2_lab_field':
+            n_copy = met['shipped']['near_duplicate_check_human_baseline']['n_above_dup_threshold']
+        elif m['R_added'] is not None:
+            n_copy = int(((unit(Z) @ m['R_added'].T).max(1) > 0.98).sum())
+        else:
+            n_copy = 0
+        s.update(what=what, not_sure_reasons=why, forced_acc_all=f['correct_of_all'], forced_acc_healthy_vs_problem=sum(
             (forced[i] == 'healthy') == (key[i]['truth'] == 'healthy') for i in key) / len(key),
-                 median_familiarity_distance=float(np.median(d)), mean_confidence=float(P.max(1).mean()))
-        res[name] = (s, ans)
-    settings = {'threshold': thr, 'familiarity_cutoff': cut, 'knn': k, 'temperature': T,
-                'reference_rows_shipped': int(n), 'reference_rows_added_by_update': int(len(Ru)),
-                'head_version': head.get('version'), 'update_base_version': upd.get('base_version')}
-    check = resized_copy_check(ids, head, R, Rall, upd, {nm: v[1] for nm, v in res.items()})
+                 median_familiarity_distance=float(np.median(d)), mean_confidence=float(P.max(1).mean()),
+                 photos_with_identical_copy_in_training=n_copy)
+        res[name] = (s, ans); settings[name] = m['settings']
+    check = resized_copy_check(ids, loaded, {nm: v[1] for nm, v in res.items()})
     return res, settings, check
 
 
-def resized_copy_check(ids, head, R, Rall, upd, ans_orig):
+def resized_copy_check(ids, loaded, ans_orig):
     """Run the ONNX backbone on the 900 px copies people saw; count same decisions as on the originals."""
     try:
         import onnxruntime as ort
@@ -157,12 +192,9 @@ def resized_copy_check(ids, head, R, Rall, upd, ans_orig):
         a = np.asarray(im.crop((l, t, l + c, t + c)), np.float32).transpose(2, 0, 1) / 255.0
         return ((a - mean) / std)[None]
     Z = np.concatenate([sess.run(None, {'input': prep(os.path.join(BASE, 'photos', i + '.jpg'))})[0] for i in ids])
-    classes = head['classes']; T, thr, cut, k = head['temperature'], head['threshold'], head['ood']['cutoff'], head['ood']['k']
     out = {}
-    for name, W, b, Rx in [('shipped', head['W'], head['b'], R), ('after_demo_update_50', upd['W'], upd['b'], Rall)]:
-        P = softmax((Z @ np.asarray(W).T + np.asarray(b)) / T, axis=1)
-        d = 1 - np.sort(unit(Z) @ Rx.T, axis=1)[:, -k:].mean(1)
-        a = {i: (classes[j] if (p >= thr and dd <= cut) else 'not_sure') for i, j, p, dd in zip(ids, P.argmax(1), P.max(1), d)}
+    for name, m in loaded.items():
+        a = decide(Z, m, ids)[0]
         out[name] = {'same_decision_as_original': int(sum(a[i] == ans_orig[name][i] for i in ids)), 'n': len(ids)}
     return out
 
@@ -192,6 +224,8 @@ def main():
            'labellers': [s for s, _ in labellers], 'labeller_agreement': agree,
            'model': {k: v[0] for k, v in model.items()}, 'model_settings': settings, 'model_on_resized_copies': check,
            'definitions': {
+               'truth': "the dataset authors' label for each photo (RoCoLe: healthy, or rust level 1 to 4); 'named rust "
+                        "correctly' = the answer 'rust' on a photo the authors labelled rust",
                'share_answered': 'photos not answered "not sure", out of all photos',
                'acc_answered': 'exact class correct (healthy or rust), out of answered photos',
                'acc_healthy_vs_problem_answered': 'healthy vs any problem correct, out of answered photos',
@@ -201,7 +235,11 @@ def main():
            'notes': ['Labellers are team members who are not farmers or plant experts, standing in for relay farmers.',
                      'The labellers may have known that this dataset holds only healthy and rust leaves; a relay farmer would not.',
                      '60 photos from one dataset (RoCoLe: Ecuador, robusta, on-plant); one-evening test.',
-                     'The 50 photos inside the demo update and the 7 demo samples are excluded from the 60.']}
+                     'The shipped model was trained on other RoCoLe photos (never these 60, nor identical copies of them); '
+                     'it has seen field photos of healthy and rust leaves only.',
+                     'The 50 photos inside the lab-only demo update and the 7 demo samples are excluded from the 60; '
+                     'RoCoLe holds identical copies of some images, and one of the 60 is an identical copy of a photo '
+                     'in the demo update (see photos_with_identical_copy_in_training).']}
     if skipped:
         out['skipped_files'] = skipped
     json.dump(out, open(os.path.join(RES, 'human_baseline.json'), 'w'), indent=1)
@@ -210,7 +248,7 @@ def main():
     for s in out['labellers']:
         print(f"{s['name'][:28]:28s} {pct(s['share_answered']):>8s}  {pct(s['acc_answered']):>12s}  {pct(s['acc_healthy_vs_problem_answered']):>23s}  {pct(s['correct_of_all']):>11s}  {s['median_seconds']:.1f}")
     for nm, s in out['model'].items():
-        print(f"{'model ' + nm:28s} {pct(s['share_answered']):>8s}  {pct(s['acc_answered']):>12s}  {pct(s['acc_healthy_vs_problem_answered']):>23s}  {pct(s['correct_of_all']):>11s}  -")
+        print(f"{nm[:28]:28s} {pct(s['share_answered']):>8s}  {pct(s['acc_answered']):>12s}  {pct(s['acc_healthy_vs_problem_answered']):>23s}  {pct(s['correct_of_all']):>11s}  -")
     print('model on resized copies:', check)
     print('wrote', os.path.join(RES, 'human_baseline.json'))
 

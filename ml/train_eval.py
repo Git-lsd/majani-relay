@@ -1,14 +1,34 @@
-"""Train the small head, calibrate it, and evaluate it on sealed field photos.
+"""Train, calibrate and evaluate the heads the phone runs, and run the experiments behind results/RESULTS.md.
 
-Also runs the two experiments that make the entry more than a leaf classifier:
-  (1) learning loop: how much do a few officer-labelled local photos help (random vs uncertain-first)?
-  (2) co-op early warning: raw village shares vs empirical-Bayes shrunk shares (simulation that uses
-      the error rates measured on the field test; labelled synthetic).
-Writes results/*.json and model/head.json, and re-exports model/backbone.onnx with the embedding
-standardisation baked in (so the web app and this script use identical numbers).
+One frozen backbone (MobileNetV3, model/backbone.onnx) and two small heads on top of it:
+
+  SHIPPED model (head v2: model/head.json + model/reference.bin)
+      Trained on lab photos (JMuBEN/JMuBEN2 sample + half of BRACOL) PLUS RoCoLe field photos (healthy, rust).
+      Never trained on: the 60 human-baseline photos (baseline/key.json), the 7 demo samples (samples/manifest.json)
+      and the red-spider-mite photos (a pest outside the five classes).
+      Temperature, confidence threshold and familiarity cutoff are chosen on out-of-fold data only: the BRACOL
+      calibration half plus out-of-fold predictions for the training field photos (5-fold cross-validation).
+      Headline field numbers: 5-fold cross-validation over the training field photos with the full decision rule
+      (head + threshold + familiarity check, reference built from that fold's training rows only, threshold values
+      chosen without the scored fold). Held-out checks: the 60 human-baseline photos, the 7 demo samples, mite photos.
+
+  LAB-ONLY model (model/head_labonly.json + reference_labonly.bin + update_demo_50_labonly.json)
+      Trained on lab photos only. Kept as a NEW-REGION SIMULATION: a model meeting a photo style it has never seen
+      (field photos stand in for a new region). It gives the motivating finding (confidently wrong on field photos,
+      caught by the familiarity check) and the learning-loop experiment (a few officer labels adapt the model to the
+      new photo style). It is also the base model of ml/starter_kit.py.
+
+  Co-op village ranking: simulation on synthetic villages, using the SHIPPED model's cross-validated error rates.
+
+Standardisation: the embedding mean/sd baked into model/backbone.onnx are computed on the LAB training rows and are
+kept unchanged for the shipped model, so backbone.onnx, every saved embedding and the lab-only files stay valid with
+one backbone. The backbone is re-exported only if mu/sd ever change (pass --export-backbone to force it).
+
+Writes results/metrics.json, results/limits.json and the model files above; removes model/update_demo_50.json
+(it adapts the lab-only head; its copy for the starter kit is model/update_demo_50_labonly.json).
 Run: ../.venv/bin/python ml/train_eval.py
 """
-import os, json, csv
+import os, sys, json, csv
 import numpy as np
 from scipy.optimize import minimize_scalar
 from scipy.special import softmax, logsumexp
@@ -21,11 +41,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 WORK = os.path.join(os.path.dirname(REPO), 'data_work')
 RES = os.path.join(REPO, 'results')
+MODEL = os.path.join(REPO, 'model')
 CLASSES = ['healthy', 'rust', 'miner', 'cercospora', 'phoma']
 CI = {c: i for i, c in enumerate(CLASSES)}
 TARGET_ACC = 0.90      # threshold chosen so answered accuracy on calibration photos >= 90%
-OOD_PCT = 97.5         # centroid-distance cutoff = 97.5th percentile on calibration photos
-RNG = np.random.default_rng(0)
+OOD_PCT = 97.5         # (unused) former centroid-distance cutoff
+FAMILIAR_PCT = 95      # familiarity cutoff = 95th percentile of calibration distances
+RNG = np.random.default_rng(0)   # lab-only split and reference draw (order of use kept, so lab-only numbers are stable)
+SHIP_FOLDS = 5
+SHIP_REF_FIELD_PER_CLASS = 200   # field rows added to the shipped familiarity reference, per class (healthy, rust)
+SHIP_C_GRID = [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0]
+DUP_COS = 0.98                   # embeddings this similar are treated as copies of one photo (RoCoLe has identical images)
 
 
 def load():
@@ -154,21 +180,61 @@ def fit_local_only(Z, y):
     return W, b
 
 
-def main():
-    rows, E = load()
-    M, src, lab = split_masks(rows)
-    y = np.array([CI.get(l, -1) for l in lab])
-    mu = E[M['train']].mean(0); sd = E[M['train']].std(0) + 1e-6
-    Z = (E - mu) / sd
-    Zn = unit(Z)
-    out = {'n': {k: int(v.sum()) for k, v in M.items()}, 'n_by_source_label': {},
-           'notes': ['JMuBEN contains rotated/flipped copies of the same leaf, so in_domain_val is optimistic.',
-                     'Calibration (temperature, threshold, familiarity cutoff) uses only the held-out half of BRACOL, '
-                     'a different source from most training photos.',
-                     'Learning-loop pool and test photos both come from RoCoLe (one region of Ecuador); real farms vary more.']}
-    for s_ in np.unique(src):
-        for l in np.unique(lab[src == s_]):
-            out['n_by_source_label'][f'{s_}/{l}'] = int(((src == s_) & (lab == l)).sum())
+def held_out_files():
+    """Original file names never used for training the shipped model: 60 human-baseline photos, 7 demo samples."""
+    key = json.load(open(os.path.join(REPO, 'baseline', 'key.json')))
+    hb = {v['original_file'] for v in key['photos'].values()}
+    assert len(hb) == key['meta']['n'] == 60, 'baseline/key.json should list 60 photos'
+    samples = {s['original_file'] for s in json.load(open(os.path.join(REPO, 'samples', 'manifest.json')))['samples']}
+    return hb, samples
+
+
+def choose_scalars(L, d, yy):
+    """Temperature (NLL), familiarity cutoff (95th percentile of distances) and confidence threshold (smallest t with
+    >= 90% accuracy on the answered photos, at least 20 answered) on one calibration set."""
+    T = float(minimize_scalar(lambda t: nll(L, yy, t), bounds=(0.05, 20), method='bounded').x)
+    P = softmax(L / T, axis=1)
+    cut = float(np.percentile(d, FAMILIAR_PCT))
+    thr = 0.0
+    for t in np.linspace(0.3, 0.99, 70):
+        m = (P.max(1) >= t) & (d <= cut)
+        if m.sum() >= 20 and (P.argmax(1)[m] == yy[m]).mean() >= TARGET_ACC:
+            thr = float(t); break
+    return T, thr, cut
+
+
+def rule_metrics(L, d, yy, T, thr, cut):
+    """Full decision rule on photos with known class (healthy / rust for field photos)."""
+    P = softmax(L / T, axis=1); pred = P.argmax(1)
+    conf = P.max(1) >= thr; fam = d <= cut; ans = conf & fam
+    rust = yy == CI['rust']; hl = yy == CI['healthy']; R_ = CI['rust']
+    nan = float('nan')
+    return {'n': int(len(yy)), 'coverage': float(ans.mean()), 'not_sure': float(1 - ans.mean()),
+            'acc_answered': float((pred[ans] == yy[ans]).mean()) if ans.any() else nan,
+            'acc_all': float((pred == yy).mean()),
+            'acc_not_sure_if_forced': float((pred[~ans] == yy[~ans]).mean()) if (~ans).any() else nan,
+            'hvp_answered': float(((pred[ans] == 0) == (yy[ans] == 0)).mean()) if ans.any() else nan,
+            'rust_named': float(((pred == R_) & ans & rust).sum() / max(1, rust.sum())),
+            'healthy_flagged': float(((pred != CI['healthy']) & ans & hl).sum() / max(1, hl.sum())),
+            'sens_answered_rust': float(((pred == R_) & ans & rust).sum() / max(1, (ans & rust).sum())),
+            'fpr_answered_healthy_as_rust': float(((pred == R_) & ans & hl).sum() / max(1, (ans & hl).sum())),
+            'ece': ece(P, yy), 'mean_confidence': float(P.max(1).mean()),
+            'not_sure_low_confidence': float((~conf & fam).mean()), 'not_sure_unfamiliar': float((~fam).mean())}
+
+
+def out_of_scope_metrics(L, d, T, thr, cut):
+    """Photos of something outside the five classes (mite): 'not sure' rate and what the answered ones are called."""
+    P = softmax(L / T, axis=1); pred = P.argmax(1)
+    conf = P.max(1) >= thr; fam = d <= cut; ans = conf & fam
+    called = {CLASSES[k]: int(((pred == k) & ans).sum()) for k in range(len(CLASSES)) if ((pred == k) & ans).any()}
+    return {'n': int(len(L)), 'not_sure': float(1 - ans.mean()), 'answered_as': called,
+            'not_sure_low_confidence': float((~conf & fam).mean()), 'not_sure_unfamiliar': float((~fam).mean())}
+
+
+def lab_only_experiments(rows, Z, Zn, y, M, src):
+    """The lab-only model and the new-region simulation (unchanged method; numbers as published before)."""
+    out = {'what': 'Lab-only model (trained on lab photos only), used as a new-region simulation: field photos play '
+                   'the photos of a region whose style the model has never seen.'}
     tr = M['train']; cal = M['calib']
 
     best = None
@@ -187,7 +253,7 @@ def main():
     ref = np.concatenate([RNG.choice(np.where(tr & (y == k))[0], REF_PER_CLASS, replace=False) for k in range(len(CLASSES))])
     q, sc = quantise_rows(Zn[ref]); Rn = unit(q.astype(np.float32) * sc[:, None])
     fam = lambda Q, R=Rn: knn_dist(Q, R)
-    dc = fam(Zn[cal]); cut = float(np.percentile(dc, 95))
+    dc = fam(Zn[cal]); cut = float(np.percentile(dc, FAMILIAR_PCT))
     thr = 0.0
     for t in np.linspace(0.3, 0.99, 70):
         m = (Pc.max(1) >= t) & (dc <= cut)
@@ -276,32 +342,12 @@ def main():
     if os.path.exists(alt):
         a = json.load(open(alt))
         out['alt_backbone_dinov2_small'] = {'params_millions': 21.6, 'field_acc_no_local_labels': a['acc']['field'],
-                                            'loop_prior_adapt': a['loop']['prior_adapt']}
+                                            'loop_prior_adapt': a['loop']['prior_adapt'],
+                                            'setting': 'lab-only training, then the new-region learning loop'}
 
     cov50, sens50, fpr50 = (float(np.mean([o[i] for o in op50])) for i in range(3))
     out['village_sim'] = village_sim(cov50, sens50, fpr50)
-    out['village_sim']['operating_point'] = 'lab model + 50 officer labels (learning-loop average)'
-
-    json.dump(out, open(os.path.join(RES, 'metrics.json'), 'w'), indent=1)
-
-    # --- export what the phone runs ---
-    q.tofile(os.path.join(REPO, 'model', 'reference.bin'))
-    with open(os.path.join(REPO, 'model', 'reference.bin'), 'ab') as fh:
-        fh.write(sc.astype('<f4').tobytes())
-    head = {'version': 'v1-' + str(np.datetime64('today')), 'classes': CLASSES, 'embed_dim': int(Z.shape[1]),
-            'W': np.round(W, 6).tolist(), 'b': np.round(b, 6).tolist(), 'temperature': round(T, 5),
-            'threshold': round(thr, 4),
-            'ood': {'metric': 'knn_cosine', 'k': KNN, 'cutoff': round(cut, 5),
-                    'reference': {'file': 'reference.bin', 'n': int(len(ref)), 'dim': int(Z.shape[1]),
-                                  'format': 'n*dim int8 (row-major) followed by n float32 little-endian per-row scales; '
-                                            'row = int8*scale, then L2-normalise. Query: L2-normalise the embedding; '
-                                            'distance = 1 - mean of the k largest cosine similarities.'}},
-            'prior_strength': lam, 'standardised_in_backbone': True,
-            'trained_on': 'JMuBEN+JMuBEN2 (Kenya, Kirinyaga; 1,500 sampled per class) + half of BRACOL (Brazil)',
-            'calibrated_on': 'held-out half of BRACOL',
-            'field_test': {'dataset': 'RoCoLe (Ecuador, robusta, on-plant)', 'coverage': round(out['field']['coverage'], 3),
-                           'acc_all': round(out['field']['acc_all'], 3)}}
-    json.dump(head, open(os.path.join(REPO, 'model', 'head.json'), 'w'))
+    out['village_sim']['operating_point'] = 'lab-only model + 50 officer labels (learning-loop average)'
 
     # demo update: what one officer session (50 labels) would send to other phones; excludes demo sample photos
     r = np.random.default_rng(7)
@@ -310,21 +356,309 @@ def main():
     pick = r.choice(cand, 50, replace=False)
     Wa, ba = adapt(Z[pick], y[pick], W, b, T, lam)
     qa, sa = quantise_rows(Zn[pick])
-    upd = {'kind': 'kahawa-head-update', 'base_version': head['version'], 'n_labels': 50,
+    # limit found: once field photos are familiar, the untaught pest is no longer caught (lab-only + demo update)
+    Ru = unit(qa.astype(np.float32) * sa[:, None]); Rall = np.vstack([Rn, Ru])
+    mite_i = np.where(M['mite'])[0]
+    before = out_of_scope_metrics(logits(Z[mite_i], W, b), fam(Zn[mite_i]), T, thr, cut)
+    after = out_of_scope_metrics(logits(Z[mite_i], Wa, ba), knn_dist(Zn[mite_i], Rall), T, thr, cut)
+    out['mite_after_demo_update_50'] = {'before': before, 'after': after}
+
+    art = dict(W=W, b=b, T=T, thr=thr, cut=cut, lam=lam, ref=ref, q=q, sc=sc, Rn=Rn, C=C,
+               upd=dict(W=Wa, b=ba, q=qa, sc=sa, pick=pick))
+    return out, art
+
+
+def shipped_model(rows, Z, Zn, y, M, lab, lab_art):
+    """Head v2: lab + field training rows; scalars on out-of-fold data; 5-fold CV headline; held-out checks."""
+    name = np.array([os.path.basename(r['path']) for r in rows])
+    hb_files, sample_files = held_out_files()
+    field = np.where(M['field'])[0]
+    hb_idx = field[np.isin(name[field], list(hb_files))]
+    sm_idx = field[np.isin(name[field], list(sample_files))]          # demo samples of healthy / rust leaves
+    sm_all = np.where(np.isin(name, list(sample_files)))[0]            # all 7 demo samples (one is a mite photo)
+    assert len(hb_idx) == 60 and len(sm_all) == 7 and not set(hb_idx) & set(sm_all)
+    lab_tr = np.where(M['train'])[0]; cal = np.where(M['calib'])[0]; mite = np.where(M['mite'])[0]
+    # RoCoLe holds identical copies of some images (some under two labels). Group copies (cosine > DUP_COS), keep every
+    # copy of a held-out photo (human baseline, demo sample, mite) out of training, and keep copies in one CV fold.
+    ro = np.r_[field, mite]; S = Zn[ro] @ Zn[ro].T; np.fill_diagonal(S, -1)
+    parent = np.arange(len(ro))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]; a = parent[a]
+        return a
+    pa, pb = np.where(np.triu(S > DUP_COS, 1))
+    for a_, b_ in zip(pa, pb):
+        parent[find(a_)] = find(b_)
+    group = {int(ro[k]): int(find(k)) for k in range(len(ro))}
+    held_groups = {group[int(i)] for i in np.r_[hb_idx, sm_all, mite]}
+    cand = field[~np.isin(field, np.r_[hb_idx, sm_idx])]
+    dup_held = cand[[group[int(i)] in held_groups for i in cand]]
+    ftr = cand[~np.isin(cand, dup_held)]                         # training field photos
+    dups = {'cosine_threshold': DUP_COS, 'pairs': int(len(pa)),
+            'pairs_with_different_labels': int((lab[ro][pa] != lab[ro][pb]).sum()),
+            'label_pairs': {f'{a_}/{b_}': int(n_) for (a_, b_), n_ in
+                            zip(*np.unique(np.sort(np.c_[lab[ro][pa], lab[ro][pb]], axis=1), axis=0, return_counts=True))},
+            'training_candidates_removed_as_copies_of_held_out': int(len(dup_held))}
+    yf = y[ftr]; yc = y[cal]
+    lab_ref = lab_art['ref']
+
+    # stratified 5-fold assignment over the training field photos; identical copies share a fold
+    rf = np.random.default_rng(2026); fold = np.empty(len(ftr), int)
+    gf = np.array([group[int(i)] for i in ftr])
+    for k in (CI['healthy'], CI['rust']):
+        ug = np.unique(gf[yf == k]); ug = ug[~np.isin(ug, gf[yf != k])] if k == CI['rust'] else ug
+        rf.shuffle(ug); gfold = {g: j % SHIP_FOLDS for j, g in enumerate(ug)}
+        for j in np.where(np.isin(gf, ug))[0]:
+            fold[j] = gfold[gf[j]]
+    rref = np.random.default_rng(2027)
+
+    def reference(field_rows):
+        pick = np.concatenate([rref.choice(field_rows[y[field_rows] == k], SHIP_REF_FIELD_PER_CLASS, replace=False)
+                               for k in (CI['healthy'], CI['rust'])])
+        rr = np.concatenate([lab_ref, pick])
+        q, sc = quantise_rows(Zn[rr])
+        return rr, q, sc, unit(q.astype(np.float32) * sc[:, None])
+
+    # C on calibration NLL: out-of-fold field logits + BRACOL calibration logits (mean of the fold heads)
+    c_scores, heads_by_C = {}, {}
+    for C in SHIP_C_GRID:
+        Lo = np.zeros((len(ftr), len(CLASSES))); Lcal = np.zeros((len(cal), len(CLASSES))); heads = []
+        for f in range(SHIP_FOLDS):
+            trn = np.r_[lab_tr, ftr[fold != f]]
+            W_, b_ = fit_head(Z[trn], y[trn], C)
+            Lo[fold == f] = logits(Z[ftr[fold == f]], W_, b_); Lcal += logits(Z[cal], W_, b_) / SHIP_FOLDS
+            heads.append((W_, b_))
+        c_scores[C] = nll(np.vstack([Lcal, Lo]), np.r_[yc, yf]); heads_by_C[C] = heads
+    C = min(c_scores, key=c_scores.get); heads = heads_by_C[C]
+
+    # out-of-fold predictions and distances (reference from that fold's training rows only)
+    Lo = np.zeros((len(ftr), len(CLASSES))); do = np.zeros(len(ftr)); per_fold = []
+    for f, (W_, b_) in enumerate(heads):
+        te_ = fold == f
+        _, _, _, Rf = reference(ftr[~te_])
+        Lo[te_] = logits(Z[ftr[te_]], W_, b_); do[te_] = knn_dist(Zn[ftr[te_]], Rf)
+        per_fold.append(dict(Lcal=logits(Z[cal], W_, b_), dcal=knn_dist(Zn[cal], Rf),
+                             Lmite=logits(Z[mite], W_, b_), dmite=knn_dist(Zn[mite], Rf)))
+
+    # cross-validated headline: fold f scored with scalars chosen on BRACOL calibration + the OTHER folds' OOF rows
+    cv, cv_mite, cv_scalars, cv_auroc = [], [], [], []
+    for f, pf in enumerate(per_fold):
+        o = fold != f; te_ = fold == f
+        T_, thr_, cut_ = choose_scalars(np.vstack([pf['Lcal'], Lo[o]]), np.r_[pf['dcal'], do[o]], np.r_[yc, yf[o]])
+        cv_scalars.append({'temperature': T_, 'threshold': thr_, 'familiarity_cutoff': cut_})
+        cv.append(rule_metrics(Lo[te_], do[te_], yf[te_], T_, thr_, cut_))
+        cv_mite.append(out_of_scope_metrics(pf['Lmite'], pf['dmite'], T_, thr_, cut_))
+        # can the two 'not sure' signals tell an untaught pest from known field leaves? (mite = positive class)
+        conf_t = softmax(Lo[te_] / T_, axis=1).max(1); conf_m = softmax(pf['Lmite'] / T_, axis=1).max(1)
+        lab01 = np.r_[np.zeros(te_.sum()), np.ones(len(mite))]
+        cv_auroc.append({'confidence': float(roc_auc_score(lab01, -np.r_[conf_t, conf_m])),
+                         'familiarity_distance': float(roc_auc_score(lab01, np.r_[do[te_], pf['dmite']]))})
+    keys = [k for k in cv[0] if isinstance(cv[0][k], float)]
+    cv_sum = {k: float(np.nanmean([c[k] for c in cv])) for k in keys}
+    cv_sum.update({k + '_sd': float(np.nanstd([c[k] for c in cv])) for k in keys})
+    cv_sum['n_per_fold'] = [c['n'] for c in cv]
+    mite_cv = {'not_sure': float(np.mean([m['not_sure'] for m in cv_mite])),
+               'not_sure_sd': float(np.std([m['not_sure'] for m in cv_mite])),
+               'auroc_mite_vs_field': {k: float(np.mean([a[k] for a in cv_auroc])) for k in cv_auroc[0]}}
+
+    # final shipped head: all training rows; scalars on BRACOL calibration + all out-of-fold field rows
+    all_tr = np.r_[lab_tr, ftr]
+    W, b = fit_head(Z[all_tr], y[all_tr], C)
+    ref_rows, q, sc, R = reference(ftr)
+    T, thr, cut = choose_scalars(np.vstack([logits(Z[cal], W, b), Lo]), np.r_[knn_dist(Zn[cal], R), do], np.r_[yc, yf])
+
+    ev = lambda idx: rule_metrics(logits(Z[idx], W, b), knn_dist(Zn[idx], R), y[idx], T, thr, cut)
+    held_out = {'human_baseline_60': ev(hb_idx), 'demo_samples_healthy_rust': ev(sm_idx)}
+    Ps = softmax(logits(Z[sm_all], W, b) / T, axis=1); ds = knn_dist(Zn[sm_all], R)
+    held_out['demo_samples_7'] = [
+        {'original_file': str(name[i]), 'truth': str(lab[i]), 'pred': CLASSES[int(p.argmax())],
+         'confidence': round(float(p.max()), 3), 'distance': round(float(dd), 3),
+         'answered': bool(p.max() >= thr and dd <= cut)} for i, p, dd in zip(sm_all, Ps, ds)]
+    held_out['mite'] = out_of_scope_metrics(logits(Z[mite], W, b), knn_dist(Zn[mite], R), T, thr, cut)
+    held_out['mite']['cv_mean_not_sure'] = mite_cv['not_sure']; held_out['mite']['cv_sd_not_sure'] = mite_cv['not_sure_sd']
+    held_out['mite']['auroc_mite_vs_field_cv'] = mite_cv['auroc_mite_vs_field']
+    # lab-style photos are still handled (calibration half: used only for the three scalars, never for the head)
+    lab_style = {'bracol_calibration_half': rule_metrics(logits(Z[cal], W, b), knn_dist(Zn[cal], R), yc, T, thr, cut),
+                 'jmuben_val_optimistic': rule_metrics(logits(Z[M['val']], W, b), knn_dist(Zn[M['val']], R), y[M['val']], T, thr, cut)}
+    # near-duplicate check: closest training field photo to each held-out human-baseline photo (cosine similarity)
+    sim = (Zn[hb_idx] @ Zn[ftr].T).max(1)
+    dup = {'max_cosine_to_training_field': float(sim.max()), 'median_cosine_to_training_field': float(np.median(sim)),
+           'n_above_dup_threshold': int((sim > DUP_COS).sum())}
+
+    n_tr = {'lab': int(len(lab_tr)), 'field': int(len(ftr)), 'field_healthy': int((yf == CI['healthy']).sum()),
+            'field_rust': int((yf == CI['rust']).sum()), 'total': int(len(all_tr))}
+    out = {'what': 'Shipped model (head v2): lab + field photos. Field numbers are 5-fold cross-validated.',
+           'C': C, 'c_scores_calibration_nll': {str(k): v for k, v in c_scores.items()},
+           'temperature': T, 'threshold': thr, 'familiarity_cutoff': cut, 'knn': KNN,
+           'reference_n': int(len(ref_rows)), 'reference_rows': {'lab': int(len(lab_ref)), 'field': int(len(ref_rows) - len(lab_ref))},
+           'prior_strength': lab_art['lam'], 'n_train': n_tr,
+           'held_out_never_trained': {'human_baseline': 60, 'demo_samples': 7, 'mite': int(len(mite))},
+           'field_cv': {'folds': SHIP_FOLDS, 'summary': cv_sum, 'per_fold': cv, 'scalars_per_fold': cv_scalars,
+                        'mite_per_fold': cv_mite,
+                        'method': 'Stratified 5-fold CV over the training field photos. Each fold: head trained on all lab '
+                                  'training rows + the other 4 folds; familiarity reference = the 1,000 lab rows + 200 '
+                                  'healthy + 200 rust from the other 4 folds (int8, as on the phone); temperature, '
+                                  'threshold and cutoff chosen on the BRACOL calibration half + out-of-fold rows of the '
+                                  'other 4 folds; scored with the full decision rule on the held-out fold.'},
+           'held_out': held_out, 'lab_style': lab_style, 'rocole_identical_copies': dups,
+           'near_duplicate_check_human_baseline': dup}
+    art = dict(W=W, b=b, T=T, thr=thr, cut=cut, q=q, sc=sc, ref_n=int(len(ref_rows)), C=C)
+    return out, art
+
+
+def write_reference(q, sc, path):
+    q.tofile(path)
+    with open(path, 'ab') as fh:
+        fh.write(sc.astype('<f4').tobytes())
+
+
+def head_json(version, W, b, T, thr, cut, ref_file, ref_n, lam, dim, **extra):
+    h = {'version': version, 'classes': CLASSES, 'embed_dim': int(dim),
+         'W': np.round(W, 6).tolist(), 'b': np.round(b, 6).tolist(), 'temperature': round(T, 5),
+         'threshold': round(thr, 4),
+         'ood': {'metric': 'knn_cosine', 'k': KNN, 'cutoff': round(cut, 5),
+                 'reference': {'file': ref_file, 'n': int(ref_n), 'dim': int(dim),
+                               'format': 'n*dim int8 (row-major) followed by n float32 little-endian per-row scales; '
+                                         'row = int8*scale, then L2-normalise. Query: L2-normalise the embedding; '
+                                         'distance = 1 - mean of the k largest cosine similarities.'}},
+         'prior_strength': lam, 'standardised_in_backbone': True}
+    h.update(extra)
+    return h
+
+
+def main():
+    rows, E = load()
+    M, src, lab = split_masks(rows)
+    y = np.array([CI.get(l, -1) for l in lab])
+    # standardisation: lab training rows (kept for the shipped model; see module docstring)
+    mu = E[M['train']].mean(0); sd = E[M['train']].std(0) + 1e-6
+    p_lab = os.path.join(WORK, 'standardisation_labonly.npz')
+    if os.path.exists(p_lab):
+        s0 = np.load(p_lab)
+        assert np.array_equal(s0['mu'], mu) and np.array_equal(s0['sd'], sd), 'lab-only standardisation changed'
+    else:
+        np.savez(p_lab, mu=mu, sd=sd)
+    Z = (E - mu) / sd
+    Zn = unit(Z)
+    out = {'n': {k: int(v.sum()) for k, v in M.items()}, 'n_by_source_label': {},
+           'notes': ['Standardisation: the embedding mean/sd baked into model/backbone.onnx are computed on the 7,045 lab '
+                     'training rows and are kept unchanged for the shipped lab+field model, so backbone.onnx, every saved '
+                     'embedding and the lab-only files work with the same backbone.',
+                     'Shipped model: the RoCoLe copy has no plant IDs, so leaves of one plant can sit in both a training '
+                     'and a test fold of the cross-validation; the cross-validated field numbers may be optimistic. '
+                     'The 60 human-baseline photos are a second check that was never trained on.',
+                     'All field photos (training and test) are Ecuadorian robusta from one dataset (RoCoLe); no photo '
+                     'comes from Kenyan farms.',
+                     'Shipped model: temperature, threshold and familiarity cutoff are chosen on the BRACOL calibration '
+                     'half plus out-of-fold field predictions; in the cross-validation each fold is scored with values '
+                     'chosen without that fold.',
+                     'Shipped model: prior_strength (how hard the on-phone learning step pulls toward the shipped head) '
+                     'is the value chosen in the lab-only new-region simulation; no held-out new-region photos exist '
+                     'to tune it for the shipped head.',
+                     'Lab-only model: JMuBEN contains rotated/flipped copies of the same leaf, so in_domain_val is optimistic.',
+                     'Lab-only model: calibration (temperature, threshold, familiarity cutoff) uses only the held-out half '
+                     'of BRACOL, a different source from most training photos.',
+                     'Lab-only learning loop: pool and test photos both come from RoCoLe (one region of Ecuador); real '
+                     'farms vary more.']}
+    for s_ in np.unique(src):
+        for l in np.unique(lab[src == s_]):
+            out['n_by_source_label'][f'{s_}/{l}'] = int(((src == s_) & (lab == l)).sum())
+
+    lab_out, la = lab_only_experiments(rows, Z, Zn, y, M, src)
+    ship_out, sa = shipped_model(rows, Z, Zn, y, M, lab, la)
+    out['shipped'] = ship_out
+    out['lab_only_new_region_simulation'] = lab_out
+    s = ship_out['field_cv']['summary']
+    out['village_sim'] = village_sim(s['coverage'], s['sens_answered_rust'], s['fpr_answered_healthy_as_rust'])
+    out['village_sim']['operating_point'] = 'shipped model (lab + field), 5-fold cross-validated on field photos'
+    json.dump(out, open(os.path.join(RES, 'metrics.json'), 'w'), indent=1)
+
+    # limits.json: the out-of-scope pest, for both models
+    lm = lab_out['mite_after_demo_update_50']; sm = ship_out['held_out']['mite']
+    lim = {'out_of_scope_pest_after_50_labels': {
+               'model': 'lab-only model + the 50-label demo update (new-region simulation)',
+               'dataset': f"RoCoLe red spider mite ({lm['after']['n']} photos)",
+               'not_sure_before': round(lm['before']['not_sure'], 3), 'not_sure_after_50': round(lm['after']['not_sure'], 3),
+               'answered_as_after_50': lm['after']['answered_as']},
+           'out_of_scope_pest_shipped_model': {
+               'model': 'shipped model (lab + field)', 'dataset': f"RoCoLe red spider mite ({sm['n']} photos, never trained on)",
+               'not_sure': round(sm['not_sure'], 3), 'answered_as': sm['answered_as'],
+               'not_sure_cv_mean': round(sm['cv_mean_not_sure'], 3),
+               'auroc_mite_vs_field_cv': {k: round(v, 3) for k, v in sm['auroc_mite_vs_field_cv'].items()}},
+           'meaning': 'Once field photos are familiar, the familiarity check no longer catches a pest the model was never '
+                      'taught: those photos look like the field photos it knows. Most answered mite photos are still '
+                      'called a problem; the rest are called healthy.',
+           'mitigations': [
+               'Officer review screen offers "different problem / not in list"; those photos stay in the not-sure lane for similar photos.',
+               'Spot-check: 1 in 10 answered photos is also queued for the officer, so errors and drift are seen.',
+               'Plot card never says a plot is disease-free; the checklist covers what photos cannot see.'],
+           'plan': ['Collect officer-labelled field photos of look-alike problems (pests, brown eye spot, nutrient '
+                    'deficiency) through the "different problem" label during a pilot and add an "other problem" class.',
+                    'Test that class on the mite photos (never trained on) before shipping it.']}
+    json.dump(lim, open(os.path.join(RES, 'limits.json'), 'w'), indent=1)
+
+    # --- export: lab-only files (starter kit, new-region simulation) ---
+    today = str(np.datetime64('today'))
+    write_reference(la['q'], la['sc'], os.path.join(MODEL, 'reference_labonly.bin'))
+    hl = head_json('v1-' + today, la['W'], la['b'], la['T'], la['thr'], la['cut'], 'reference_labonly.bin',
+                   len(la['ref']), la['lam'], Z.shape[1],
+                   role='lab-only base model for the new-region simulation and ml/starter_kit.py (not shipped in the app)',
+                   trained_on='JMuBEN+JMuBEN2 (Kenya, Kirinyaga; 1,500 sampled per class) + half of BRACOL (Brazil)',
+                   calibrated_on='held-out half of BRACOL',
+                   field_test={'dataset': 'RoCoLe (Ecuador, robusta, on-plant)', 'coverage': round(lab_out['field']['coverage'], 3),
+                               'acc_all': round(lab_out['field']['acc_all'], 3)})
+    json.dump(hl, open(os.path.join(MODEL, 'head_labonly.json'), 'w'))
+    u = la['upd']
+    upd = {'kind': 'kahawa-head-update', 'base_version': hl['version'], 'base_head': 'head_labonly.json', 'n_labels': 50,
            'source': 'DEMO: 50 RoCoLe field photos labelled by the dataset authors, standing in for an officer session',
-           'W': np.round(Wa, 6).tolist(), 'b': np.round(ba, 6).tolist(),
-           'reference_add': {'int8': qa.astype(int).tolist(), 'scale': sa.tolist()},
-           'labels': [CLASSES[int(y[i])] for i in pick]}
-    json.dump(upd, open(os.path.join(REPO, 'model', 'update_demo_50.json'), 'w'))
-    np.savez(os.path.join(WORK, 'standardisation.npz'), mu=mu, sd=sd)
-    export_backbone_with_standardisation(mu, sd)
-    print(json.dumps({k: out[k] for k in ['n', 'C', 'temperature', 'threshold', 'familiarity_cutoff']}, indent=1))
+           'W': np.round(u['W'], 6).tolist(), 'b': np.round(u['b'], 6).tolist(),
+           'reference_add': {'int8': u['q'].astype(int).tolist(), 'scale': u['sc'].tolist()},
+           'labels': [CLASSES[int(y[i])] for i in u['pick']]}
+    json.dump(upd, open(os.path.join(MODEL, 'update_demo_50_labonly.json'), 'w'))
+    old_upd = os.path.join(MODEL, 'update_demo_50.json')
+    if os.path.exists(old_upd):  # it adapts the lab-only head; the app would reject it against the shipped head
+        os.remove(old_upd)
+
+    # --- export: what the phone runs (shipped model) ---
+    write_reference(sa['q'], sa['sc'], os.path.join(MODEL, 'reference.bin'))
+    cv = ship_out['field_cv']['summary']; nt = ship_out['n_train']
+    head = head_json(f'v2-{today}-lab+field', sa['W'], sa['b'], sa['T'], sa['thr'], sa['cut'], 'reference.bin',
+                     sa['ref_n'], la['lam'], Z.shape[1],
+                     trained_on=f"JMuBEN+JMuBEN2 (Kenya, Kirinyaga; 1,500 sampled per class) + half of BRACOL (Brazil) "
+                                f"+ {nt['field']} RoCoLe field photos (Ecuador, robusta, on-plant; {nt['field_healthy']} healthy, "
+                                f"{nt['field_rust']} rust). Not trained on: 60 human-baseline photos, 7 demo samples, mite photos.",
+                     calibrated_on='held-out half of BRACOL + out-of-fold predictions for the training field photos (5-fold)',
+                     field_test={'dataset': 'RoCoLe (Ecuador, robusta, on-plant)', 'method': '5-fold cross-validation',
+                                 'coverage': round(cv['coverage'], 3), 'acc_answered': round(cv['acc_answered'], 3),
+                                 'acc_all': round(cv['acc_all'], 3)},
+                     standardisation='lab training rows (same as head_labonly.json)')
+    json.dump(head, open(os.path.join(MODEL, 'head.json'), 'w'))
+
+    p_std = os.path.join(WORK, 'standardisation.npz')
+    same = os.path.exists(p_std) and all(np.array_equal(np.load(p_std)[k], v) for k, v in (('mu', mu), ('sd', sd)))
+    if not same or '--export-backbone' in sys.argv:
+        np.savez(p_std, mu=mu, sd=sd)
+        export_backbone_with_standardisation(mu, sd)
+        print('backbone.onnx re-exported')
+    else:
+        print('standardisation unchanged: backbone.onnx left as is')
+
+    print('SHIPPED C', ship_out['C'], 'T', round(ship_out['temperature'], 3), 'thr', ship_out['threshold'],
+          'cut', round(ship_out['familiarity_cutoff'], 4), 'n_train', nt)
+    print('CV', json.dumps({k: round(v, 3) for k, v in cv.items() if isinstance(v, float)}))
+    for k, v in ship_out['held_out'].items():
+        print(k, v if isinstance(v, list) else {kk: (round(vv, 3) if isinstance(vv, float) else vv) for kk, vv in v.items()})
+    print('lab style', {k: round(v['acc_all'], 3) for k, v in ship_out['lab_style'].items()})
+    print('near-dup', ship_out['near_duplicate_check_human_baseline'])
+    print('LAB-ONLY', {k: lab_out[k] for k in ['C', 'temperature', 'threshold', 'familiarity_cutoff']})
     for k in ['in_domain_val', 'in_domain_calib', 'field']:
-        print(k, {kk: out[k][kk] for kk in ['n', 'acc_all', 'coverage', 'acc_answered', 'acc_healthy_vs_problem', 'mean_confidence']})
-    print('mite', out['mite']); print('ood auroc', out['ood_auroc_field_vs_heldout'])
-    print('cross', out['cross_source_jmuben_to_bracol_acc'])
-    print('loop', json.dumps(out['learning_loop']['curves']), 'lambda', lam, lam_scores)
-    print('village', json.dumps(out['village_sim']))
+        print(k, {kk: lab_out[k][kk] for kk in ['n', 'acc_all', 'coverage', 'acc_answered', 'acc_healthy_vs_problem', 'mean_confidence']})
+    print('mite', lab_out['mite']); print('ood auroc', lab_out['ood_auroc_field_vs_heldout'])
+    print('loop', json.dumps(lab_out['learning_loop']['curves']), 'lambda', lab_out['learning_loop']['lambda'])
+    print('mite after demo update', lab_out['mite_after_demo_update_50'])
+    print('village (shipped)', json.dumps(out['village_sim']))
+    print('village (lab-only +50)', json.dumps(lab_out['village_sim']))
 
 
 def fit_beta_binomial(x, a):

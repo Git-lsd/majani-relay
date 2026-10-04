@@ -4,7 +4,7 @@
      the background when online, so the next visit gets updates. The backbone, the wasm runtime,
      photos and audio are only re-downloaded when VERSION changes.
    - Bump VERSION whenever backbone.onnx, audio or the vendor files change (safest: on every deploy). */
-const VERSION = 'kahawa-v11';
+const VERSION = 'kahawa-v12';
 
 // Files the app cannot work without. Install fails (and the page falls back to the network) if one is missing.
 const CORE = [
@@ -16,7 +16,7 @@ const CORE = [
   'model/backbone.onnx', 'model/head.json', 'model/backbone_meta.json',
 ];
 // Files that may not exist yet (written by other team members). Cached if present.
-const OPTIONAL = ['answers.json', 'samples/manifest.json', 'model/update_demo_50.json'];
+const OPTIONAL = ['answers.json', 'samples/manifest.json'];
 // Answer ids from SPEC.md; audio/<lang>/<id>.m4a is cached for each one that exists.
 const ANSWER_IDS = ['result_healthy', 'result_rust', 'result_miner', 'result_cercospora', 'result_phoma',
   'result_not_sure', 'retake_photo', 'action_healthy', 'action_rust', 'action_miner', 'action_cercospora',

@@ -4,7 +4,7 @@
   ../.venv/bin/python baseline/build_set.py --candidates # contact sheets of card candidates (to scratch)
 
 Photo set: 60 RoCoLe field photos (30 healthy, 30 rust split across rust levels 1-4 in proportion to the
-pool), seeded. It excludes the 50 photos inside model/update_demo_50.json and the 7 demo samples, so the
+pool), seeded. It excludes the 50 photos inside model/update_demo_50_labonly.json and the 7 demo samples, so the
 model 'after the demo update' is scored on photos it never saw. The update file stores only embeddings,
 so the 50 rows are recomputed with the same selection as ml/train_eval.py and checked against the file.
 Photos are resized to max 900 px (JPEG q85, no EXIF) and named p01..p60 in shuffled order, so the name
@@ -63,14 +63,14 @@ def load_rows():
 
 
 def demo_update_rows(rows, E):
-    """Re-run the 'demo update' selection of ml/train_eval.py and check it against model/update_demo_50.json."""
+    """Re-run the 'demo update' selection of ml/train_eval.py and check it against model/update_demo_50_labonly.json."""
     src = np.array([r['source'] for r in rows]); lab = np.array([r['label'] for r in rows])
     fidx = np.where((src == 'RoCoLe') & np.isin(lab, ['healthy', 'rust']))[0]  # = split_masks()['field']
     sample_files = {s['original_file'] for s in json.load(open(os.path.join(REPO, 'samples', 'manifest.json')))['samples']}
     r = np.random.default_rng(7)
     cand = [i for i in fidx if os.path.basename(rows[i]['path']) not in sample_files]
     pick = r.choice(cand, 50, replace=False)
-    upd = json.load(open(os.path.join(REPO, 'model', 'update_demo_50.json')))
+    upd = json.load(open(os.path.join(REPO, 'model', 'update_demo_50_labonly.json')))
     st = np.load(os.path.join(WORK, 'standardisation.npz'))
     Zn = unit((E[pick] - st['mu']) / st['sd'])
     q = np.array(upd['reference_add']['int8'], np.float32); sc = np.array(upd['reference_add']['scale'], np.float32)

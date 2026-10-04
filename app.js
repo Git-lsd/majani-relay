@@ -69,7 +69,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v11'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v12'; // keep equal to VERSION in sw.js
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
 const WC_KEY = 'wording_corrections'; // meta record: { key, items: [...] }
 const WC_FIELDS = ['id', 'lang', 'shown_text', 'english', 'suggestion', 'who', 'note', 'created', 'app_version', 'head_version'];
@@ -874,7 +874,7 @@ async function updateModelOnPhone() {
   return ad;
 }
 
-// Update file, same format as model/update_demo_50.json (SPEC): adapted W, b and the added reference rows
+// Update file (format in SPEC.md, kind 'kahawa-head-update'): adapted W, b and the added reference rows
 // (L2-normalised embeddings stored as int8 with one scale per row). No photos are included.
 function quantRow(v) {
   let mx = 0;
@@ -1092,11 +1092,16 @@ function reasonText(reason) {
     ? 'This photo looks unlike the photos the AI learned from.'
     : 'The AI\'s best guess was below its confidence line.';
 }
-function truthText(truth) {
+// Dataset label of a sample photo. For a problem outside the AI's classes (the mite sample), say what the
+// right result is and, if the AI answered anyway, how such photos are caught now and the planned fix.
+function truthText(truth, notSure) {
   const t = String(truth).replace(/_/g, ' ');
   const base = String(truth).split('_level')[0];
   const known = Model.shipped && Model.shipped.classes.includes(base);
-  return known ? t : `${t} (not one of the AI's answers: it should say "not sure")`;
+  if (known) return t;
+  if (notSure) return `${t} (not one of the AI's answers, so "not sure" is the right result)`;
+  return `${t}. This problem is not one of the AI's ${Model.shipped ? Model.shipped.C : 5} answers, so the answer above is wrong. ` +
+    'Such photos are found by the officer\'s 1-in-10 spot check and marked "Different problem". The planned fix is an "other problem" class learned from those officer labels.';
 }
 
 function probBars(r) {
@@ -1115,7 +1120,7 @@ function resultCard(r) {
       h('p', null, `Confidence line: ${pct(head ? head.threshold : null)}. Distance from familiar photos: ${r.ood_distance == null ? '–' : r.ood_distance.toFixed(3)} (limit ${head && isFinite(head.cutoff) ? head.cutoff.toFixed(3) : 'none'}).`),
       h('p', null, `Model ${r.head_version}. ${r.ms ? r.ms + ' ms on this phone.' : ''}`),
       h('p', null, 'The square shows the part of the photo the AI looked at.')));
-  const sample = r.sample_truth ? h('p', { class: 'small' }, h('b', null, 'Dataset label: '), truthText(r.sample_truth), ' (RoCoLe sample)') : null;
+  const sample = r.sample_truth ? h('p', { class: 'small' }, h('b', null, 'Dataset label: '), truthText(r.sample_truth, r.not_sure), ' (RoCoLe sample)') : null;
   const where = r.tree ? h('p', { class: 'small' }, `Tree ${r.tree}, leaf ${r.leaf}`) : null;
   if (r.not_sure) {
     return card('unsure', h('div', { class: 'row' }, h('img', { class: 'thumb', src: r.thumb, alt: 'Leaf photo' }),
@@ -1292,7 +1297,7 @@ function openSamples() {
   s.replaceChildren(h('div', { class: 'sheet-body', role: 'dialog', 'aria-label': 'Sample photos' },
     h('div', { class: 'row' }, h('h3', { class: 'grow', style: 'margin:0' }, 'Sample photos'),
       h('button', { class: 'btn secondary small', type: 'button', onclick: closeSheet }, icon('close'), 'Close')),
-    h('p', { class: 'small' }, 'Public field photos (RoCoLe dataset: Ecuador, robusta coffee). They are not from Kenya. The dataset label is shown so you can compare. A visit that uses them is marked "includes sample photos".'),
+    h('p', { class: 'small' }, 'Public field photos (RoCoLe dataset: Ecuador, robusta coffee). They are not from Kenya. The AI was not trained on these photos, so they are a fair check. The dataset label is shown so you can compare. A visit that uses them is marked "includes sample photos".'),
     rows));
   s.hidden = false;
   s.onclick = (e) => { if (e.target === s) closeSheet(); };
@@ -1436,24 +1441,13 @@ function learningCard(labelled) {
         toast(`Update file saved (${(r.size / 1024).toFixed(0)} KB${r.corrections ? `, with ${plural(r.corrections, 'wording correction')}` : ''}).`);
       } }, icon('download'), 'Share this update with other relay farmers'),
       h('label', { class: 'btn secondary block', 'aria-disabled': ready ? null : 'true' }, icon('upload'), 'Load an update from another phone', importInput),
-      h('button', { class: 'btn secondary block', type: 'button', disabled: !ready, onclick: loadDemoUpdate }, icon('grid'), 'Load demo update (50 labels, demo only)'),
       h('button', { class: 'btn danger block', type: 'button', disabled: !ad, onclick: async () => {
         await DB.del('meta', 'adapted_head');
         await applyStoredAdaptedHead();
         toast('Back to the shipped model. Officer labels are kept.');
         renderReview();
       } }, icon('undo'), 'Reset to shipped model')),
-    h('p', { class: 'small' }, 'How it works: the small last layer of the AI is refitted on this phone from the officer\'s labels (200 steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI\'s set of familiar photos, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as 1,280 numbers each (about 5 KB per photo as text); no pictures.'),
-    h('p', { class: 'small' }, 'The demo update was made by the team from 50 RoCoLe field photos (Ecuador, robusta) labelled by the dataset authors, standing in for an officer. It is not from Kenyan farms.'));
-}
-
-async function loadDemoUpdate() {
-  try {
-    const j = await fetchJSON('model/update_demo_50.json');
-    const a = await importUpdateJSON(j, 'demo file: 50 RoCoLe photos labelled by the dataset authors');
-    toast(`Demo update loaded: ${a.version}.`);
-  } catch (e) { toast('Could not load the demo update: ' + e.message); }
-  renderReview();
+    h('p', { class: 'small' }, `How it works: the small last layer of the AI is refitted on this phone from the officer's labels (up to ${REFIT_STEPS} steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI's set of familiar photos, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as ${(Model.shipped ? Model.shipped.D : 1280).toLocaleString('en')} numbers each (about 5 KB per photo as text); no pictures.`));
 }
 
 // ----- 8c. Co-op dashboard
@@ -1541,11 +1535,11 @@ async function renderAbout() {
   const meta = Model.meta || {};
   const kv = (pairs) => h('dl', { class: 'kv' }, pairs.filter(([, v]) => v != null && v !== '').map(([k, v]) => [h('dt', null, k), h('dd', null, String(v))]));
   const known = new Set(['version', 'classes', 'embed_dim', 'W', 'b', 'temperature', 'threshold', 'ood', 'prior_strength', 'notes',
-    'trained_on', 'calibrated_on', 'field_test', 'standardised_in_backbone']);
+    'trained_on', 'calibrated_on', 'field_test', 'standardised_in_backbone', 'standardisation', 'role']);
   const ft = hr.field_test && typeof hr.field_test === 'object' ? hr.field_test : null;
   const ood = hr.ood || {};
   const famText = ood.reference
-    ? `distance to the ${ood.k || 10} most similar of ${ood.reference.n} stored training photos above ${ood.cutoff} means "not sure"`
+    ? `distance to the ${ood.k || 10} most similar of ${Number(ood.reference.n).toLocaleString('en')} stored training photos above ${ood.cutoff} means "not sure"`
     : (ood.cutoff != null ? `distance to the nearest class centre above ${ood.cutoff} means "not sure"` : null);
   const extra = Object.entries(hr).filter(([k, v]) => !known.has(k) && v != null && (typeof v !== 'object' || JSON.stringify(v).length < 400))
     .map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v]);
@@ -1570,7 +1564,8 @@ async function renderAbout() {
         h('li', null, 'It does not make the final call. The extension officer does.'),
         h('li', null, 'It does not name any spray, product or dose.'),
         h('li', null, 'It does not check berries, roots or the whole farm. Other causes of low yield are in the checklist, which is not AI.'),
-        h('li', null, 'It was not trained on photos from this farm. It was trained on lab-style leaf photos, so out of the box it says "not sure" to almost all field photos. It becomes useful as the officer labels local photos.'))),
+        h('li', null, 'It has not yet seen photos from Kenyan farms. It learned from lab leaf photos (Kenya, Brazil) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
+        h('li', null, `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem"; the planned fix is an "other problem" class learned from those officer labels.`))),
     card('', h('h2', null, icon('lock'), ' Privacy and your data'),
       h('p', null, 'Plot records, leaf photos (small 160-pixel copies) and officer labels stay on this phone (browser storage) until someone exports them. Nothing is sent anywhere by the app.'),
       h('p', null, 'The member number is saved only as a scrambled code (SHA-256 hash). Short numbers can still be guessed by someone who has this phone.'),
@@ -1588,7 +1583,10 @@ async function renderAbout() {
         ['"High" confidence from', Model.shipped ? pct(Model.shipped.highCut) : null],
         ['Familiarity check', famText], ['Prior strength (learning loop)', hr.prior_strength],
         ['Trained on', hr.trained_on], ['Calibrated on', hr.calibrated_on],
-        ['Field test', ft ? `${ft.dataset || ''}: answers ${pct(ft.coverage, 1)} of photos out of the box; if forced to answer every photo, ${pct(ft.acc_all, 1)} correct` : null],
+        ['Field test', ft ? `${ft.dataset || ''}${ft.method ? ', ' + ft.method : ''}: answers ${pct(ft.coverage)} of field photos it did not learn from` +
+          (ft.acc_answered != null ? `, ${pct(ft.acc_answered)} of those answers correct` : '') +
+          `; if forced to answer every photo, ${pct(ft.acc_all)} correct` : null],
+        ['Embedding standardisation', hr.standardisation],
         ['Notes', hr.notes], ...extra,
         ['Backbone', meta.backbone ? `${meta.backbone} (frozen, ImageNet weights, ${meta.license || ''})` : null],
         ['Backbone file', meta.onnx_bytes ? `${(meta.onnx_bytes / 1e6).toFixed(1)} MB` : null],
