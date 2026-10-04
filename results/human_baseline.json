@@ -1,0 +1,322 @@
+{
+ "generated_by": "ml/score_baseline.py (do not edit by hand)",
+ "photo_set": {
+  "set": "rocole60-seed2026",
+  "n": 60,
+  "healthy": 30,
+  "rust_by_level": {
+   "rust_level_1": 17,
+   "rust_level_2": 8,
+   "rust_level_3": 3,
+   "rust_level_4": 2
+  },
+  "source": "RoCoLe (Parraga-Alava et al. 2019), Ecuador, robusta, on-plant field photos, CC BY 4.0",
+  "excluded": {
+   "demo_update_50": 50,
+   "demo_samples": 7
+  },
+  "shown_to_people": "resized to max 900 px, JPEG quality 85, one at a time, order fixed per name"
+ },
+ "labellers": [
+  {
+   "n": 60,
+   "n_answered": 58,
+   "share_answered": 0.9666666666666667,
+   "acc_answered": 0.5862068965517241,
+   "acc_healthy_vs_problem_answered": 0.9137931034482759,
+   "correct_of_all": 0.5666666666666667,
+   "answer_counts": {
+    "healthy": 30,
+    "rust": 8,
+    "miner": 3,
+    "cercospora": 13,
+    "phoma": 4,
+    "not_sure": 2
+   },
+   "by_rust_level": {
+    "0": {
+     "label": "healthy",
+     "n": 30,
+     "n_answered": 29,
+     "correct_of_all": 0.9,
+     "acc_answered": 0.9310344827586207,
+     "called_a_problem_of_all": 0.06666666666666667
+    },
+    "1": {
+     "label": "rust level 1",
+     "n": 17,
+     "n_answered": 17,
+     "correct_of_all": 0.29411764705882354,
+     "acc_answered": 0.29411764705882354,
+     "called_a_problem_of_all": 0.8235294117647058
+    },
+    "2": {
+     "label": "rust level 2",
+     "n": 8,
+     "n_answered": 8,
+     "correct_of_all": 0.25,
+     "acc_answered": 0.25,
+     "called_a_problem_of_all": 1.0
+    },
+    "3": {
+     "label": "rust level 3",
+     "n": 3,
+     "n_answered": 2,
+     "correct_of_all": 0.0,
+     "acc_answered": 0.0,
+     "called_a_problem_of_all": 0.6666666666666666
+    },
+    "4": {
+     "label": "rust level 4",
+     "n": 2,
+     "n_answered": 2,
+     "correct_of_all": 0.0,
+     "acc_answered": 0.0,
+     "called_a_problem_of_all": 1.0
+    }
+   },
+   "name": "Team member A",
+   "file": "hidden (alias in use)",
+   "sent_at": "2026-10-04T00:23:42.100Z",
+   "n_labelled": 60,
+   "median_seconds": 2.4,
+   "total_minutes": 9.8,
+   "n_changed_with_back": 0,
+   "device": "laptop/tablet"
+  },
+  {
+   "n": 60,
+   "n_answered": 60,
+   "share_answered": 1.0,
+   "acc_answered": 0.5666666666666667,
+   "acc_healthy_vs_problem_answered": 0.9666666666666667,
+   "correct_of_all": 0.5666666666666667,
+   "answer_counts": {
+    "healthy": 30,
+    "rust": 5,
+    "miner": 3,
+    "cercospora": 19,
+    "phoma": 3
+   },
+   "by_rust_level": {
+    "0": {
+     "label": "healthy",
+     "n": 30,
+     "n_answered": 30,
+     "correct_of_all": 0.9666666666666667,
+     "acc_answered": 0.9666666666666667,
+     "called_a_problem_of_all": 0.03333333333333333
+    },
+    "1": {
+     "label": "rust level 1",
+     "n": 17,
+     "n_answered": 17,
+     "correct_of_all": 0.17647058823529413,
+     "acc_answered": 0.17647058823529413,
+     "called_a_problem_of_all": 0.9411764705882353
+    },
+    "2": {
+     "label": "rust level 2",
+     "n": 8,
+     "n_answered": 8,
+     "correct_of_all": 0.125,
+     "acc_answered": 0.125,
+     "called_a_problem_of_all": 1.0
+    },
+    "3": {
+     "label": "rust level 3",
+     "n": 3,
+     "n_answered": 3,
+     "correct_of_all": 0.0,
+     "acc_answered": 0.0,
+     "called_a_problem_of_all": 1.0
+    },
+    "4": {
+     "label": "rust level 4",
+     "n": 2,
+     "n_answered": 2,
+     "correct_of_all": 0.5,
+     "acc_answered": 0.5,
+     "called_a_problem_of_all": 1.0
+    }
+   },
+   "name": "Team member B",
+   "file": "hidden (alias in use)",
+   "sent_at": "2026-10-04T00:24:11.039Z",
+   "n_labelled": 60,
+   "median_seconds": 2.3499999999999996,
+   "total_minutes": 4.8,
+   "n_changed_with_back": 0,
+   "device": "laptop/tablet"
+  }
+ ],
+ "labeller_agreement": {
+  "Team member A | Team member B": {
+   "same_answer": 0.6,
+   "same_healthy_vs_problem_both_answered": 0.9137931034482759
+  }
+ },
+ "model": {
+  "shipped": {
+   "n": 60,
+   "n_answered": 0,
+   "share_answered": 0.0,
+   "acc_answered": null,
+   "acc_healthy_vs_problem_answered": null,
+   "correct_of_all": 0.0,
+   "answer_counts": {
+    "not_sure": 60
+   },
+   "by_rust_level": {
+    "0": {
+     "label": "healthy",
+     "n": 30,
+     "n_answered": 0,
+     "correct_of_all": 0.0,
+     "acc_answered": null,
+     "called_a_problem_of_all": 0.0
+    },
+    "1": {
+     "label": "rust level 1",
+     "n": 17,
+     "n_answered": 0,
+     "correct_of_all": 0.0,
+     "acc_answered": null,
+     "called_a_problem_of_all": 0.0
+    },
+    "2": {
+     "label": "rust level 2",
+     "n": 8,
+     "n_answered": 0,
+     "correct_of_all": 0.0,
+     "acc_answered": null,
+     "called_a_problem_of_all": 0.0
+    },
+    "3": {
+     "label": "rust level 3",
+     "n": 3,
+     "n_answered": 0,
+     "correct_of_all": 0.0,
+     "acc_answered": null,
+     "called_a_problem_of_all": 0.0
+    },
+    "4": {
+     "label": "rust level 4",
+     "n": 2,
+     "n_answered": 0,
+     "correct_of_all": 0.0,
+     "acc_answered": null,
+     "called_a_problem_of_all": 0.0
+    }
+   },
+   "not_sure_reasons": {
+    "unfamiliar": 60
+   },
+   "forced_acc_all": 0.03333333333333333,
+   "forced_acc_healthy_vs_problem": 0.5,
+   "median_familiarity_distance": 0.6912947297096252,
+   "mean_confidence": 0.8950538317477373
+  },
+  "after_demo_update_50": {
+   "n": 60,
+   "n_answered": 53,
+   "share_answered": 0.8833333333333333,
+   "acc_answered": 0.8867924528301887,
+   "acc_healthy_vs_problem_answered": 0.8867924528301887,
+   "correct_of_all": 0.7833333333333333,
+   "answer_counts": {
+    "healthy": 24,
+    "rust": 29,
+    "not_sure": 7
+   },
+   "by_rust_level": {
+    "0": {
+     "label": "healthy",
+     "n": 30,
+     "n_answered": 28,
+     "correct_of_all": 0.7666666666666667,
+     "acc_answered": 0.8214285714285714,
+     "called_a_problem_of_all": 0.16666666666666666
+    },
+    "1": {
+     "label": "rust level 1",
+     "n": 17,
+     "n_answered": 16,
+     "correct_of_all": 0.8823529411764706,
+     "acc_answered": 0.9375,
+     "called_a_problem_of_all": 0.8823529411764706
+    },
+    "2": {
+     "label": "rust level 2",
+     "n": 8,
+     "n_answered": 7,
+     "correct_of_all": 0.875,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.875
+    },
+    "3": {
+     "label": "rust level 3",
+     "n": 3,
+     "n_answered": 1,
+     "correct_of_all": 0.3333333333333333,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.3333333333333333
+    },
+    "4": {
+     "label": "rust level 4",
+     "n": 2,
+     "n_answered": 1,
+     "correct_of_all": 0.5,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.5
+    }
+   },
+   "not_sure_reasons": {
+    "answered": 53,
+    "unfamiliar": 6,
+    "low_confidence": 1
+   },
+   "forced_acc_all": 0.85,
+   "forced_acc_healthy_vs_problem": 0.85,
+   "median_familiarity_distance": 0.3789138197898865,
+   "mean_confidence": 0.8689642727429364
+  }
+ },
+ "model_settings": {
+  "threshold": 0.53,
+  "familiarity_cutoff": 0.52794,
+  "knn": 10,
+  "temperature": 0.98671,
+  "reference_rows_shipped": 1000,
+  "reference_rows_added_by_update": 50,
+  "head_version": "v1-2026-10-03",
+  "update_base_version": "v1-2026-10-03"
+ },
+ "model_on_resized_copies": {
+  "shipped": {
+   "same_decision_as_original": 60,
+   "n": 60
+  },
+  "after_demo_update_50": {
+   "same_decision_as_original": 58,
+   "n": 60
+  }
+ },
+ "definitions": {
+  "share_answered": "photos not answered \"not sure\", out of all photos",
+  "acc_answered": "exact class correct (healthy or rust), out of answered photos",
+  "acc_healthy_vs_problem_answered": "healthy vs any problem correct, out of answered photos",
+  "correct_of_all": "exact class correct, out of all photos (\"not sure\" counts as not correct)",
+  "by_rust_level": "per true class/level; called_a_problem_of_all = any of the four problems chosen",
+  "median_seconds": "median seconds a photo was on screen with the page visible (all visits added up)"
+ },
+ "notes": [
+  "Labellers are team members who are not farmers or plant experts, standing in for relay farmers.",
+  "The labellers may have known that this dataset holds only healthy and rust leaves; a relay farmer would not.",
+  "60 photos from one dataset (RoCoLe: Ecuador, robusta, on-plant); one-evening test.",
+  "The 50 photos inside the demo update and the 7 demo samples are excluded from the 60."
+ ],
+ "skipped_files": [
+  "aliases.json: photo set None is not 'rocole60-seed2026'"
+ ]
+}

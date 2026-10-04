@@ -83,7 +83,10 @@ def load_labellers(key, set_name):
         ans = {r['id']: r.get('answer') for r in rows}
         secs = [float(r.get('seconds') or 0) for r in rows if r.get('answer')]
         s = score(ans, key)
-        s.update(name=d.get('name'), file=os.path.basename(p), sent_at=d.get('sent_at'),
+        # Public display name: optional alias map in ../data_work/baseline/aliases.json (kept off GitHub).
+        alias_p = os.path.join(os.path.dirname(p), 'aliases.json')
+        aliases = json.load(open(alias_p)) if os.path.exists(alias_p) else {}
+        s.update(name=aliases.get(norm_name(d.get('name')), d.get('name')), file=('hidden (alias in use)' if aliases else os.path.basename(p)), sent_at=d.get('sent_at'),
                  n_labelled=sum(1 for r in rows if r.get('answer')),
                  median_seconds=float(np.median(secs)) if secs else None,
                  total_minutes=round(sum(secs) / 60, 1), n_changed_with_back=sum(1 for r in rows if r.get('changed')),

@@ -29,6 +29,35 @@
 5. **Size vs accuracy.** A 5x larger backbone (DINOv2-small, 21.6M parameters, ~87 MB) is right 49% of the time on field photos with no local labels (vs 2.5%); after 50 labels it answers 58% of photos with 90% correct. We ship the small model to respect the side-loading constraint.
 6. **Limit found: unknown pests after adaptation.** Before local labels the tool says "not sure" to 100% of red-spider-mite photos (a pest it was never taught). After 50 officer labels it says "not sure" to only 22%; of the rest, 81 are flagged as rust (the officer still hears about a problem) and 45 are wrongly called healthy. Mitigations in the app: a "different problem / not in list" label for the officer, and a spot-check that queues 1 in 10 answered photos for the officer anyway.
 
+## Human baseline: picture card vs AI (one-evening test)
+To compare the AI with a paper picture card, two team members labelled the same 60 field photos with only a picture card (two training pictures and one line per problem), on a phone or laptop. The AI was scored on the same photos with the same rule as the app.
+
+| Who | Photos answered (not "not sure") | Answers correct | Healthy vs problem correct (of answered) | Correct out of all 60 | Median seconds per photo |
+|---|---|---|---|---|---|
+| Team member A (picture card) | 97% | 59% | 91% | 57% | 2.4 |
+| Team member B (picture card) | 100% | 57% | 97% | 57% | 2.3 |
+| AI as shipped (no local labels) | 0% | — | — | 0% | — |
+| AI after the demo update (50 labelled field photos) | 88% | 89% | 89% | 78% | — |
+
+Right answer by true class, out of all photos of that class ("not sure" counts as not right):
+
+| Who | Healthy (30) | Rust level 1 (17) | Rust level 2 (8) | Rust level 3 (3) | Rust level 4 (2) |
+|---|---|---|---|---|---|
+| Team member A | 90% | 29% | 25% | 0% | 0% |
+| Team member B | 97% | 18% | 12% | 0% | 50% |
+| AI after the demo update | 77% | 88% | 88% | 33% | 50% |
+
+What it means: with only the card, both people told sick leaves from healthy ones well (91%–97% of answers), but named rust correctly on only 5–7 of the 30 rust photos; they often chose "brown eye spot" (13–19 times each). After 50 officer-style labels, the AI named rust on 24 of the 30 rust photos, but called 5 of the 30 healthy leaves a problem. The two people gave the same answer on 60% of photos and agreed on healthy vs problem on 91%. For counting rust per village, a consistent rust-vs-look-alike label is what matters; for "is something wrong?", a card already works.
+
+What this test is and is not:
+- The labellers are two team members who are not farmers or plant experts, standing in for relay farmers. Relay farmers trained by the cooperative may do better.
+- The project handoff describes this dataset as healthy and rust leaves, so the labellers could have known; their answers (many "brown eye spot") suggest they did not rely on it.
+- The comparison favours the AI on one point: it learned from 50 labelled photos of this same dataset, while the people had only a card with lab-style pictures. A relay farmer would normally be trained with field photos.
+- 60 photos from one dataset (RoCoLe: Ecuador, robusta, leaves on the plant): 30 healthy and 30 rust (rust levels 1 to 4: 17, 8, 3, 2 photos). They are not photos from Kenyan farms.
+- A one-evening test: each person labelled each photo once, with no training beyond the card.
+- The AI as shipped says "not sure" to 100% of these photos because they look unlike its training photos. The AI after the demo update has learned from 50 other photos of the same dataset (none of them among these 60), labelled by the dataset authors in place of an officer.
+- People saw copies resized to 900 px; the AI used the original photos. On the resized copies the AI makes the same decision on 60 of 60 photos as shipped and on 58 of 60 after the update.
+
 ## Simplifications (stated)
 - JMuBEN contains augmented copies of the same leaf; its in-domain validation score (100%) is optimistic and not used as a headline.
 - No training or test photo comes from Kenyan farms in field conditions; the field test is Ecuadorian robusta. Leaf rust looks similar across species, but this is a proxy.

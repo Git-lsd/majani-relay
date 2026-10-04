@@ -119,7 +119,7 @@ Simplifications: the evidence shows the gap is real; it does not show that this 
 
 What we have not shown: that the AI gives better counts than a trained relay farmer with a tally sheet.
 
-> TODO: Human baseline: see results/human_baseline.json once run.
+**Human baseline (one-evening test).** Two team members with no coffee knowledge, standing in for newly trained relay farmers, labelled the same 60 field photos with only a picture card. They told sick leaves from healthy ones well (91%–97% of answers) but named rust on only 5–7 of the 30 rust photos, often choosing "brown eye spot". After 50 officer-style labels, the AI named rust on 24 of the 30, but called 5 of the 30 healthy leaves a problem. So a card is enough to notice that something is wrong; the AI's value is a consistent rust label for counting. Limits: two non-experts, one dataset (Ecuador robusta), and the AI had seen 50 labelled photos from the same dataset while the people had only lab-style card pictures. Details: [results/RESULTS.md](results/RESULTS.md).
 
 ## Fit with the farmer registry
 
