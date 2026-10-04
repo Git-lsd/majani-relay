@@ -299,6 +299,7 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | `sw.js`, `manifest.webmanifest`, `icons/` | Offline cache and "Add to Home Screen" |
 | `lib/kahawa-core.js` | Shared maths: familiarity check, on-phone refit, Beta-binomial prior |
 | `vendor/ort/` | onnxruntime-web 1.30.0 (WebAssembly build) and its licence |
+| `fonts/` | Fraunces and IBM Plex Sans web fonts (self-hosted so the app works offline) and their licences |
 | `model/` | Image model (ONNX), shipped head and familiarity set; the lab-only head, its familiarity set and a 50-label update (`*_labonly*`), used for the new-region simulation and the starter kit, not by the app |
 | `answers.json`, `audio/` | The fixed answer list (English, Swahili, Kikuyu tier) and audio |
 | `guides.json` | The fixed "What does this mean?" guides, with sources ([docs/GUIDES.md](docs/GUIDES.md)) |
@@ -317,6 +318,7 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | Uganda coffee leaf dataset ("A Machine Learning Dataset for Classification of Common Coffee Leaf Diseases in Uganda") | CC BY 4.0 | Soroti University (Uganda), Mendeley Data, 2025, doi 10.17632/k36wnd6knb.1. Used as a test set only; no Ugandan photo is in this repository |
 | MobileNetV3-Large weights (timm `mobilenetv3_large_100`) | Apache-2.0 | Ross Wightman, PyTorch Image Models. Pretrained on ImageNet-1k, whose images have their own non-commercial terms; we use the released weights and share no ImageNet images. |
 | onnxruntime-web 1.30.0 | MIT | Microsoft. Licence in `vendor/ort/LICENSE.txt` |
+| Fraunces, IBM Plex Sans (fonts) | SIL Open Font License 1.1 | Undercase Type; IBM. Licences in `fonts/` |
 | Swahili and Kikuyu audio (made with Meta MMS TTS, `facebook/mms-tts-swh`, `facebook/mms-tts-kik`) | CC-BY-NC 4.0 | Meta AI. Non-commercial: fine for this hackathon and a non-commercial pilot. A paid service would need recorded human clips. |
 | NLLB-200 and MMS-1b-all (used on a laptop to check text and audio; not shipped) | CC-BY-NC 4.0 | Meta AI |
 | Advice text in `answers.json` | – | Written from Kenyan extension material, mainly the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute), Infonet-Biovision and CABI Plantwise. Sources per answer in `answers.json`. |
