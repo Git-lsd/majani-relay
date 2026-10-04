@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v16'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v17'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -1119,7 +1119,8 @@ function viewConsent() {
     const u = visit.unfinished;
     out.push(card('warn', h('div', { class: 'card-head' }, icon('flag'), 'Unfinished visit'),
       h('p', null, `${u.village}, ${fmtDate(u.created)}: ${plural(u.photo_ids.length, 'photo')}.`),
-      h('button', { class: 'btn block', type: 'button', onclick: () => resumeVisit(u) }, 'Continue this visit')));
+      h('button', { class: 'btn block', type: 'button', onclick: () => resumeVisit(u) }, 'Continue this visit'),
+      h('button', { class: 'btn secondary block', type: 'button', onclick: () => discardVisit(u) }, icon('trash'), 'Discard this visit')));
   }
   out.push(card('', h('h2', null, 'Plot visit'), h('p', { class: 'small' }, 'Step 1 of 3: ask the farmer first.'),
     answerBlock('consent_photos'),
@@ -1401,6 +1402,21 @@ async function syncVisitPhotos() {
     }
     if (changed && currentTab === 'visit') renderVisit();
   } catch (e) { /* storage unavailable */ }
+}
+
+async function discardVisit(plot) {
+  const n = (plot.photo_ids || []).length;
+  if (!confirm(`Discard the unfinished visit (${plot.village || 'no village'}, ${plural(n, 'photo')})? Its photos are deleted from this phone.`)) return;
+  try {
+    const photos = (await DB.all('photos')).filter((p) => p.plot_id === plot.id);
+    for (const p of photos) await DB.del('photos', p.id);
+    await DB.del('plots', plot.id);
+  } catch (e) { /* storage unavailable */ }
+  visit.unfinished = null;
+  await refreshVisitContext();
+  updateQueueBadge();
+  renderVisit();
+  toast('Unfinished visit discarded.');
 }
 
 async function resumeVisit(plot) {
@@ -1860,7 +1876,9 @@ async function renderAbout() {
       ...langStatus(),
       h('p', null, h('span', { class: 'tag' }, 'Corrections'), ' ',
         `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`)),
-    card('', h('h2', null, 'Model card'),
+    h('details', { class: 'card tech' }, h('summary', null, 'Technical details (model card, simplifications)'),
+      h('p', { class: 'small' }, 'For evaluators and technical staff. Relay farmers and officers do not need this to use the app.'),
+      h('h3', null, 'Model card'), h('div', null,
       kv([['Head version', hr.version], ['Model in use', Model.active && Model.active.version], ['Classes', (hr.classes || []).join(', ')],
         ['Sent to the officer, never shown as an answer', toOfficer.length ? toOfficer.map(className).join(', ') : null],
         ['Embedding size', hr.embed_dim], ['Temperature', hr.temperature], ['Confidence line (threshold)', hr.threshold],
@@ -1877,7 +1895,7 @@ async function renderAbout() {
         ['Input', meta.input_size ? `${meta.input_size}×${meta.input_size} centre crop after resizing the shorter side to ${meta.resize_shorter}` : null],
         ['Runtime', 'onnxruntime-web 1.30.0 (MIT), WebAssembly, 1 thread']]),
       Model.error ? h('p', { class: 'notice' }, 'Model error: ' + Model.error) : null),
-    card('', h('h2', null, 'Simplifications'),
+      h('h3', null, 'Simplifications'), h('div', null,
       h('ul', { class: 'small' },
         h('li', null, 'Photo resizing copies the Python (PIL) resize used in training. Very large photos are first halved by the browser, so they differ slightly.'),
         h('li', null, 'The photo check (too dark, too bright, no detail) uses rough thresholds, not tuned on data.'),
@@ -1886,6 +1904,7 @@ async function renderAbout() {
         h('li', null, 'The learning loop uses gradient descent with a step-size search; the team\'s Python evaluation uses L-BFGS on the same objective. Results should be close, not identical.'),
         h('li', null, 'Spot checks pick a random 1 in 10 answered photos on this phone.'),
         h('li', null, 'The co-op dashboard treats photos as independent and AI answers as correct.'))),
+    ),
     card('', h('h2', null, 'Credits'),
       h('ul', { class: 'small' },
         h('li', null, 'Sample photos: RoCoLe dataset (Parraga-Alava et al. 2019), CC BY 4.0.'),

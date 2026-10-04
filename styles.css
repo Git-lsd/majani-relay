@@ -49,7 +49,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 18px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  font: 18px/1.45 "Avenir Next", "Avenir", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 16px);
   overflow-x: hidden;
 }
@@ -172,7 +172,8 @@ th:first-child, td:first-child { text-align: left; }
 th { background: var(--card); font-size: .8rem; }
 tr.alert td { background: var(--bad-bg); }
 .alert-flag { color: var(--bad); font-weight: 800; white-space: nowrap; }
-.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: .92rem; }
+.kv { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 6px 14px; font-size: .92rem; }
+@media (max-width: 560px) { .kv { grid-template-columns: minmax(0, 1fr); gap: 2px; } .kv dd { margin-bottom: 10px; color: var(--muted, #555); } }
 .kv dt { font-weight: 700; }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
 
@@ -224,3 +225,12 @@ tr.alert td { background: var(--bad-bg); }
 .seg button { padding: 4px 6px; line-height: 1.15; }
 .farm-line { overflow-wrap: anywhere; }
 @media (max-width: 400px) { .seg.seg-4 { grid-template-columns: repeat(2, 1fr); } }
+
+/* collapsible technical section on About */
+details.tech > summary { cursor: pointer; font-weight: 800; font-size: 1.05rem; list-style: none; display: flex; align-items: center; gap: 10px; min-height: 44px; }
+details.tech > summary::-webkit-details-marker { display: none; }
+details.tech > summary::before { content: "▸"; display: inline-block; transition: transform .15s; }
+details.tech[open] > summary::before { transform: rotate(90deg); }
+details.tech h3 { margin: 18px 0 8px; font-size: 1rem; }
+.btn.secondary { background: transparent; color: var(--primary); margin-top: 10px; }
+h1, h2, h3, .brand span { letter-spacing: -0.01em; }
