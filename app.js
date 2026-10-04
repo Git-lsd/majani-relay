@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v23'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v24'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -1915,7 +1915,8 @@ async function renderAbout() {
         h('li', null, h('span', null, h('b', null, 'Check. '), 'The AI names the leaf problem, or says "not sure".')),
         h('li', null, h('span', null, h('b', null, 'Review. '), 'The extension officer labels the unclear photos. The labels teach the AI on this phone.')),
         h('li', null, h('span', null, h('b', null, 'Plan. '), 'The Co-op tab shows which villages to visit first.'))),
-      h('p', { class: 'small' }, 'Tip: use "Add to Home Screen" in the browser menu to open the app like any other app.')),
+      h('p', { class: 'small' }, 'Tip: use "Add to Home Screen" in the browser menu to open the app like any other app.'),
+      h('p', { class: 'small' }, h('a', { href: 'https://github.com/git-lsd/majani-relay/blob/main/docs/WHY.md', target: '_blank', rel: 'noopener' }, 'Why we built it: the story on one page'))),
     card('', h('h2', null, icon('lock'), ' Privacy and your data'),
       h('p', null, 'Plot records, small copies of the leaf photos and officer labels stay on this phone until someone exports them. The app sends nothing anywhere.'),
       h('p', null, 'The member number is saved only as a scrambled code. Short numbers can still be guessed by someone who has this phone.'),

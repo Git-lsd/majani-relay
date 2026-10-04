@@ -69,6 +69,7 @@ OUT = {
     'DATA_CARD.tmpl.md': 'docs/DATA_CARD.md',
     'PRIOR_ART.tmpl.md': 'docs/PRIOR_ART.md',
     'HANDOFF.tmpl.md': 'docs/HANDOFF.md',
+    'WHY.tmpl.md': 'docs/WHY.md',
 }
 KEY = re.compile(r'\{\{([A-Z0-9_]+)\}\}')
 
