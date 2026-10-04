@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v19'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v20'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -1560,9 +1560,10 @@ function officerLock(root, tab) {
     h('p', null, tab === 'coop'
       ? 'The co-op dashboard ranks villages from the plot records on this phone. Enter the officer PIN to open it.'
       : 'Photo review, plot records and model updates are for the extension officer. Enter the officer PIN to open them.'),
-    h('label', { class: 'field' }, h('span', null, 'Officer PIN'), input),
-    h('button', { class: 'btn block', type: 'button', onclick: tryOpen }, 'Open'),
-    msg,
+    h('div', { class: 'pin-row' },
+      h('label', { class: 'field' }, h('span', null, 'Officer PIN'), input),
+      h('button', { class: 'btn block', type: 'button', onclick: tryOpen }, 'Open'),
+      msg),
     h('p', { class: 'small' }, `Demo PIN: ${OFFICER_PIN}. In a pilot, each officer would set their own PIN.`)));
 }
 function lockOfficer() { officerUnlocked = false; renderCurrent(); toast('Officer screens locked.'); }

@@ -267,4 +267,7 @@ details.more p { font-size: .9rem; }
 .coop-table td:first-child { overflow-wrap: break-word; }
 .coop-table .alert-flag .ic { width: 16px; height: 16px; vertical-align: -2px; }
 .card > details.more:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
-.pin-input { max-width: 200px; font-size: 1.6rem; letter-spacing: .5em; text-align: center; -webkit-text-security: disc; }
+.pin-row { display: grid; gap: 18px; margin: 18px 0 6px; }
+.pin-row label.field span { display: block; margin-bottom: 8px; }
+.pin-row .pin-input { display: block; width: 100%; max-width: 220px; min-height: 60px; font-size: 1.6rem; letter-spacing: .5em; text-align: center; -webkit-text-security: disc; }
+.pin-row p { margin: 0; }
