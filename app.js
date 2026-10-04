@@ -1987,6 +1987,7 @@ async function renderAbout() {
         h('li', null, 'Sample photos: RoCoLe dataset (Parraga-Alava et al. 2019), CC BY 4.0.'),
         h('li', null, 'Swahili and Kikuyu audio: made with Meta MMS text-to-speech, CC BY-NC 4.0.'),
         h('li', null, 'Backbone: MobileNetV3 (timm), Apache-2.0. Runtime: onnxruntime-web, MIT.'),
+        h('li', null, 'Fonts: Fraunces and IBM Plex Sans, SIL Open Font License 1.1.'),
         h('li', null, 'App code: MIT License.'))));
 }
 
