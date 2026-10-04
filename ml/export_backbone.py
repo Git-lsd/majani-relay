@@ -1,4 +1,7 @@
-"""Export the frozen ImageNet backbone (feature extractor) to ONNX for in-browser use.
+"""First-time setup only: export the frozen ImageNet backbone (feature extractor) to ONNX and write
+model/backbone_meta.json (ml/prepare_embed.py reads it). ml/train_eval.py then re-exports model/backbone.onnx with
+the lab standardisation built in, which is what the phone runs; on an existing checkout, run
+ml/train_eval.py --export-backbone instead of this script.
 The backbone is never fine-tuned; only the small head in model/head.json is trained.
 """
 import os, json, torch, timm

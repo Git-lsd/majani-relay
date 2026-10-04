@@ -2,7 +2,7 @@
 
 Date: 3 October 2026. Version `g1`. Data file: [`guides.json`](../guides.json).
 
-**No native speaker has checked the Swahili.** Every guide has `sw_verified: false` and should be shown as "not yet checked by a native speaker". The Swahili was written by an AI model and checked only by machine translation back into English.
+The Swahili was drafted with an AI model and checked by machine back-translation (section "Swahili check by machine"). A Swahili-speaking extension officer reviews all 24 guide sections in pilot week 1, starting with the 4 flagged sections. Until then every guide has `sw_verified: false`, and the app shows the tag "Speaker review: pilot week 1".
 
 ## What the guides are
 
@@ -33,7 +33,7 @@ Part 2 is headed "What keeps trees healthy" in the healthy guide and "Common rea
 - "When to call the officer" gives concrete reasons: many trees affected, leaves falling, berries affected, shoot tips dying, or the farmer is not sure.
 - Kenyan extension material comes first. Where it is thin (brown eye spot, Phoma), the guide uses other sources, and its notes say so.
 - The wording matches the fixed answer list (`answers.json`), for example *afisa wa ugani* (extension officer), *kutu ya majani ya kahawa* (coffee leaf rust), *Weka alama kwenye mti huu* (mark this tree).
-- As for the answer list, the app should show the Swahili as "not yet checked by a native speaker" and offer the "Wording wrong?" button on each guide.
+- As for the answer list, the app shows the Swahili with the tag "Speaker review: pilot week 1" and offers the "Wording wrong?" button on each guide section.
 
 ## Sources
 
@@ -54,7 +54,7 @@ How well each guide is sourced for Kenya:
 
 - **Healthy, leaf rust, leaf miner, not sure:** Kenyan sources (Kenya Coffee Sustainability Manual, Infonet-Biovision). The rust variety line also uses the World Coffee Research variety catalogue.
 - **Brown eye spot:** the Kenyan manual lists it only as a minor disease. Symptoms and causes come from a Pacific fact sheet.
-- **Phoma:** the weakest. Symptoms and weather come from Brazilian and general sources. The hygiene and windbreak steps come from Kenyan advice for bacterial blight of coffee, a major disease that looks similar, so the steps fit both. A KALRO coffee agronomist should confirm this guide.
+- **Phoma:** the least Kenya-specific. Symptoms and weather come from Brazilian and general sources. The hygiene and windbreak steps come from Kenyan advice for bacterial blight of coffee, a major disease that looks similar, so the steps fit both. A KALRO coffee agronomist should confirm this guide.
 
 ## Simplifications
 
@@ -86,11 +86,11 @@ We think these are model errors. Dictionaries give caterpillar for *kiwavi* and 
 
 Other words the model read loosely, but with the meaning kept: *kutu* (rust) as "rash" or "corrosion", *afisa wa ugani* (extension officer) as "expansion officer", *machipukizi ya ziada* (extra suckers) as "extra buds", *unga* (powder) as "flour", *takriban* (about) as "at least". The titles and headings were also read back. Only the rust title came back wrong (*Kutu ya majani ya kahawa* as "Coarseness of coffee leaves"), though the same words came back as "coffee leaf rust" inside a sentence.
 
-Limits: the check is machine-only. It cannot catch a wrong word that maps back to the right English word, and it does not test tone or whether a farmer in Kirinyaga, Nyeri or Murang'a finds the line natural. **This does not replace a review by a speaker.**
+Limits: the check is machine-only. It cannot catch a wrong word that maps back to the right English word, and it does not test tone or whether a farmer in Kirinyaga, Nyeri or Murang'a finds the line natural. **A speaker review is still the final check: a Swahili-speaking extension officer reviews every section in pilot week 1.**
 
 ## Quality check (3 October 2026)
 
-A second agent checked the file for safety and fit with the answer list. It changed three sections. Each change was read back again by machine, with the same settings.
+A second review pass checked the file for safety and fit with the answer list. It changed three sections. Each change was read back again by machine, with the same settings.
 
 | Section | Change | Why | Mark |
 |---|---|---|---|

@@ -1,5 +1,5 @@
 """Local test server for the app (phone on the same Wi-Fi): correct audio/wasm types, no caching.
-Run from kahawa-check/:  ../.venv/bin/python ml/serve.py   then open http://<Mac IP>:8765 on the phone.
+Run from kahawa-check/:  ../.venv/bin/python ml/serve.py   then open http://<laptop IP>:8765 on the phone.
 POST /baseline/save stores one labeller's human-baseline answers in ../data_work/baseline/ (outside the repo)."""
 import http.server, functools, os, json, re, time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

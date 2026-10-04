@@ -25,7 +25,7 @@ The brief names no country. We chose central Kenya: open Kenyan coffee leaf phot
 ## 3. The precondition: a farmer registry
 
 Annex B: in many settings the binding constraint is a missing farmer registry, not a missing algorithm. In Ukraine, a working registry unlocked advice, insurance and grants for 150,000 farmers. **In Kenyan coffee this is partly met:**
-- KIAMIS, the national registry, lists 8.9 million farmers (news report, September 2026), but it is incomplete and its contact details are not kept up to date.
+- KIAMIS, the national registry, lists 8.9 million farmers (news report, September 2026) and is still growing; the Ministry's 2026 draft data policy names real-time checks of farmer contact details as a gap.
 - Cooperative member lists, keyed by member (grower) number, reliably reach coffee farmers: a coffee advance fund paid 668,414 farmers through them (news report, June 2026).
 - **Left out:** farmers outside cooperatives or never visited; unmapped land, if records are later linked to maps.
 
@@ -35,7 +35,7 @@ So we key records to the existing member number instead of building a registry. 
 
 - **Relay farmer:** trained by the cooperative to check members' plots, on their own smartphone.
 - **Extension officer or co-op agronomist:** labels unclear photos, makes the final call, chooses where to go.
-- **Co-op manager:** keeps the member list; combines exports (by hand today).
+- **Co-op manager:** keeps the member list; combines the phones' CSV exports.
 
 Why not Noor's phone: only 27.5% of rural Kenyan women aged 15–49 own a smartphone (Kenya DHS 2022).
 
@@ -64,12 +64,12 @@ The gap we work on is not telling farmers a disease name. It is getting standard
 - **Careful ranking** (simulated villages): false alarms per 40 villages fall from 3.4 to 1.0; the cost is more misses near the alert line (1.6 → 3.0).
 
 **Not yet shown, with the next step:**
-- **No Kenyan photos taken the way relay farmers take them** (the Kenyan training photos are close-ups cropped to the spot). Next: a sealed Kenyan test, first pilot month.
+- **Results on Kenyan farm photos** (field results so far come from Ecuador and Uganda; the Kenyan training photos are lab-style close-ups). Next: the first 200 officer-labelled Kenyan pilot photos kept aside as a sealed test, first pilot month.
 - **In a new region the officer sees most photos at first** (14% of Ugandan photos answered after 10 labels). Next: measure on the sealed Kenyan test.
-- **Look-alikes reach the rust count** (9% of Ugandan Phoma leaves; 85 of 167 mite photos). Next: retrain, before the pilot and in pilot week 4.
+- **Look-alikes kept out of the rust count** (today 9% of Ugandan Phoma leaves and 85 of 167 mite photos are answered "rust"). Next: retrain, before the pilot and in pilot week 4.
 - **Offline tested on one iPhone in airplane mode** (it opened and checked a sample photo) and in Chrome's offline mode on a computer; not yet on an Android phone, and speed not yet timed. Next: a full visit in airplane mode on a low-cost Android phone, timed, before the pilot.
-- **Swahili not yet checked by a native speaker.** Next: a Swahili-speaking officer, pilot week 1.
-- **Ranking simulated; phones combined by hand.** Next: replay on pilot visits against the officer's own village checks.
+- **Swahili wording: reviewed by a Swahili-speaking officer in pilot week 1.** It is already cross-checked by machine read-back and against published Swahili farm material.
+- **Village ranking tested on simulated villages.** Next: replay on pilot visits against the officer's own village checks.
 
 ## 7. Next: the proposed 90-day pilot
 

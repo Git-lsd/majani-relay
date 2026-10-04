@@ -452,7 +452,7 @@ def evaluate():
     mu, sd = standardisation()
     Z = ((E - mu) / sd).astype(np.float64); Zn = unit(Z)
     w = group_weights(group)
-    res = {'what': 'External test of Kahawa Check on coffee-leaf photos from farms in Uganda (never trained on), and '
+    res = {'what': 'External test of Majani Relay on coffee-leaf photos from farms in Uganda (never trained on), and '
                    'the officer learning loop on those photos (the new-region test).',
            'generated_by': 'ml/eval_uganda.py', 'dataset': DATASET, 'data': stats, 'models': {}}
     for tag, hf in [('shipped', 'head.json'), ('lab_only', 'head_labonly.json')]:

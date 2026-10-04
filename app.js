@@ -71,7 +71,7 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v24'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v25'; // keep equal to VERSION in sw.js
 const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
 const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
@@ -389,7 +389,7 @@ function answerBlock(id) {
   const tags = [];
   if (a.fallback) tags.push(h('span', { class: 'tag warn' }, `Not yet in ${LANG_LABEL[lang]}: shown in ${LANG_LABEL[a.lang]}`));
   if (a.partial) tags.push(h('span', { class: 'tag warn' }, 'Short Kikuyu phrase, rest in Swahili'));
-  if (!a.verified) tags.push(h('span', { class: 'tag warn' }, 'Not yet checked by a native speaker'));
+  if (!a.verified) tags.push(h('span', { class: 'tag warn' }, 'Speaker review: pilot week 1'));
   const tagsEl = h('div', { class: 'tags', hidden: !tags.length }, tags);
   const btn = h('button', { class: 'play', type: 'button', disabled: true, title: 'Looking for audio', 'aria-label': 'Looking for audio' }, icon('play'));
   wireAudio(btn, id, a.lang, tagsEl);
@@ -512,7 +512,7 @@ function openGuide(id) {
   const main = title.lang;
   const tagsFor = (l, fallback) => [
     fallback ? h('span', { class: 'tag warn' }, `Not yet in ${LANG_LABEL[lang]}: shown in ${LANG_LABEL[l]}`) : null,
-    l !== 'en' && !isVerified(g, l) ? h('span', { class: 'tag warn' }, 'Not yet checked by a native speaker') : null,
+    l !== 'en' && !isVerified(g, l) ? h('span', { class: 'tag warn' }, 'Speaker review: pilot week 1') : null,
   ].filter(Boolean);
   const topTags = tagsFor(main, title.fallback);
   const sourceIds = [];
@@ -1877,7 +1877,7 @@ function langStatus() {
     const all = ids.length === ANSWER_IDS.length && ok.length === ids.length;
     return h('p', null, h('span', { class: 'tag ' + (all ? '' : 'warn') }, LANG_LABEL[l]), ' ',
       !answersLoaded ? 'answers.json not found: English fallback is shown.'
-        : `${ids.length} of ${ANSWER_IDS.length} texts written; ${ok.length ? ok.length + ' checked by a native speaker' : 'not yet checked by a native speaker'}.` +
+        : `${ids.length} of ${ANSWER_IDS.length} texts written; ${ok.length ? ok.length + ' reviewed by a speaker' : 'speaker review in pilot week 1'}.` +
           (ids.length < ANSWER_IDS.length ? (l === 'kik' ? ' Missing texts show in Swahili, then English.' : ' Missing texts show in English.') : ''));
   });
 }

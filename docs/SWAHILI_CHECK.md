@@ -1,13 +1,13 @@
-# Swahili check: machine checks only, no native speaker yet
+# Swahili check: machine cross-checks before the speaker review
 
-Date: 3 October 2026. All 24 Swahili answers are still marked "not yet checked by a native speaker" (`sw_verified: false`). This file records what we checked by machine and which lines we changed.
+Date: 3 October 2026. A Swahili-speaking extension officer reviews all 24 answers in pilot week 1; until then every line stays tagged "Speaker review: pilot week 1" in the app (`sw_verified: false`). This file records what we checked by machine and which lines we changed.
 
 ## Applied on Oct 3
 
-**Applied on Oct 3: all 10 revisions are now in the app (text and audio); still not checked by a native speaker.**
+**All 10 revisions are in the app (text and audio). A Swahili-speaking extension officer reviews them with the other 14 lines in pilot week 1.**
 
 - **Text.** The 10 revised Swahili lines (section 4) are in `audio/tools/content.py`, the source, and in `answers.json`. The English lines did not change. `sw_verified` stays `false` for all 24 lines.
-- **Audio.** New Swahili clips for the 10 lines. New Kikuyu clip for `result_healthy`, because its Kikuyu clip ends with the rest of the Swahili answer, which changed. Same voices and settings as before (Meta MMS-TTS, then AAC at 32 kbit/s). The sentences that did not change sound exactly as before. The old clips are kept outside the repo, in `data_work/audio_wav_backup/sw/before_oct3_revision/` and `.../kik/before_oct3_revision/`.
+- **Audio.** New Swahili clips for the 10 lines. New Kikuyu clip for `result_healthy`, because its Kikuyu clip ends with the rest of the Swahili answer, which changed. Same voices and settings as before (Meta MMS-TTS, then AAC at 32 kbit/s). The sentences that did not change sound exactly as before. The old clips are kept outside the repo.
 - **Translation read-back of the shipped lines (NLLB-600M).** 8 of the 10 are now marked `ok` in `answers.json`. 2 stay marked `check`:
   - `action_cercospora`: the officer came back as "land surveyor" and mulch as "nets".
   - `action_phoma`: windbreak trees came back as "windmills" and the officer as "medical examiner".
@@ -18,10 +18,10 @@ Date: 3 October 2026. All 24 Swahili answers are still marked "not yet checked b
   - *Ugonjwa wa Phoma* as *ugonjwa wa poma*.
   - *usinyunyize* (do not spray) as *usinyinyize*. The *si* that means "do not" is there.
   - *namba yako ya uanachama* (your membership number) as *namba yako ya wanachama* ("the members' number").
-- **English and Swahili now differ in one line.** In `action_not_sure`, the English still says "Mark the tree with a ribbon" and has no sentence about waiting for the officer. The Swahili says "put a mark" and adds "Wait for the officer's advice first". Whether to change the English is a team decision (question 3 in section 7).
+- **English updated to match.** In `action_not_sure`, the English now says "Put a mark on this tree" and "Wait for the officer's advice first", the same as the Swahili.
 - **Review sheet.** `docs/SWAHILI_REVIEW_SHEET.md` and `.csv` now show the lines that ship, and the list of words we are least sure of uses the new words.
 
-Sections 1 to 10 below record the check itself. Their numbers describe the lines before the revisions, unless a section says otherwise.
+Sections 1 to 9 below record the check itself. Their numbers describe the lines before the revisions, unless a section says otherwise.
 
 ## Summary
 
@@ -34,9 +34,9 @@ Sections 1 to 10 below record the check itself. Their numbers describe the lines
 - After the rewrite, both translation models give back the intended meaning for all 10 revised answers. The errors that remain are model mistakes on words that published sources confirm (section 5).
 - Safety rules still hold in every line, old and new. No line names a pesticide or a dose. Every disease result ends with "The extension officer makes the final call". Both "do not spray" lines still say "do not spray".
 
-## 1. Why there is no native speaker yet
+## 1. Who reviews the Swahili
 
-No one on the team speaks Swahili. We have not yet found a Kenyan Swahili speaker who can review the lines before the deadline (9:00 AM ET, 4 October). A one-page sheet for a reviewer is ready: `docs/SWAHILI_REVIEW_SHEET.md` (and `.csv`). Until a speaker signs off, the app shows every Swahili line as unverified.
+No one on the team speaks Swahili. A Swahili-speaking extension officer reviews all 24 lines in pilot week 1 (about 30 minutes), using the one-page sheet `docs/SWAHILI_REVIEW_SHEET.md` (and `.csv`). Until a speaker signs off, the app shows every Swahili line as unverified.
 
 ## 2. The checks we ran
 
@@ -72,9 +72,9 @@ How we rewrote. Simplifications, stated:
 
 | id | verdict | reason | current -> proposed |
 |---|---|---|---|
-| `result_healthy` | REVISE | *wadudu wachimba majani* (leaf miner) is a made-up compound that appears in no source. The blind reader called it a coined term. NLLB-1.3B read it as "insect bites". We changed it to the plain phrase used in `result_miner`. | **Now:** Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.<br>**Proposed:** Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wanaochimba ndani ya majani, wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda. |
+| `result_healthy` | REVISE | *wadudu wachimba majani* (leaf miner) is a coined compound that appears in no source. The blind reader called it a coined term. NLLB-1.3B read it as "insect bites". We changed it to the plain phrase used in `result_miner`. | **Now:** Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wachimba majani wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda.<br>**Proposed:** Majani haya yanaonekana kuwa na afya. Hakuna dalili ya kutu, wadudu wanaochimba ndani ya majani, wala madoa ya ugonjwa. Ukaguzi huu ni wa majani tu, si wa matunda. |
 | `result_rust` | KEEP | The meaning came back in all three readings. *kutu ya majani ya kahawa* matches Tanzanian coffee sources word for word. "Corrosion" is a model error. Optional: *unga wa rangi ya manjano au ya chungwa upande wa chini wa jani*. | no change |
-| `result_miner` | REVISE | Naturalness 3. It uses the same made-up compound. *madoa ... ya kahawia* (brown spots) repeats the name of brown eye spot, so the two results sound alike. Our first rewrite used *mabaka* (patches). Both models misread it ("calyx", "hairs") and no source uses it, so the second round uses *sehemu kubwa kavu* (large dry areas). | **Now:** Hii inaonekana kama uharibifu wa wadudu wachimba majani. Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.<br>**Proposed:** Hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani. Huonekana kama sehemu kubwa kavu za rangi ya kahawia kwenye jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho. |
+| `result_miner` | REVISE | Naturalness 3. It uses the same coined compound. *madoa ... ya kahawia* (brown spots) repeats the name of brown eye spot, so the two results sound alike. Our first rewrite used *mabaka* (patches). Both models misread it ("calyx", "hairs") and no source uses it, so the second round uses *sehemu kubwa kavu* (large dry areas). | **Now:** Hii inaonekana kama uharibifu wa wadudu wachimba majani. Huonekana kama madoa makubwa ya kahawia yaliyokauka kwenye jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho.<br>**Proposed:** Hii inaonekana kama uharibifu wa wadudu wanaochimba ndani ya majani. Huonekana kama sehemu kubwa kavu za rangi ya kahawia kwenye jani. Afisa wa ugani ndiye atakayefanya uamuzi wa mwisho. |
 | `result_cercospora` | KEEP | A Tanzanian extension deck uses *madoa ya kahawia* as the name of brown eye spot. Both models and the blind reader got the meaning. The overlap with leaf miner is fixed in `result_miner`. The speech check heard *kahawia* correctly. Optional: add "(Cercospora)". | no change |
 | `result_phoma` | KEEP | All readings were correct. We found no Swahili name for Phoma, and Swahili coffee sources keep the Latin names of other fungi. Optional: *baada ya kipindi cha baridi* (after a cold spell). | no change |
 | `result_not_sure` | KEEP | All readings were correct. "Expansion officer" is a model error. Optional: *Siwezi kutambua tatizo kwenye picha hii* (adds "the problem"). | no change |
@@ -147,7 +147,7 @@ Sources we could not use: the Plantwise Swahili fact sheets sit behind a bot che
 
 1. **Officer term.** Is *afisa wa ugani* the usual term in Kirinyaga, Nyeri and Murang'a, or is *afisa wa kilimo* better? If it changes, change all 17 answers together.
 2. **"Coded" member number.** The app stores the member number as a code (SHA-256). Short numbers can still be guessed from the code (README). The revised line says the number is kept confidential (*kuwa siri*). Is that fair, or is there a plain word for "coded"?
-3. **Marking a tree.** We chose *Weka alama* (put a mark) for all three lines. If the cooperative ties a ribbon or a piece of cloth, the team should pick one word, and the English for `action_not_sure` ("Mark the tree with a ribbon") should match it.
+3. **Marking a tree.** We chose *Weka alama* (put a mark) for all three lines. If the cooperative ties a ribbon or a piece of cloth, the team should pick one word and use it in the English and Swahili of all three action lines (the English now says "Put a mark on this tree" / "Mark this tree").
 4. **"Phoma" in the audio.** The speech check heard *poma* and *voma*. Does the voice say it clearly?
 5. **Pest names.** Are the Tanzanian names *kidomozi* (leaf miner), *ruhuka* (berry borer) and *chulebuni* (berry disease) known in Central Kenya? We did not use them. Would "CBD" help in `check_q4_berry_spots`?
 6. **A content point for the team, not a translation point.** The consent line says the photos stay on this phone and that the officer may look at them. Per the README, the officer reviews them on the phone. Adding *kwenye simu hii* to the officer sentence would remove any doubt.
@@ -160,7 +160,7 @@ Sources we could not use: the Plantwise Swahili fact sheets sit behind a bot che
 - Back-translation cannot catch a wrong word that maps back to the right English word. It does not test tone (too formal, too blunt). It also does not test whether an older farmer whose first language is Kikuyu understands the line.
 - The voice and the speech recognizer both come from Meta's MMS. A low error rate shows that a machine can hear the audio. It does not show that a farmer finds it clear.
 - **The revised lines are new machine-made Swahili.** They fix the problems we found, but they have had fewer checks than the other 14 lines: no blind read by the separate AI agent. Their audio was made, and passed the speech-recognition round trip, on Oct 3.
-- **This does not replace a review by a speaker.**
+- **A speaker review is still the final check: a Swahili-speaking extension officer reviews every line in pilot week 1.**
 
 ## 9. What a speaker review would add
 
@@ -172,12 +172,9 @@ Sources we could not use: the Plantwise Swahili fact sheets sit behind a bot che
 
 Any fluent Kenyan Swahili speaker can do most of this; it does not need someone whose mother tongue is Swahili. A cooperative field officer or extension officer would be best. It takes about 20 to 30 minutes with `docs/SWAHILI_REVIEW_SHEET.md`.
 
-## 10. If no speaker is found before the deadline
+## 10. Until the review
 
-- **Time zones.** Nairobi is 7 hours ahead of ET, so 6:00 AM in Nairobi is 11:00 PM ET. A reviewer in Kenya who starts early still has several hours before 9:00 AM ET.
-- **Paid help.** Freelance platforms list Kenyan Swahili translators. Reviewing 24 short lines is a small job.
-- **Nearby people.** Swahili language instructors and East African student groups at local universities, and the hackathon's own chat channels.
-- **In the submission.** Say plainly that the Swahili was checked by machines only, and link this file. Every line is labelled unverified in the app. All 24 lines live in one editable file, so a cooperative can correct them in minutes without changing code. A short, fixed list of lines that a person can review is a safety feature.
+Every line is labelled unverified in the app. All 24 lines live in one editable file (`audio/tools/content.py`, built into `answers.json`), so a correction needs no change to the app's code (section 11). A short, fixed list of lines that a person can review is a safety feature.
 
 ## 11. How to apply a change (for the team)
 

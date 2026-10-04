@@ -4,7 +4,7 @@
 
 **What we ask (15-20 minutes):** for each row, would a coffee farmer in Central Kenya understand it, and is it correct? Write **Y** if yes. Write **N** and a better wording if not. If you only have 5 minutes, do rows 1-9 (the safety lines).
 
-Reviewer name: ________________  Date: ________  May we thank you by name in our hackathon submission? Y / N
+Reviewer name: ________________  Date: ________  May we thank you by name in the project credits? Y / N
 
 | # | Where it appears in the app | English meaning | Swahili | OK? (Y/N) | Correction |
 |---|---|---|---|---|---|

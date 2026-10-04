@@ -32,7 +32,7 @@ Raw sizes are the file sizes we downloaded. Image counts are those stated by the
 - **Licence:** CC BY 4.0.
 - **Raw size:** three zip files, 549 MB in total (Cercospora 252 MB, leaf rust 69 MB, Phoma 227 MB). The paper lists 7,682 Cercospora, 8,337 rust and 6,572 Phoma images (22,591).
 - **Conditions:** Mutira coffee plantation, Kirinyaga County, Kenya. The paper says "real-world conditions", one digital camera, labelled with the help of a plant pathologist. The images were cropped to the diseased area and resized. Smaller classes were enlarged with augmented copies (rotations and flips) of the same photos.
-- **Role:** training data for the classes rust, Cercospora (brown eye spot) and Phoma. The main session sampled up to 1,500 photos per class. Used for training: rust 1,279, Cercospora 1,286, Phoma 1,275 (another 214–225 per class held out; these overlap with training through augmented copies, so they are not used as a headline) per class.
+- **Role:** training data for the classes rust, Cercospora (brown eye spot) and Phoma. The main session sampled up to 1,500 photos per class. Used for training: rust 1,279, Cercospora 1,286, Phoma 1,275 (another 214–225 per class held out; these overlap with training through augmented copies, so they are not used as a headline).
 - **What it does not cover:**
   - Whole leaves on the tree, as a relay farmer would photograph them. The crops show the lesion, not the leaf, the branch or the background.
   - Independent photos: many images are rotated or flipped copies of each other. A random train/test split puts copies of the same leaf on both sides, so accuracy measured inside JMuBEN is too optimistic. We do not use it as a headline number.
@@ -48,7 +48,7 @@ Raw sizes are the file sizes we downloaded. Image counts are those stated by the
 - **Licence:** CC BY 4.0.
 - **Raw size:** two zip files, 1.29 GB in total (healthy 567 MB, miner 725 MB). The paper lists 18,985 healthy and 16,979 miner images (35,964).
 - **Conditions:** same plantation, camera and processing as JMuBEN: cropped, resized, with augmented copies.
-- **Role:** training data for healthy and leaf miner (up to 1,500 sampled per class). Used for training: healthy 1,282, leaf miner 1,253 (218 / 247 held out) per class.
+- **Role:** training data for healthy and leaf miner (up to 1,500 sampled per class). Used for training: healthy 1,282, leaf miner 1,253 (218 / 247 held out).
 - **What it does not cover:** the same gaps as JMuBEN. In addition, "healthy" here means healthy-looking crops from one plantation; it does not show the range of healthy leaves under other light, dust, water drops or old age.
 
 ## 3. BRACOL (Brazil, arabica: healthy, miner, rust, Phoma, Cercospora)

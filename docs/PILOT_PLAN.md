@@ -19,7 +19,7 @@ Edit the template, not docs/PILOT_PLAN.md.
 ## Timeline
 
 **Weeks 1–2: setup.**
-- **Swahili review:** a Swahili-speaking officer reviews the 24 fixed answers (about 30 minutes; consent and safety lines first, `LANGUAGE.md`, section 5) and the 24 sections of the "What does this mean?" guides (the 4 flagged by machine first, `GUIDES.md`); a Kikuyu speaker reviews the 3 Kikuyu phrases. Only approved strings lose the "not yet checked" tag. A KALRO coffee agronomist checks the Phoma guide, which rests mostly on non-Kenyan sources.
+- **Swahili review:** a Swahili-speaking officer reviews the 24 fixed answers (about 30 minutes; consent and safety lines first, `LANGUAGE.md`, section 5) and the 24 sections of the "What does this mean?" guides (the 4 flagged by machine first, `GUIDES.md`); a Kikuyu speaker reviews the 3 Kikuyu phrases. Only approved strings lose the "Speaker review" tag. A KALRO coffee agronomist checks the Phoma guide, which rests mostly on non-Kenyan sources.
 - **Consent and data:** a short data agreement with the cooperative (controller, retention, ODPC registration check, short impact assessment; `RESPONSIBLE_AI.md`, sections 6 and 11). Consent is read aloud at every visit; no photos without it.
 - **30-minute training** for relay farmers: photo protocol (3 leaves on each of 5 trees, underside), consent, checklist, export, phone lock, delete after export.
 - **Officer onboarding:** the queue, the labels (including "Different problem" and "Skip"), photos the relay farmer sent with "I think it's something else", the three farm-detail taps, the on-phone update and sharing it. The officer relabels 100 random Ecuador and 100 random Ugandan photos so we know how often the dataset labels agree with an officer.

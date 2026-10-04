@@ -2,7 +2,7 @@
 
 Majani Relay (earlier name: Kahawa Check) speaks in three tiers. English is on the screen. Swahili is the main local language, as text and audio. Kikuyu is the "less-supported" tier: a few short phrases, and Swahili for the rest.
 
-No one on the team speaks Swahili or Kikuyu. So every local-language string is marked **unverified** (`sw_verified: false`, `kik_verified: false` in `answers.json`), and the app shows the tag "Not yet checked by a native speaker" next to it.
+No one on the team speaks Swahili or Kikuyu, so a Swahili-speaking extension officer reviews all 24 answers in pilot week 1 (section 5). Until then every local-language string is marked **unverified** (`sw_verified: false`, `kik_verified: false` in `answers.json`), and the app shows the tag "Speaker review: pilot week 1" next to it.
 
 All facts below were checked on 2026-10-03.
 
@@ -18,7 +18,7 @@ Why these languages:
 - Central Kenya's arabica belt (Kirinyaga, Nyeri, Murang'a) is mostly Kikuyu-speaking at home. Swahili is the national language most adults also use. This is the same pattern as Noor in the brief: a home language, plus the national one when she needs it.
 - Swahili has good open tools (section 3). Kikuyu has few, which makes it a fair test of how the tool degrades.
 
-How the app picks the text (implemented by the web-app agent in `app.js`):
+How the app picks the text (in `app.js`):
 - Swahili selected: Swahili text, then English if a Swahili text is missing.
 - Kikuyu selected: the `kik` field, then Swahili, then English.
 - Audio follows the same order: `audio/kik/<id>.m4a`, then `audio/sw/<id>.m4a`.
@@ -45,10 +45,10 @@ We dropped one phrase on purpose: "Mĩtĩ yothe nĩ mĩega" (all the trees are g
 The brief's glossary defines a **fixed list of answers** as everything the tool is allowed to say. It adds that a tool which can say anything cannot be checked for safety.
 
 Our reasons:
-- **It can be checked.** 24 answers, each one to three short sentences (14 words or fewer per sentence). A native speaker can review all of them in about 30 minutes.
+- **It can be checked.** 24 answers, most of them one to three short sentences (the consent and "not sure" action answers are longer), with 15 words or fewer per Swahili sentence. A native speaker can review all of them in about 30 minutes.
 - **No made-up advice.** The tool never writes new sentences, so it cannot invent a pesticide, a dose or a diagnosis. The guardrails are in the text itself: no product names, no doses, and "The extension officer makes the final call" on every disease result.
 - **It works offline and is small.** The audio is made once, before shipping. The phone plays compressed audio files (AAC, about 1.5 MB in total). It does not run a 145 MB speech model or a 2.4 GB translation model.
-- **It fits a weak language.** Machine translation into Kikuyu scores far below Swahili (section 3). Generating Kikuyu on the phone would produce text no one on the team can check.
+- **It fits a language with few machine-translation tools.** Machine translation into Kikuyu scores far below Swahili (section 3). Generating Kikuyu on the phone would produce text no one on the team can check.
 
 The cost: the tool cannot answer free questions. Anything outside the list goes to the extension officer.
 
@@ -78,14 +78,14 @@ Sources: Common Voice live stats API (`commonvoice.mozilla.org/api/v1/stats/lang
 
 Every check below is done by a machine or by us. None of them replaces a native speaker. That is why every string stays marked unverified.
 
-1. **Source wording.** The advice comes from Kenyan extension material: the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute), Infonet-Biovision, and the CABI Plantwise fact sheet for brown eye spot. Each answer cites its source in its `notes` field in `answers.json`.
-2. **Back-translation.** We translated every Swahili sentence back to English with NLLB-200-distilled-600M (`swh_Latn` to `eng_Latn`, beam 4, one sentence at a time). We then compared it with our English by hand and set `sw_backtranslation_match`:
+1. **Source wording.** The advice comes mainly from Kenyan extension material (the Kenya Coffee Sustainability Manual, review led by KALRO Coffee Research Institute, and Infonet-Biovision); for brown eye spot it also uses a Pacific fact sheet and a CABI Plantwise summary. Each answer cites its source in its `notes` field in `answers.json`.
+2. **Back-translation.** We translated every Swahili sentence back to English with NLLB-200-distilled-600M (`swh_Latn` to `eng_Latn`, beam 4, one sentence at a time). We then compared it with our English by hand and set `sw_backtranslation_match`. First round, before the Oct 3 revision (item 6 gives the counts after it):
    - `ok` (14 of 24): the meaning came back. Some word slips are expected and listed in `notes`. For example, *kutu* (leaf rust) often comes back as "corrosion", because it is the same word as metal rust.
    - `check` (10 of 24): a word that matters came back wrong. Examples: *nyigu* (wasp) came back as "ants"; *matandazo* (mulch) as "nets"; *utepe* (ribbon) as "stick"; *chama cha ushirika* (cooperative society) as "company". We believe our Swahili is right in most of these cases, but only a speaker can confirm it.
-   - Kikuyu: we back-translated the three Kikuyu phrases (`kik_Latn` to `eng_Latn`). All three came back with the intended meaning. NLLB's Kikuyu-to-English score is low (chrF++ 42.9), so this is weak evidence.
+   - Kikuyu: we back-translated the three Kikuyu phrases (`kik_Latn` to `eng_Latn`). All three came back with the intended meaning. NLLB's Kikuyu-to-English score is low (chrF++ 42.9), so this is limited evidence.
 3. **Audio round trip.** We transcribed every generated audio file with MMS-1b-all speech recognition and compared the transcript with the text:
-   - Swahili, 24 clips: character error rate 3.5%, word error rate 17.9% overall. Per clip, character error rate ranges from 1.2% to 8.0%. Most errors are single letters inside a word (for example *ugani* heard as *udani*).
-   - Kikuyu phrases: "Mathangũ maya ma kahũa nĩ mega" 13% character error rate; "Oya mbica ĩngĩ" 7%; the one-word clip "Ndiĩ" (0.5 seconds) failed (heard as "ĩe").
+   - Swahili, 24 clips (first round, before the Oct 3 revision; the re-run is in [SWAHILI_CHECK.md](SWAHILI_CHECK.md)): character error rate 3.5%, word error rate 17.9% overall. Per clip, character error rate ranges from 1.2% to 8.0%. Most errors are single letters inside a word (for example *ugani* heard as *udani*).
+   - Kikuyu phrases: "Mathangũ maya ma kahũa nĩ mega" 13% character error rate; "Oya mbica ĩngĩ" 7%; the one-word clip "Ndiĩ" (0.5 seconds) was not recognised (heard as "ĩe").
    - Limit: the recogniser and the voice are both from Meta's MMS project. A low error rate shows a machine can understand the audio. It does not show that a farmer finds it natural.
 4. **Benchmarks.** We report the published scores in section 3 instead of claiming quality ourselves.
 5. **Labelled unverified.** Every string carries `sw_verified: false` and `kik_verified: false` until a speaker signs off. The app shows this to the user.
@@ -95,15 +95,15 @@ Every check below is done by a machine or by us. None of them replaces a native 
 
 What these checks can miss. A wrong word that NLLB maps back to the "right" English word passes the back-translation check. The register (too formal, too blunt) is not tested at all. The pronunciation of the technical name "Phoma" was not checked by ear.
 
-## 5. What a 30-minute native-speaker review would check
+## 5. The 30-minute Swahili review (pilot week 1)
 
-Ask a Swahili speaker with farm vocabulary, ideally a cooperative staff member or extension officer in Kirinyaga, Nyeri or Murang'a. For Kikuyu, ask someone from the same area.
+In pilot week 1, a Swahili-speaking extension officer in Kirinyaga, Nyeri or Murang'a does this review (a cooperative staff member with farm vocabulary also works). A Kikuyu speaker from the same area checks the three Kikuyu phrases.
 
 Give them a sheet with these columns: answer id | English | Swahili | back-translation | flag | correct / fix / unnatural / offensive | suggested wording | reviewer initials and date.
 
 Order of work (most important first):
 1. **Safety lines (10 minutes).** `result_not_sure`, `action_not_sure`, `disclaimer_final_call`, `consent_photos`, and the final-call sentence used in the four disease results. Is it clear that the tool can be wrong, that a person decides, and that the farmer can say no?
-2. **The 10 answers flagged `check` (10 minutes).** Confirm or replace these words: *wadudu wachimba majani* (leaf miner), *nyigu* (wasp), *matandazo* (mulch), *miti ya kuzuia upepo* (windbreak trees), *utepe* (ribbon), *kukata miti chini ili ichipue machipukizi mapya* (stumping, not felling), *mbolea ya samadi* (manure), *mdudu anayetoboa matunda* (berry borer), *kiangazi* (dry spell), *chama cha ushirika* (cooperative).
+2. **The 6 answers still flagged `check`, and the Oct 3 changes (10 minutes).** Confirm or replace: *nyigu* (wasp), *matandazo* (mulch), *miti ya kuzuia upepo* (windbreak trees), *mbolea ya samadi* (manure), *mdudu anayetoboa matunda* (berry borer), *kiangazi* (dry spell); then the revised words *wadudu wanaochimba ndani ya majani* (leaf miner), *Weka alama* (mark the tree), *kukata mashina* (stumping, not felling), *namba yako ya uanachama* (membership number), *chama cha ushirika* (cooperative).
 3. **Farmer words (5 minutes).** What do farmers actually call leaf rust, brown eye spot, Phoma and coffee berry disease? Is *afisa wa ugani* the usual term, or *afisa wa kilimo*? Is the first-person "Sina uhakika" (I am not sure) acceptable from an app?
 4. **Listen (3 minutes).** Play five Swahili clips and the three Kikuyu clips. Is the voice understandable? Is "Phoma" said in a usable way?
 5. **Kikuyu (2 minutes).** Are the three phrases correct and polite? Which other answers should get a Kikuyu phrase first? (Our suggestion: the final-call sentence and the consent question.)

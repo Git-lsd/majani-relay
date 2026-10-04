@@ -1,5 +1,5 @@
 {
- "what": "External test of Kahawa Check on coffee-leaf photos from farms in Uganda (never trained on), and the officer learning loop on those photos (the new-region test).",
+ "what": "External test of Majani Relay on coffee-leaf photos from farms in Uganda (never trained on), and the officer learning loop on those photos (the new-region test).",
  "generated_by": "ml/eval_uganda.py",
  "dataset": {
   "name": "A Machine Learning Dataset for Classification of Common Coffee Leaf Diseases in Uganda",

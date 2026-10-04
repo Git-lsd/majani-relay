@@ -1,5 +1,5 @@
 # Usage (from kahawa-check/audio/tools): ../../../.venv/bin/python build_answers.py ../..
-"""Assemble kahawa-check/answers.json from content.py + bt.json (NLLB back-translations) + my own meaning comparison.
+"""Assemble kahawa-check/answers.json from content.py + bt.json (NLLB back-translations) + the team's meaning comparison.
 Audio paths point to the AAC files the app plays (audio/<lang>/<id>.m4a); see tts.py for the WAV -> m4a step."""
 import json, os, re, sys
 sys.path.insert(0, ".")
@@ -8,8 +8,8 @@ import content
 ROOT = sys.argv[1]
 bt = json.load(open("bt.json"))
 
-# My comparison of the NLLB back-translation with the English source.
-# "ok"    = the back-translation keeps the meaning (word-sense slips I checked are listed).
+# The team's comparison of the NLLB back-translation with the English source.
+# "ok"    = the back-translation keeps the meaning (word-sense slips we checked are listed).
 # "check" = the back-translation changes a word that matters; a native speaker must confirm the Swahili.
 CMP = {
  "result_healthy": ("ok", "re-check of the revised line (Oct 3): meaning kept ('pests digging in the leaves'); 'kutu' still came back as 'corrosion', the same Swahili word as metal rust."),
@@ -21,7 +21,7 @@ CMP = {
  "retake_photo": ("ok", "'upande wa chini' came back as 'bottom' (= underside)."),
  "action_healthy": ("ok", "'Pogoa' came back as 'cut' (= prune)."),
  "action_rust": ("ok", "Meaning kept; 'kutu' rendered as 'corrosion'."),
- "action_miner": ("check", "'Nyigu' (wasp) came back as 'ants'. I believe 'nyigu' is correct; a reviewer should confirm."),
+ "action_miner": ("check", "'Nyigu' (wasp) came back as 'ants'. Dictionaries give 'wasp' (docs/SWAHILI_CHECK.md section 6); the speaker review in pilot week 1 checks it."),
  "action_cercospora": ("check", "re-check of the revised line (Oct 3): the soil test and the fertiliser advice now come back as two separate points. Two key words still come back wrong: 'afisa wa ugani' as 'land surveyor' and 'matandazo' (mulch) as 'nets'. Published Kenyan and Tanzanian sources use both words (docs/SWAHILI_CHECK.md section 6), so we kept them; a speaker should confirm."),
  "action_phoma": ("check", "re-check of the revised line (Oct 3): 'Ugonjwa wa Phoma' now comes back as a disease ('Phoma's disease'). Two key words still come back wrong: 'miti ya kuzuia upepo' (windbreak trees) as 'windmills' and 'afisa wa ugani' as 'medical examiner'. Sources confirm both terms (docs/SWAHILI_CHECK.md section 6); a speaker should confirm."),
  "action_not_sure": ("ok", "re-check of the revised line (Oct 3): meaning kept ('Make a mark on this tree', 'Do not spray', 'Wait for the officer's advice first'); 'matokeo' (results) came back as 'effects'."),
@@ -54,7 +54,7 @@ for k, v in content.C.items():
                   "followed by the remaining Swahili sentences, so nothing is dropped. "
                   "Kikuyu back-translation (NLLB kik->eng, FLORES chrF++ 42.9, weak evidence): '" + bt[k]["kik_bt"] + "'.")
         if k == "result_not_sure":
-            notes += " Machine transcription of the 0.5 s Kikuyu clip failed (heard 'ĩe'); a recorded human clip would be better."
+            notes += " Machine transcription did not recognise the 0.5 s Kikuyu clip (heard 'ĩe'); a recorded human clip would be clearer."
     if cited:
         notes += " Sources: " + " | ".join(f"{s} = {content.SOURCES[s]}" for s in cited)
     if k in REVISED:

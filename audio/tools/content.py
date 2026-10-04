@@ -1,4 +1,4 @@
-# Source content for kahawa-check/answers.json (docs agent).
+# Source texts for answers.json: English, Swahili and Kikuyu, with the sources behind each answer.
 # Sources referenced in notes by short key:
 SOURCES = {
     "KCS": "Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners), "
@@ -60,7 +60,7 @@ add("retake_photo",
     "Please take the photo again. Show the underside of one leaf, in daylight. Hold the phone still.",
     "Tafadhali piga picha tena. Onyesha upande wa chini wa jani moja, kwenye mwanga wa mchana. Shika simu bila kutikisa.",
     kik="Oya mbica ĩngĩ.",
-    notes="Protocol from SPEC (underside of 3 leaves on 5 trees). kik phrase means 'Take another photo'; the rest falls back to Swahili.")
+    notes="Photo protocol of the app: underside of 3 leaves on each of 5 trees. kik phrase means 'Take another photo'; the rest falls back to Swahili.")
 
 # ---------- next steps ----------
 add("action_healthy",
@@ -89,8 +89,9 @@ add("action_cercospora",
 add("action_phoma",
     "Phoma is worse in cold, windy weather on high ground. Windbreak and shade trees can help. Ask the extension officer about approved control.",
     "Ugonjwa wa Phoma huzidi wakati wa baridi na upepo mkali katika maeneo ya juu. Miti ya kuzuia upepo na miti ya kivuli inaweza kusaidia. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu.",
-    notes="PHOMA sources: cold wind and altitude above about 900 m favour the disease. Windbreak advice is general (KCS recommends windbreaks "
-          "for bacterial blight on exposed sides). Weakest-sourced item for Kenya; a CRI agronomist should confirm.")
+    notes="PHOMA sources: cold wind and altitude above about 900 m favour the disease. Windbreak advice is general (Infonet-Biovision recommends windbreaks "
+          "on exposed sides for bacterial blight, and the PHOMA article for Phoma; KCS does not mention them). "
+          "Kenyan sources are thinnest for this item; a KALRO Coffee Research Institute agronomist should confirm.")
 
 add("action_not_sure",
     "Put a mark on this tree. The officer will review the saved photo. Do not spray because of this result. Wait for the officer's advice first.",

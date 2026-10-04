@@ -6,7 +6,7 @@ All figures are for **Kenya** unless the row says otherwise.
 **How to read the "Check" column**
 - **Read**: we opened the source and read the number ourselves (PDF, web page, or World Bank API).
 - **Secondary**: we read the number in a news report or factsheet that cites the original, not in the original.
-- **Snippet**: we saw the number only in a search-engine summary. The page itself was blocked. Do not put these on a slide without opening the source first.
+- **Snippet**: we saw the number only in a search-engine summary. The page itself was blocked. Open the source before quoting these.
 
 ## Key figures
 
@@ -77,10 +77,10 @@ All figures are for **Kenya** unless the row says otherwise.
 
 ## 4. The registry precondition
 
-The brief says the binding constraint is often a missing farmer registry. **In Kenyan coffee this precondition is partly met.** The national registry (KIAMIS) exists but is incomplete and its contact details are not kept up to date; what reliably reaches coffee farmers today is the cooperative member list keyed by grower number. Farmers outside cooperatives and unmapped plots are not covered. Our tool plugs into the cooperative list; it does not build or fix a registry.
+The brief says the binding constraint is often a missing farmer registry. **In Kenyan coffee this precondition is partly met.** The national registry (KIAMIS) exists and is still growing, and the Ministry's own draft data policy names real-time checks of farmer contact details as a gap; what reliably reaches coffee farmers today is the cooperative member list keyed by grower number. Farmers outside cooperatives and unmapped plots are not covered. Our tool plugs into the cooperative list; it does not build or fix a registry.
 
 - **National registry exists.** KIAMIS holds 8.9 million registered farmers as of 30 Sep 2026 (row 30). It was 6.4 million in March 2023 (World Bank KCSAP completion report, https://documents1.worldbank.org/curated/en/099061024092575123/pdf/BOSIB1887abe1c019186251678c4cc131cf.pdf) and 6.6 million in July 2025 (The Star, 26 Aug 2025: https://www.the-star.co.ke/news/2025-08-26-state-rolls-out-phase-two-of-farmer-registration-targets-500000).
-- **Known weaknesses.** The Ministry's March 2026 draft data policy lists "data fragmentation, lack of realtime farmer contact validation", low digital literacy, unreliable networks and "insufficient extension staff" (https://kilimo.go.ke/wp-content/uploads/2026/03/Final-DRAFT-KENYA-AGRICULTURAL-DATA-INFORMATION-AND-DIGITAL-3.pdf).
+- **Gaps the Ministry names.** The Ministry's March 2026 draft data policy lists "data fragmentation, lack of realtime farmer contact validation", low digital literacy, unreliable networks and "insufficient extension staff" (https://kilimo.go.ke/wp-content/uploads/2026/03/Final-DRAFT-KENYA-AGRICULTURAL-DATA-INFORMATION-AND-DIGITAL-3.pdf).
 - **Coffee in KIAMIS.** FAO Kenya (2025) says KIAMIS "has cooperatives register modules that target farmers in the coffee value chain", built with the cooperatives (https://www.fao.org/kenya/news/newsdetails/how-farmer-registration-is-transforming-agri-food-systems/en). In Aug 2025 the Agriculture PS said coffee farmer data collection had started for EU deforestation rules (The Star, 26 Aug 2025). The coffee strategy plans "a coffee census incorporating KIAMIS data" and says most coffee data "is currently on estimates" (strategy, sections 2.6.1 and 3.2.5).
 - **How cooperatives keep member lists.** Cooperatives hold member lists, because the Cherry Fund paid 668,414 farmers through them (row 31) and the Direct Settlement System pays members from cooperative data. In Nov 2024 the Cooperatives CS ordered all cooperatives to submit member data (Capital FM: https://capitalfm.africa/govt-backs-down-on-directive-for-direct-coffee-farmer-payments/). In May 2025 the national coffee cooperative union asked for one more year "to complete data clean-up" and open accounts for all farmers (KBC: https://www.kbc.co.ke/coffee-union-seeks-extension-of-farmers-payment-model/). Separately, a NACCU partnership with Dimitra is registering and mapping coffee farms with an offline app in English and Swahili (PR Newswire, 1 Oct 2025: https://www.prnewswire.com/news-releases/dimitra-and-national-coffee-cooperative-union-partner-to-advance-a-national-initiative-on-environmental-compliance-carbon-and-esg-in-kenya-302572249.html).
 - **Not verified:** what share of coffee cooperatives keep member lists on paper versus software. The strategy lists "promote digitalisation and automation of cooperative societies operations" as a future activity, which suggests many are not yet digital.
@@ -122,9 +122,9 @@ Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not docum
 
 ## 6b. Is the name taken?
 
-**Decision (4 Oct 2026, after midnight ET):** the tool is now called **Majani Relay** (say mah-JAH-nee; *majani* = leaves). The check below was done for the earlier name, Kahawa Check, and is why we moved away from "Kahawa".
+**Decision (4 Oct 2026):** the tool is now called **Majani Relay** (say mah-JAH-nee; *majani* = leaves). The check below was done for the earlier name, Kahawa Check, and is why we moved away from "Kahawa".
 
-- **"Majani Relay": no product with this exact name found** in one web search on 4 Oct 2026. Nearby results: a GitHub account "majani-plus" with an unrelated prayer-app relay, and "majani-mahindi", a maize leaf disease analyser on GitHub (seen only in the search results, not opened). Not checked: app stores, the Kenya trademark register (KIPI), the company register. A Swahili speaker should still confirm that the name reads well.
+- **"Majani Relay": no product with this exact name found** in one web search on 4 Oct 2026. Not checked: app stores, the Kenya trademark register (KIPI), the company register. A Swahili-speaking extension officer confirms the name in pilot week 1, together with the rest of the Swahili text.
 
 The earlier check, for "Kahawa Check" (3 Oct 2026):
 
@@ -136,14 +136,10 @@ The earlier check, for "Kahawa Check" (3 Oct 2026):
   - Sauti ya Kahawa, the Kenya Coffee Platform (https://www.sautiyakahawa.org/)
   - MyKahawa, a Nairobi Coffee Exchange data site (https://www.mykahawa.org/)
   - "KAHAWA+", the name of the NACCU-Dimitra programme, confirmed on https://dimitra.io/who-we-help/ (3 Oct 2026; earlier seen only in a snippet: https://www.newsghana.com.gh/kenyas-coffee-farmers-race-to-meet-eu-digital-compliance-deadline/).
-- **Two alternatives** (no app with these names found; the Swahili meanings need a native speaker to check, as for all our local-language text):
-  1. **Kutu Watch**. *Kutu* is given as Swahili for "rust" in online dictionaries.
-  2. **Majani Check**. *Majani* = leaves.
-  - Avoid "Jani": it is already a Nairobi e-bus booking app (BasiGo).
 
 ## 7. Candidate problem statements (brief's template)
 
-*Update, 3 Oct, 7 PM ET: after the evidence review in section 8, the **recommended** statement is the one marked there. A to C below are kept for the record.*
+*The statement we use is in section 8. A to C are earlier versions we considered.*
 
 **A. Relay farmer (the earlier lead, matches the primary user in the spec)**
 Because of this tool, a cooperative relay farmer will record a checked leaf-health result for each plot they visit, and send the unclear cases to the officer, by the end of the plot visit that they would otherwise do late, at the officer's next visit; we know because Kenya has one public extension agent per 1,380 farmers against a 1:600 target (MoALD 2025), smallholder trees yield about 2 kg of cherry against a 2.53 kg living-wage level (MoALD 2024; Kenya Coffee Platform 2024), and two of the main varieties, SL28 and SL34, are susceptible to leaf rust (MoALD 2024).
@@ -176,11 +172,11 @@ On the evening of 3 Oct we asked a separate review to test our claim that farmer
 > Because of this tool, the county extension officer or cooperative agronomist will send their next visits to the villages with the most leaf rust, by the week the relay farmers' plot checks reach the cooperative, that they would otherwise do late, after paper reports arrive; we know because one Kenyan extension officer typically serves 1,500–3,000 farmers and paper-based reporting has caused "delayed information flows" (Ministry of Agriculture draft data policy, 2026), and coffee-specific extension has "collapsed" in places (Coffee Development and Marketing Strategy, 2024).
 
 Simplifications in this statement:
-- "The week the checks reach the cooperative" depends on how often relay farmers export their village totals. Each phone ranks only its own records today; combining several phones' exports is done by hand (not built into the app).
+- "The week the checks reach the cooperative" depends on how often relay farmers export their village totals. Each phone keeps its own records offline, and the co-op combines the phones' exports.
 - The evidence shows the gap is real. It does not show that our tool closes it.
 - The 1,500–3,000 figure is for all farmers, not coffee farmers only. The national figure in row 15 (1:1,380) comes from a different document.
 
-**Recommended framing in 4 sentences.** Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts. Majani Relay turns each relay farmer's plot visit into a standard record keyed to the cooperative member number; the AI labels each leaf photo or says "not sure", so 15 photos become a rust count, and unclear photos go to a named officer whose labels improve the model. Village rust shares, adjusted for small samples, rank where the officer should go first, like the brief's cotton example, which counts pests to decide whether and when to act.
+**Recommended framing in 4 sentences.** Kenyan coffee farmers mostly recognise visible rust. What is missing is a way to get standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts. Majani Relay turns each relay farmer's plot visit into a standard record keyed to the cooperative member number; the AI labels each leaf photo or says "not sure", so 15 photos become a rust count, and unclear photos go to a named officer whose labels improve the model. Village rust shares, adjusted for small samples, rank where the officer should go first, like the brief's cotton example, which counts pests to decide whether and when to act.
 
 **Claims we do not make** are listed in [NEED_EVIDENCE.md](NEED_EVIDENCE.md), section 6.
 
@@ -191,7 +187,6 @@ Simplifications in this statement:
 - How often coffee farmers see an extension officer.
 - The exact number of coffee cooperative societies (550 from USDA; other counts not opened).
 - Paper versus digital member lists in coffee cooperatives.
-- The leaf rust loss figure (row 11): full text blocked. Open it before quoting it.
+- The leaf rust loss figure (row 11): seen only in a search summary.
 - Any link between El Nino rains and leaf rust in Kenya.
-- Whether "KAHAWA+" is the official programme name.
 - FAOSTAT's online query service needed a login; we used FAOSTAT's public bulk file instead (same database, release of 31 Dec 2025).

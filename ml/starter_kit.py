@@ -153,7 +153,7 @@ def show(name, res):
 def embed_images(paths, augment=None, batch=64):
     """Embed images (paths relative to ../data_raw, as in results/index.csv) with the frozen backbone, standardised
     exactly like the phone. augment: optional function PIL.Image -> PIL.Image applied before the standard resize/crop.
-    About a minute per 1,000 images on the Mac GPU."""
+    About a minute per 1,000 images on a laptop GPU."""
     import torch, timm
     from PIL import Image
     meta = json.load(open(os.path.join(REPO, 'model', 'backbone_meta.json')))

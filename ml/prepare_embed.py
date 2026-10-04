@@ -1,5 +1,6 @@
-"""Index the coffee-leaf datasets, de-duplicate augmented copies, and embed every image
-with the frozen backbone (same preprocessing as the web app).
+"""Index the coffee-leaf datasets, sample up to 1,500 JMuBEN photos per class, and embed every image
+with the frozen backbone (same preprocessing as the web app). DEDUP=1 groups augmented copies instead;
+it is off by default because the hash is too coarse for these crops.
 
 Outputs results/index.csv and ../data_work/embeddings.npz (not committed: large).
 Run: ../.venv/bin/python ml/prepare_embed.py
@@ -14,7 +15,7 @@ REPO = os.path.dirname(HERE)
 RAW = os.path.join(os.path.dirname(REPO), 'data_raw')
 WORK = os.path.join(os.path.dirname(REPO), 'data_work')
 os.makedirs(WORK, exist_ok=True)
-CAP = int(os.environ.get('CAP', 1500))  # max de-duplicated JMuBEN groups per class
+CAP = int(os.environ.get('CAP', 1500))  # max JMuBEN photos sampled per class (groups when DEDUP=1)
 CLASSES = ['healthy', 'rust', 'miner', 'cercospora', 'phoma']
 
 
