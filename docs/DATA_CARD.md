@@ -112,7 +112,7 @@ Raw sizes are the file sizes we downloaded. Image counts are those stated by the
 ## 7. Other data the tool depends on
 
 - **ImageNet (pretraining of the image backbone).** The backbone is timm `mobilenetv3_large_100.ra_in1k`, with weights released under Apache-2.0. Those weights were trained on ImageNet-1k, whose own terms limit the images to non-commercial research. We use the weights as released and do not redistribute ImageNet images. ImageNet has very few coffee leaves; the backbone is generic.
-- **Synthetic data, labelled as such.** The co-op screen (village ranking) has a button that adds six demo villages, each marked "(synthetic)". The village simulation in `results/RESULTS.md` (section 3.5) also uses synthetic villages; only the classifier error rates in it are measured.
+- **Synthetic data, labelled as such.** The co-op screen (village ranking) has a button that adds six demo villages, each shown with a "synthetic" tag (in the co-op CSV the village name ends with "(synthetic)" and the `synthetic` column is true). The village simulation in `results/RESULTS.md` (section 3.5) also uses synthetic villages; only the classifier error rates in it are measured.
 - **Language models (not training data).** NLLB-200, MMS TTS and MMS speech recognition were used to make and check the Swahili and Kikuyu audio. They are described with their licences in `docs/LANGUAGE.md`.
 - **Advice text.** The fixed answers are written from Kenyan extension material, mainly the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute). Sources are cited per answer in `answers.json`.
 

@@ -7,7 +7,7 @@ Edit the template, not docs/RESPONSIBLE_AI.md.
 
 The brief makes this a pass/fail criterion. It asks whether the limits are respected, and whether our account of privacy, consent, bias and human oversight is credible. The health annex also asks three questions that apply to any tool on a shared phone: where the data sits, who can read it, and what happens when the phone is lost or shared. This page answers all of them for Majani Relay (earlier name: Kahawa Check).
 
-Facts about the app below were checked against `app.js` (app cache version `kahawa-v18`) and the shipped head (v3-2026-10-03-lab+field+other) on the night of 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
+Facts about the app below were checked against `app.js` (app cache version `kahawa-v19`) and the shipped head (v3-2026-10-03-lab+field+other) on 3–4 October 2026. If the app changes, this page must be checked again. Every limit below ends with its next step: what, who, how we measure it, and when.
 
 ## 1. The fail-safe in one paragraph
 
@@ -35,7 +35,7 @@ The tool reads a leaf photo and gives one of five answers (healthy, leaf rust, l
 
 ### Where it sits
 
-All of this sits in the browser storage (IndexedDB) of the relay farmer's phone, inside the Majani Relay web app. A few conveniences (chosen language, last village typed) sit in the browser's local storage. There is no server and no account. After the first visit, the app works without internet and makes no network requests with farm data.
+All of this sits in the browser storage (IndexedDB) of the relay farmer's phone, inside the Majani Relay web app. A few conveniences (chosen language, last village typed, the role last chosen in "Wording wrong?") sit in the browser's local storage. There is no server and no account. After the first visit, the app works without internet and makes no network requests with farm data.
 
 Data leaves the phone only when a person exports it:
 - **Co-op CSV** (button "Export CSV"): one row per village with counts, shares and the alert flag. No member codes, no photos.
@@ -53,19 +53,19 @@ How these files travel (Bluetooth, WhatsApp, a memory card) is up to the user. O
 | The extension officer | Everything, while using the relay farmer's phone during a visit. Otherwise only what is exported to them. |
 | The cooperative | Only exported files. |
 | The team that built the tool | Nothing. There is no server. |
-| Anyone who picks up the unlocked phone | Everything in the app: thumbnails, villages, member codes, answers, labels. |
+| Anyone who picks up the unlocked phone | Everything in the app: thumbnails, villages, member codes, answers, labels. The Officer and Co-op tabs ask for the officer PIN, but in this demo it is one fixed PIN shown on the lock screen, so it does not stop a person who wants to look. |
 
 ### Lost phone
 
 - The data stays on the phone. It is protected only by the phone's screen lock.
 - What could leak: leaf thumbnails, village names, member codes, farm details (variety, last spray, fruit load), and which plots had a possible disease. The last item is the most sensitive. A buyer or neighbour could use "rust on plot X" against a farmer. That is one reason the co-op export holds village totals only, and the plot-records export goes only to the named officer.
 - Member codes are a weak protection. The hash prefix is public in the code, and member numbers are short, so someone with the phone and time can recover a number by trying all of them. The app says this on screen. In law, this is pseudonymous data, not anonymous data.
-- There is no remote wipe (simplification, stated). Mitigation: keep a screen lock; export and then use "Delete all data on this phone" at the end of each round of visits. **Next step:** an app PIN and a per-farm delete button (section 11; app lead; both work offline on the pilot phones; before the pilot starts). A remote wipe needs a server and is not planned.
+- There is no remote wipe (simplification, stated). Mitigation: keep a screen lock; export and then use "Delete all data on this phone" at the end of each round of visits. **Next step:** a PIN each officer sets, a PIN for the plot-visit records, and a per-farm delete button (section 11; app lead; all work offline on the pilot phones; before the pilot starts). A remote wipe needs a server and is not planned.
 
 ### Shared phone
 
 The brief's household shares phones: Noor's daughter's smartphone is used at weekends. A relay farmer's phone may also be used by family members.
-- Anyone using the same browser sees the same app data. The app has no PIN of its own (gap, stated). **Next step:** add an app PIN (section 11; app lead; before the pilot starts).
+- Anyone using the same browser sees the same app data. The Officer and Co-op tabs open only after the officer PIN. Demo simplification, stated on the lock screen and in About: one fixed demo PIN (2026), the same on every phone, checked on the phone, and unlocked until the app is reloaded ("Lock officer screens" locks them again). It keeps these screens out of casual reach, for example of family members who use the phone; it is not real security. The Plot visit tab has no PIN (gap, stated). **Next step:** let each officer set their own PIN, and add a PIN for the plot-visit records (section 11; app lead; before the pilot starts).
 - Advice in the training of relay farmers: use the phone's own lock, do not lend the phone with the app open, and delete data after export.
 - If the daughter's phone is used, delete the data before the phone goes back to school with her.
 
@@ -137,7 +137,7 @@ The full list per dataset is in `docs/DATA_CARD.md`. The main limits:
 ### Scope limits
 
 - **Leaf photos only.** The AI looks at leaves. It misses coffee berry disease, which attacks berries and is Kenya's most damaging coffee disease, and bacterial blight of coffee, which is not in its five labels.
-- **The checklist, not the AI, covers the rest.** Soil fertility (fertiliser or manure), very old trees, weeds, spots or holes in the berries, and a dry spell at flowering are fixed questions marked "not AI". A "yes" on a berry question tells the relay farmer to tell the officer.
+- **The checklist, not the AI, covers the rest.** Soil fertility (fertiliser or manure), very old trees, weeds, spots or holes in the berries, and a dry spell at flowering are fixed questions under "Things a leaf photo cannot show"; the app says the AI does not use these answers. A "yes" on a berry question tells the relay farmer to tell the officer.
 - **It does not explain a yield drop.** Kenya's 2020 coffee policy explains falling yields mainly by soil fertility, ageing trees and farmers, low reinvestment, climate and missing extension, not by misidentified disease. The tool covers one part: leaf problems the officer should look at.
 - **It does not predict outbreaks.** The village ranking ranks rust already seen in photos.
 - **It does not give spray timing.** It never names a product, dose or date. The officer decides when action starts.
@@ -149,7 +149,7 @@ Sources for these points: `docs/NEED_EVIDENCE.md`.
 - **The officer makes the final call.** This sentence is in every disease answer and in the disclaimer. The officer review screen says "You make the final call."
 - **The "not sure" lane.** Low confidence or an unfamiliar photo sends the photo to the officer queue. The farmer is told "Do not spray because of this result" (`action_not_sure`).
 - **The relay farmer can disagree.** On any answered photo, "I think it's something else" (with a confirm step) sends the photo to the officer with the reason "relay farmer disagrees". It then counts in the village numbers only after the officer labels it; "Skip" keeps it out. The relay farmer can undo it until the plot card is saved or the officer has labelled the photo. The AI answer is never silently kept in the count against the relay farmer's view.
-- **Explanations are fixed and sourced.** "What does this mean?" opens one of 6 fixed guides (what it looks like, common causes, what to do now, when to call the officer). Every "not sure", "unfamiliar" and "different problem" result opens the same not-sure guide. Control questions go to the officer ("ask the officer about approved control"); no product or dose is named. Each section has a "Wording wrong?" button. The Swahili was checked by machine only (20 of 24 sections read back correctly; `GUIDES.md`).
+- **Explanations are fixed and sourced.** "What does this mean?" opens one of 6 fixed guides (what it looks like, common causes, what to do now, when to call the officer). Every "not sure", "unfamiliar" and "different problem" result opens the same not-sure guide. Control questions go to the officer ("ask the officer about approved control"); no product or dose is named. Each Swahili or Kikuyu section has a "Wording wrong?" button (English sections do not, because the English is the team's own source text). The Swahili was checked by machine only (20 of 24 sections read back correctly; `GUIDES.md`).
 - **The learning loop uses only officer labels** (the five answers and "Different problem"). The model's own guesses are never used as labels. "Skip (cannot tell)" photos are not used.
 - **Drift is limited.** When the small head is refit on the phone, a penalty pulls it toward the shipped weights (`prior_strength` in `model/head.json`). A few wrong labels cannot move it far. The image backbone is never changed.
 - **Shared updates are checked.** An update file only loads on the model version it was made for, and it carries its list of labels, so the receiver can see how many labels it rests on.
@@ -198,9 +198,9 @@ Limits of oversight:
 | Healthy answer when berries are sick | False comfort | Healthy answers say "leaves only, not berries"; checklist asks about berry spots and holes | Relies on the relay farmer asking the checklist. Next step: compare checklist berry answers with the officer's berry checks, pilot weeks 3–8 |
 | Wrong officer label | Spreads to other phones | Prior penalty; version check; label counts in the update file | No second reviewer. Next step: the officer relabels 100 dataset photos to measure agreement, pilot week 1; add a second reviewer if the officer cannot keep up (`PILOT_PLAN.md`) |
 | Wrong or unnatural Swahili / Kikuyu | Misunderstood advice | Fixed list; back-translation and audio checks; "not yet checked" tag on screen; 10 strings flagged for review | No native speaker has checked yet. Next step: speaker review, pilot week 1 |
-| Lost or shared phone | Plot data seen by others | No names; member number hashed; thumbnails only; delete-all button | Short member numbers can be guessed; no app PIN; no remote wipe. Next step: app PIN and per-farm delete, before the pilot |
+| Lost or shared phone | Plot data seen by others | No names; member number hashed; thumbnails only; delete-all button; Officer and Co-op tabs behind a fixed demo officer PIN | Short member numbers can be guessed; the demo PIN is the same on every phone and shown on screen, so it is not real security; no PIN on the plot-visit records; no remote wipe. Next step: a PIN each officer sets, a PIN for the plot-visit records, and per-farm delete, before the pilot |
 | Browser clears storage | Records lost | Persistent-storage request; export | Possible on iPhone if not added to the home screen. Next step: add to home screen at training; weekly export, pilot weeks 1–12 |
-| Plot results used against a farmer (price talks) | Livelihood harm | Data stays on the phone; exports are village totals | A person with the phone can still see plot results. Next step: app PIN, before the pilot |
+| Plot results used against a farmer (price talks) | Livelihood harm | Data stays on the phone; exports are village totals; plot records on the Officer and Co-op tabs sit behind the demo officer PIN | A person with the phone can still see plot results, because the demo PIN is fixed and shown on screen. Next step: a PIN each officer sets and a PIN for the plot-visit records, before the pilot |
 | Village alert: false alarm or miss | Officer goes to the wrong village | Small-sample adjustment; ranked list, not an alarm; officer decides | Fewer false alarms (3.4 → 1.0) but more misses (1.6 → 3.0) than raw shares, in simulation. Next step: replay on pilot data against the officer's own checks, after 3 months |
 | Relay farmer over-relies on the tool | Skips the officer | Every result points to the officer; "not sure" is common by design | Depends on training and trust. Next step: any spray decision made on an app answer pauses the pilot and triggers retraining (stop rule in `PILOT_PLAN.md`); the officer asks about this at each weekly review, weeks 3–8 |
 | Nobody answers the "not sure" queue | Photos wait; the model never adapts; the ranking rests on few photos | Plot card says "waiting for the officer"; advice stays "do not spray because of this result"; waiting counts shown per village | Needs a named reviewer agreed with the cooperative. Next step: the co-op manager names the reviewer before pilot week 1; median queue waiting time reported |
@@ -212,7 +212,7 @@ The 90-day pilot plan ([PILOT_PLAN.md](PILOT_PLAN.md)) schedules each of these.
 | Item | Who | How we know it is done | When |
 |---|---|---|---|
 | Native-speaker review of all Swahili and Kikuyu strings, consent first ([LANGUAGE.md](LANGUAGE.md), section 5) | A Swahili-speaking extension officer; a Kikuyu speaker | All 24 strings reviewed; approved strings lose the "not yet checked" tag | Pilot week 1 |
-| A "delete this farm" button and an app PIN | App lead | Both work offline on the pilot phones | Before the pilot starts |
+| A "delete this farm" button, a PIN each officer sets (replacing the fixed demo PIN), and a PIN for the plot-visit records | App lead | All work offline on the pilot phones | Before the pilot starts |
 | Field photos from Kenyan farms, taken with the relay farmers' phones, labelled by an officer | The team with the extension officer | The first 200 kept as a sealed test, opened once | Weeks 3–9 |
 | A data agreement with the cooperative: controller, retention period, ODPC registration check, short impact assessment, and who may receive the plot-records CSV | Co-op manager with the team | Signed agreement | Pilot week 1 |
 | A named reviewer for the officer queue, and a review rhythm | Co-op manager | Name agreed; median queue waiting time reported | Before pilot week 1 |

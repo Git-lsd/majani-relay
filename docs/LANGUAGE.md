@@ -91,7 +91,7 @@ Every check below is done by a machine or by us. None of them replaces a native 
 5. **Labelled unverified.** Every string carries `sw_verified: false` and `kik_verified: false` until a speaker signs off. The app shows this to the user.
 
 6. **Second round (Oct 3 evening).** A second machine translation model (NLLB-1.3B), a blind back-translation by a separate AI agent that never saw our English, and a check of key terms against published Swahili agricultural sources. 10 phrases were rewritten in simpler, better-attested Swahili and their audio regenerated; after the rewrite, 18 of 24 come back "ok" and 6 "check" (mostly model errors on attested words such as *matandazo*, mulch). Details: [SWAHILI_CHECK.md](SWAHILI_CHECK.md). Review sheet for a speaker: [SWAHILI_REVIEW_SHEET.md](SWAHILI_REVIEW_SHEET.md).
-7. **Corrections from the field.** Every spoken answer in the app has a "Wording wrong?" button. The relay farmer (who reads the English beside the Swahili) or the officer types a better phrasing. Reports stay on the phone, travel with the officer's update file or a CSV export, and do not change the app's text until someone reviews them.
+7. **Corrections from the field.** Every Swahili or Kikuyu sentence in the app (answers and guide sections) has a "Wording wrong?" button. English text has none, because the English is the team's own source text; on the English screen the play button plays the Swahili audio. The report form shows the English meaning next to the Swahili or Kikuyu text, and the relay farmer or the officer types a better phrasing. Reports stay on the phone, travel with the officer's update file or a CSV export, and do not change the app's text until someone reviews them.
 
 What these checks can miss. A wrong word that NLLB maps back to the "right" English word passes the back-translation check. The register (too formal, too blunt) is not tested at all. The pronunciation of the technical name "Phoma" was not checked by ear.
 
@@ -121,7 +121,7 @@ What is missing, and why:
 - **No Kikuyu speech input.** The tool has no voice input in any language, so nothing is lost here. If voice yes/no answers were added later, MMS has a Kikuyu recognition adapter, and the African Next Voices Kikuyu set (754 hours, CC BY 4.0, including Kirinyaga dialects) could be used to test or fine-tune it. We have not done this.
 - **Short Kikuyu audio is fragile.** The one-word clip "Ndiĩ" was not recognised by the machine round trip. Short words from a TTS model are often clipped.
 
-The fallback is the design, not a failure: when a Kikuyu text is missing, the app shows Swahili with a "Swahili fallback" tag. A Kikuyu speaker can add phrases later by editing `answers.json` and running `audio/tools/tts.py`. No code change is needed.
+The fallback is the design, not a failure: when a Kikuyu text is missing, the app shows the Swahili text with the tag "Not yet in Kikuyu: shown in Swahili" (and "Short Kikuyu phrase, rest in Swahili" on the three answers that start in Kikuyu). A Kikuyu speaker can add phrases later by editing `answers.json` and running `audio/tools/tts.py`. No code change is needed.
 
 ## 7. A language with no speech model: recorded human clips
 
