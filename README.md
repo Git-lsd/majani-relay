@@ -4,19 +4,59 @@ Generated from docs/templates/README.tmpl.md by ml/fill_docs.py (numbers come fr
 
 # Majani Relay
 
-**Standard leaf checks by cooperative relay farmers in central Kenya, turned into rust counts for the extension officer. Offline, in Swahili. It says "not sure" when it should, sends other problems to the officer, and the officer makes the final call.**
-
-*Majani* is Swahili for "leaves"; say it **mah-JAH-nee**. Earlier versions were called Kahawa Check (*kahawa* = coffee). Like all our Swahili, the name still needs a check by a native speaker.
+**A phone app that turns coffee leaf photos taken by cooperative relay farmers in central Kenya into village rust counts, so the extension officer knows where to go first.**
 
 Live app: https://git-lsd.github.io/majani-relay/ · Code: https://github.com/git-lsd/majani-relay · Videos: Demo, Tech and Team videos are in the hackathon submission and will be added here after judging.
 
 Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every phone; see [Run it](#run-it)).
 
-Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agriculture sector, 3–4 October 2026.
+---
+
+### What it does
+
+1. A **relay farmer** (a farmer the cooperative trains to visit members' plots) photographs 15 coffee leaves per plot.
+2. The AI on the phone names the leaf problem or says **"not sure — the officer will look"**. Works offline after the first visit; answers in Swahili, as text and audio.
+3. The extension officer labels the unclear photos and makes the final call. The labels teach the model on the phone.
+4. The co-op screen ranks villages by rust, so the officer knows where to go first.
+
+### Results at a glance
+
+| Test | Result |
+|---|---|
+| **Field photos:** healthy and rust leaves on the plant (RoCoLe, Ecuador), never trained on (cross-validated) | Answers 91%; 89% of those answers are right. The rest go to the officer. |
+| **New country:** farm photos from Uganda, never trained on | At first 93% go to the officer instead of a guess (forced, it would be right on only 43%). After 100 officer labels: answers 46%, 94% of those right. Dataset labels stand in for the officer. |
+| **Village ranking:** simulated villages, at the model's measured error rates | False alarms per 40 villages: 3.4 → 1.0 with the small-sample adjustment. Misses near the alert line: 1.6 → 3.0. |
+
+All results and how they were measured: [Evaluation](#evaluation).
+
+### Try it
+
+1. **Plot visit** → "Farmer agrees" → type any village → **"Try sample photos"**.
+2. **Officer** → demo PIN **2026** → label the waiting rust level 3 photo "Leaf rust" → **"Update the model on this phone"**.
+3. **Co-op** → **"Load demo villages (synthetic)"** to see the village ranking.
+
+Full steps, what each sample photo should show, and how to run it on your own computer: [Run it](#run-it).
+
+### Main limits
+
+- **No Kenyan photos taken the way relay farmers take them yet** (the Kenyan training photos are close-ups cropped to the spot). Next step: a sealed Kenyan test set in the first pilot month ([Limitations](#limitations)).
+- **Swahili not yet checked by a native speaker.** Next step: a Swahili-speaking officer checks all 24 answers in pilot week 1 ([docs/LANGUAGE.md](docs/LANGUAGE.md)).
+- **One fixed demo PIN, the same on every phone; not real security.** Next step: a PIN each officer sets, before the pilot ([Limitations](#limitations)).
+- **Each phone ranks only its own records; combining phones is done by hand.** Next step: the co-op manager times this in the pilot ([Roadmap](#roadmap-not-built)).
+
+Every limit, each with its next step: [Limitations](#limitations).
 
 ---
 
-## What it is
+## Full details below
+
+Click a section to open it.
+
+<details><summary><a name="what-it-is"></a><b>What it is, in more detail</b> — the full description and the four main results</summary>
+
+*Majani* is Swahili for "leaves"; say it **mah-JAH-nee**. Earlier versions were called Kahawa Check (*kahawa* = coffee). Like all our Swahili, the name still needs a check by a native speaker.
+
+In one line: standard leaf checks by cooperative relay farmers in central Kenya, turned into rust counts for the extension officer. Offline, in Swahili. It says "not sure" when it should, sends other problems to the officer, and the officer makes the final call.
 
 Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts.
 
@@ -32,7 +72,9 @@ For the people using it: every result has a **"What does this mean?"** button th
 
 **Which decision from the brief.** The brief's list includes "documenting a field observation" and "connecting evidence to a pricing, market or extension-service next step". Majani Relay does both (the extension-service part), plus a third item on the list, identifying a crop problem, as far as a leaf photo can show it.
 
-## Who uses it, and when
+</details>
+
+<details><summary><a name="who-uses-it-and-when"></a><b>Who uses it, and when</b> — relay farmer, extension officer, cooperative office, and Noor</summary>
 
 | Person | When | What they do with it |
 |---|---|---|
@@ -43,7 +85,9 @@ For the people using it: every result has a **"What does this mean?"** button th
 
 Why the relay farmer and not Noor: only 27.5% of rural Kenyan women aged 15–49 own a smartphone (Kenya DHS 2022). Noor's phone stays at the house while she works. The cooperative already exists (cooperatives produce 70% of Kenya's coffee), and the World Bank-funded NAVCDP project already uses 3,248 "digitally equipped agripreneurs" for last-mile advice. Sources: [docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md).
 
-## The problem
+</details>
+
+<details><summary><a name="the-problem"></a><b>The problem</b> — what the evidence says, and the problem statement</summary>
 
 What the evidence says (every source, country, year and link: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md)):
 
@@ -58,7 +102,9 @@ What the evidence says (every source, country, year and link: [docs/NEED_EVIDENC
 
 Simplifications: the evidence shows the gap is real; it does not show that this tool closes it, which needs a field pilot ([docs/PILOT_PLAN.md](docs/PILOT_PLAN.md)). "The week the checks reach the cooperative" depends on how often relay farmers export their totals.
 
-## How it works
+</details>
+
+<details><summary><a name="how-it-works"></a><b>How it works</b> — a diagram of the plot visit, the officer visit and the co-op screen</summary>
 
 ```
  Plot visit (relay farmer's phone, offline)
@@ -107,7 +153,9 @@ Simplifications: the evidence shows the gap is real; it does not show that this 
 
 The model on the phone (head v3-2026-10-03-lab+field+other) was trained on 7045 lab-style photos from Kenya and Brazil plus 1303 field photos of healthy and rust leaves from Ecuador, and 154 photos of a pest (red spider mite) as "other problem". The "other problem" answer is never shown as a diagnosis: the photo goes to the officer with the reason "looks like a different problem", and it never counts as rust.
 
-## The Small-AI rules and how we meet them
+</details>
+
+<details><summary><a name="the-small-ai-rules-and-how-we-meet-them"></a><b>The Small-AI rules and how we meet them</b> — each rule from the brief, with its limit and next step</summary>
 
 | Rule from the brief | How Majani Relay meets it | Limit, stated, and the next step |
 |---|---|---|
@@ -118,7 +166,9 @@ The model on the phone (head v3-2026-10-03-lab+field+other) was trained on 7045 
 | A person makes the final call; flag what it is unsure of | Three routes to the officer ("not sure", "unfamiliar photo", "looks like a different problem"), plus a fourth for people: the relay farmer can tap "I think it's something else"; officer queue; 1-in-10 spot check; "Different problem (not in list)" label for the officer; every disease answer ends with "The extension officer makes the final call"; no spray names or doses; nothing is sent automatically. | The officer visits rarely, so a queued photo can wait a long time. The "not sure" answer says "Do not spray because of this result". **Next step:** agree a review rhythm with the cooperative (for example monthly) and measure queue waiting time in the pilot. |
 | Avoid hallucinations | The tool never writes text. Every sentence comes from a fixed list of 24 answers in `answers.json` or from 6 fixed guides in `guides.json`. | The tool cannot answer free questions. Those go to the officer. A chat assistant that answers only from an officer-approved library is a roadmap item, not built ([Roadmap](#roadmap-not-built)). **Next step:** in the pilot the officer notes the free questions relay farmers bring (count by topic, weeks 3–8), to decide whether the fixed list needs more answers. |
 
-## What the AI does, and why a simpler tool would not do the same job
+</details>
+
+<details><summary><a name="what-the-ai-does"></a><b>What the AI does, and why a simpler tool would not do the same job</b> — including the picture-card test with people</summary>
 
 - **It turns photos into counts.** It labels each leaf photo, or sends it to the officer. That makes 15 photos per plot into a rust count the cooperative can add up, without the officer looking at every photo. SMS cannot carry or read a photo. A spreadsheet cannot look at a leaf. A web search needs signal and returns general pictures, not a label for this leaf.
 - **It knows when it does not know.** The familiarity check compares each photo with stored training photos; the "other problem" answer catches photos that look like a problem outside the list.
@@ -133,23 +183,9 @@ The model on the phone (head v3-2026-10-03-lab+field+other) was trained on 7045 
 
 **Human baseline (one-evening test).** Two team members with no coffee knowledge, standing in for newly trained relay farmers, labelled the same 60 field photos with only a picture card. They told sick leaves from healthy ones well (91%–97% of answers) but named rust on only 5–7 of the 30 rust photos, often choosing "brown eye spot". The shipped AI, which never trained on these photos, answered 50 of the 60 (88% right), named rust on 19 of the 30 and called 4 of the 30 healthy leaves a problem. So a card is enough to notice that something is wrong; the AI adds a consistent rust label, which is what a village count needs. Limits: two non-experts, one dataset (Ecuador robusta), and the AI had trained on other field photos from the same dataset while the people had only lab-style card pictures. **Next step:** repeat the card test with relay farmers trained by the cooperative, on 60 officer-labelled Kenyan pilot photos, in the first pilot month ([docs/PILOT_PLAN.md](docs/PILOT_PLAN.md)). We have not shown that the AI gives better counts than a trained relay farmer with a tally sheet.
 
-## Prior art
+</details>
 
-Much of this exists already, and we build on it. Coffee leaf photo apps exist in East Africa: PlantVillage Nuru (now PlantVillage+) has had a coffee rust model in Uganda since 2022, and KawaScan works offline in Uganda. Coffee rust surveillance with standard plot counts and regional alerts has run in Central America, Mexico and Colombia since 2013–2014, with counts by eye and no image AI. Saying "not sure" is published (Digital Green's FarmerChat rejects poor photos; Pham et al. 2025 reject low-confidence coffee predictions), and the drop from lab photos to field photos has been reported before (Xiang et al. 2026; Zuñiga Cajas et al. 2025 on the same Ecuador dataset). What we did not find in our searches (3 Oct 2026), for coffee or in any extension tool: standard plot photos from a relay farmer turned into rust counts, with unclear photos queued for a named officer, the officer's labels updating the model on the phone, and villages ranked for visits with a small-sample adjustment. Each part has a precedent elsewhere; the combination is what we claim, and we say "not found", never "first". Tools, programmes, datasets, sources and search limits: [docs/PRIOR_ART.md](docs/PRIOR_ART.md).
-
-## Fit with the farmer registry
-
-The brief warns that AI built where there is no farmer registry will be hard to use. In Kenyan coffee this precondition is **partly met**: the national registry (KIAMIS) exists but is incomplete and its contact details are not kept up to date, while cooperative member lists, keyed by member (grower) number, are what reliably reaches coffee farmers today (they were used to pay hundreds of thousands of farmers). We do not build or fix a registry; we plug into the cooperative list. Kenya has over 800,000 smallholder coffee farmers, and about 550 cooperatives market over 80% of the coffee ([docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md), rows 4 and 6).
-
-- **How it fits.** Each plot record is keyed to the member number, stored on the phone as a scrambled code. Today that links visits to the same farm on the phone; exports hold village totals only. A later version could link records to the cooperative's list and to KIAMIS, the national farmer registry, through the same number. We have not built that link.
-- **What the tool assumes exists:**
-  - a cooperative member list, and a cooperative active enough to support a relay farmer (in the brief, Noor is a member for 11 years yet sells her parchment to a passing middleman, which suggests her cooperative is weak at marketing; our tool needs its list and its relay farmers, not its marketing);
-  - a relay farmer with a smartphone;
-  - a named person who answers the officer queue: the county extension officer, or the cooperative's agronomist or field officer.
-- **If nobody answers the queue:** the photos stay queued, the plot card says "waiting for the officer", and the advice stays "Do not spray because of this result". The model does not adapt, and the village ranking rests on fewer photos.
-- **Who is left out:** farmers outside cooperatives; and, if records are later linked to plot maps, land that is not yet mapped (about 30% of coffee land was geo-mapped in July 2025). Sources: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 5.
-
-## Data
+<details><summary><a name="data"></a><b>Data</b> — five open datasets (CC BY 4.0), and what they do not cover</summary>
 
 All five image datasets are open under **CC BY 4.0**. None was collected by us. Full details, including what each dataset does not cover: [docs/DATA_CARD.md](docs/DATA_CARD.md).
 
@@ -165,7 +201,9 @@ The shipped model trains on 8502 photos (7045 lab-style, 1303 field, 154 mite as
 
 **What the data does not cover.** No photo comes from a Kenyan farm taken the way the tool will be used: the Kenyan photos are lab-style crops, the field training photos are from Ecuador (robusta), and the external test is from Uganda (species not stated). Only five leaf classes, plus one pest as "other". No berries (so no coffee berry disease or berry borer: the checklist covers these). No relay farmers' phones. Each gap has a next step in [Limitations](#limitations).
 
-## Evaluation
+</details>
+
+<details><summary><a name="evaluation"></a><b>Evaluation</b> — all seven results, with tables and figures</summary>
 
 Full results: [results/RESULTS.md](results/RESULTS.md). Figures: `results/figs/`. Every number below is generated from `results/metrics.json` and `results/uganda_external.json`.
 
@@ -211,7 +249,7 @@ Before this check, the app answered only 10% of Ugandan photos after 100 labels 
 
 ![Learning loop on Ugandan photos](results/figs/uganda_learning_loop.png)
 
-**4. People with a picture card vs the AI.** See the human baseline above. ![Picture card vs AI](results/figs/picture_card_vs_ai.png)
+**4. People with a picture card vs the AI.** See the human baseline in [What the AI does](#what-the-ai-does). ![Picture card vs AI](results/figs/picture_card_vs_ai.png)
 
 **5. Village ranking (simulation with synthetic villages, at the shipped model's measured error rates).** Per round of 40 villages with about 6.6 real outbreaks: raw shares raise 3.4 false alarms and miss 1.6 outbreaks; adjusted shares raise 1.0 false alarms and miss 3.0. If the officer can visit 5 villages, the adjusted ranking finds 3.7 real outbreaks against 3.5 for raw shares. The adjustment trades fewer false alarms for more misses near the line; missed villages still appear in the ranked list, below the alert line. The app and the simulation use the same rule: alert when the chance that a village's rust share is above 25% is more than 0.5. The villages are synthetic; only the model's error rates are measured.
 
@@ -225,7 +263,9 @@ Before this check, the app answered only 10% of Ugandan photos after 100 labels 
 
 **The phone matches the Python pipeline.** The ONNX model and the shipped head give the same class as the Python evaluation on 25/25 test photos, and the same decision on all 7 demo photos.
 
-## Responsible AI
+</details>
+
+<details><summary><a name="responsible-ai"></a><b>Responsible AI</b> — fail-safe, human oversight, privacy, consent and deletion</summary>
 
 Summary below. The full account (privacy, consent, deletion, Kenya Data Protection Act, bias, failure modes): [docs/RESPONSIBLE_AI.md](docs/RESPONSIBLE_AI.md).
 
@@ -239,7 +279,9 @@ Summary below. The full account (privacy, consent, deletion, Kenya Data Protecti
 - **Deletion:** "Delete all data on this phone" in the About screen; "Discard this visit" for an unfinished visit.
 - **Known gaps, each with a next step in [docs/RESPONSIBLE_AI.md](docs/RESPONSIBLE_AI.md):** no per-farm delete button; only a fixed demo officer PIN, not one each officer sets, and no PIN on the plot-visit records; no native-speaker check yet.
 
-## Languages
+</details>
+
+<details><summary><a name="languages"></a><b>Languages</b> — Swahili and Kikuyu, and how the wording is checked</summary>
 
 English on screen. Swahili for the 24 fixed answers, as text and audio. Kikuyu as the less-supported tier. Details, resource comparison and the native-speaker review plan: [docs/LANGUAGE.md](docs/LANGUAGE.md).
 
@@ -252,7 +294,9 @@ English on screen. Swahili for the 24 fixed answers, as text and audio. Kikuyu a
 
 No one on the team speaks Swahili or Kikuyu. So the tool uses a fixed list a speaker can check in about 30 minutes, and every local-language string is marked unverified until then. Without a speaker, we cross-checked every phrase four ways (two translation models, a blind back-translation by a separate AI agent, and key terms against published Swahili farm material) and rewrote 10 weak phrases ([docs/SWAHILI_CHECK.md](docs/SWAHILI_CHECK.md)). Under every Swahili or Kikuyu sentence, a **"Wording wrong?"** button lets the relay farmer or officer report a better phrasing; reports are saved on the phone, travel with the officer's update or as a CSV, and never change the app's text until someone reviews them. English sentences have no such button, because the English is the team's own source text. On the English screen, the play button plays the Swahili audio (tagged "Audio in Swahili"). The 6 "What does this mean?" guides have the same tags and the same "Wording wrong?" button on each Swahili or Kikuyu section; their Swahili was checked by machine back-translation only (20 of 24 sections read back correctly, 4 flagged for a speaker; [docs/GUIDES.md](docs/GUIDES.md)).
 
-## Run it
+</details>
+
+<details><summary><a name="run-it"></a><b>Run it</b> — on a phone, on your own computer, on GitHub Pages, and rebuilding every number</summary>
 
 **On a phone (GitHub Pages).** Open https://git-lsd.github.io/majani-relay/ once with internet. The chip at the top right shows "Saving for offline", then "Model ready". From then on it works in airplane mode. Use "Add to Home Screen" from the browser menu so it opens like an app (on iPhone this also stops Safari from clearing its data after 7 days without use).
 
@@ -290,7 +334,9 @@ python ml/fill_docs.py          # fills the numbers in this README and the docs 
 
 The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/tools/` (see [docs/LANGUAGE.md](docs/LANGUAGE.md), section 8).
 
-## What is in this repository
+</details>
+
+<details><summary><a name="what-is-in-this-repository"></a><b>What is in this repository</b> — where each part of the app, model and docs lives</summary>
 
 | Path | What it is |
 |---|---|
@@ -306,6 +352,62 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | `ml/` | Training and evaluation scripts |
 | `results/` | Metrics, figures, RESULTS.md |
 | `docs/` | Data card, Responsible AI, pilot plan, officer decision context, result guides, prior art, languages, problem evidence, need evidence, video scripts |
+
+</details>
+
+<details><summary><a name="limitations"></a><b>Limitations</b> — every limit, each with its next step (what, who, how we measure it, when)</summary>
+
+Each limit has its next step: what, who, how we measure it, and when. Most of them are built into the 90-day pilot ([docs/PILOT_PLAN.md](docs/PILOT_PLAN.md)); the full list is in [results/RESULTS.md](results/RESULTS.md), section 3.8.
+
+- **No Kenyan photos taken the way relay farmers take them yet** (the Kenyan training photos are close-ups cropped to the spot). Field training photos are Ecuadorian robusta; the external test is Ugandan. **Next step:** keep the first 200 officer-labelled Kenyan pilot photos aside as a sealed Kenyan test set. Who: the team with the cooperative's extension officer. Metric: photos answered, answers correct, rust leaves named rust. When: first pilot month.
+- **In a new region the officer still sees most photos at first.** On the Ugandan photos never used to choose a setting, the app answers 14% after 10 officer labels and 32% after 50 (Ecuador simulation: 93% after 50). The nearest-officer-photo check that opens it was chosen on Ugandan photos (a separate part) and checked on Ecuador and mite photos, not on Kenyan photos, and it roughly doubles healthy leaves called a problem (0.7% → 1.6% after 100 labels). **Next step:** report photos answered and answers correct on the sealed Kenyan pilot test, with the app rule and the previous rule side by side. Who: ML lead. Metric: answered and correct after 50 and 100 labels; healthy leaves called a problem must stay under 2%. When: first pilot month.
+- **Phoma can reach the rust count.** In Uganda 9% of Phoma leaves are answered "rust"; forced, 53% would be. The shipped model has seen Phoma only in lab photos. **Next step:** train on half of the Ugandan copy groups (Phoma field photos included) and test on the other half. Who: ML lead. Metric: Phoma leaves answered "rust" and rust leaves named rust on the held-out half. When: before the pilot starts.
+- **Officer labels of only healthy and rust photos wear down the "other" answer.** The 38% of mite photos sent to the officer holds before any officer labels. When the phone is updated with 10 officer labels of healthy and rust photos, the share falls to 26%, and to 13% after 100 (starting from 71% with no labels in this test, which is optimistic because the head trained on most of these photos). The cause is the on-phone refit, not the familiarity check. Until it is fixed, the 1-in-10 spot check and the officer's "Different problem" labels are the safeguard. **Next step:** keep the "other" weights fixed during the on-phone refit, or mix stored "other" photos into it, and rerun the mite test. Who: ML lead. Metric: mite photos sent to the officer after 10, 50 and 100 healthy and rust labels, within 5 points of the no-label level, with rust leaves named rust unchanged. When: before the pilot starts.
+- **Mite photos still reach the rust count, and "other" knows one pest.** 85 of 167 mite photos are still answered "rust"; the demo's mite sample is answered "healthy". Brown eye spot in the field, other pests and nutrient shortage are not in "other". **Next step:** the officer labels every "Different problem" photo in the queue; the ML lead retrains "other" with them and keeps 1 in 5 aside as a test. Who: extension officer and ML lead. Metric: mite-like photos counted as rust (must fall), rust leaves named rust (must stay within 3 points). When: pilot week 4.
+- **A few "Different problem" labels can swing the on-phone update.** On the 7 demo photos, an update built from a single "Different problem" label (and no healthy labels) sent the healthy demo photos to the officer as "looks like a different problem"; with a healthy and a rust label added, all demo photos came back as before. **Next step:** test the on-phone update with 1–20 labels that include "Different problem", and add a rule (for example, a stronger pull toward the shipped model for "other", or a minimum number of healthy and rust labels) if healthy photos are sent to "other". Who: ML lead. Metric: healthy field photos sent to "other" after the update (must stay near 0.4%). When: before the pilot starts.
+- **No plant IDs in the Ecuador photos.** Leaves of one plant can sit in both a training and a test fold, so cross-validated numbers may be optimistic; the 60 picture-card photos give a second check. **Next step:** record plot and plant with every pilot photo so tests can hold out whole farms. Who: the team adds the fields; relay farmers fill them in. Metric: answers correct on held-out farms against randomly held-out photos. When: from the first pilot visit.
+- **Labels come from dataset authors, not an officer.** **Next step:** the extension officer relabels 100 random Ecuador photos and 100 random Ugandan photos. Who: cooperative extension officer. Metric: share of photos where the officer agrees with the dataset label. When: pilot week 1.
+- **The village ranking is a simulation** with synthetic villages; it ranks rust already seen and does not predict outbreaks. Each phone ranks only its own records; combining phones is done by hand. **Next step:** replay both alert rules on pilot visit data and compare with the officer's own village checks. Who: ML lead with the extension officer. Metric: false alarms and missed outbreaks. When: after 3 months of pilot visits.
+- **Leaf photos only.** It misses coffee berry disease (berries), Kenya's most damaging coffee disease, and bacterial blight. The checklist (not AI) asks about berries, fertility, old trees, weeds and dry spells; the tool does not explain a yield drop. **Next step:** in the pilot, compare checklist "yes" answers on berry spots with the officer's own berry checks. Who: extension officer. Metric: share of officer-confirmed berry problems the checklist flagged. When: pilot weeks 3–8.
+- **It needs a named reviewer.** Without one, queued photos wait, the model does not adapt, and the ranking rests on fewer photos. **Next step:** the cooperative names the reviewer before the pilot. Metric: median days a queued photo waits. When: pilot week 1.
+- **Unverified Swahili and Kikuyu.** Back-translation flagged 10 of 24 Swahili answers for a speaker to check, and 4 of 24 guide sections. The Phoma guide rests mostly on Brazilian and general sources. Next step in the [Small-AI table](#the-small-ai-rules-and-how-we-meet-them) above; a KALRO coffee agronomist also checks the Phoma guide in pilot week 1.
+- **Phones.** Tried on one iPhone over local Wi-Fi only; offline mode not yet tested on a phone; first download about 36 MB. The newest features (guides, "I think it's something else", farm details) were tested in a desktop browser whose storage ran in memory, so saving the guides for offline use and keeping disagreements and farm details across a reload are not yet tested. Next step in the [Small-AI table](#the-small-ai-rules-and-how-we-meet-them) above.
+- **Privacy on a shared phone.** The Officer and Co-op tabs open only after a fixed demo officer PIN (2026). It is the same on every phone, checked on the phone and shown on the lock screen, so it keeps these screens out of casual reach but is not real security. The Plot visit tab has no PIN; there is no per-farm delete and no remote wipe; short member numbers can be guessed from their codes. **Next step:** add a per-farm delete button, a PIN each officer sets, and a PIN for the plot-visit records. Who: app lead. Metric: all three work offline on the test phones. When: before the pilot starts.
+- **Who is left out.** Farmers outside cooperatives; farmers no relay farmer visits; land not yet mapped, if records are later linked to plot maps. **Next step:** in the pilot, the co-op manager counts members whose plots no relay farmer visited. When: pilot week 12.
+- **Price is out of scope.** The brief also mentions price information; this tool stays on one decision: where the officer should look first, based on standard leaf checks. **Next step:** none in the pilot; at the week-12 review the co-op manager says whether price information should sit next to the visit record.
+- **What we do not claim:** that farmers cannot tell when coffee is sick; that the tool finds rust earlier than people or before symptoms show; that it cuts losses or raises yield; that it beats extension officers or a paper form; that it predicts outbreaks. Full list: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 6.
+
+</details>
+
+<details><summary><a name="roadmap-not-built"></a><b>Roadmap (not built)</b> — a chat assistant, officer decision context, and getting records to the officer</summary>
+
+- **Majani Relay Assistant.** A chat assistant for relay farmers that answers only from a vetted library of answers the officer has approved. It never generates free text: it picks an approved answer or says it does not know, and then sends the question to the officer. Not built. **Next step:** in the pilot the officer notes the free questions relay farmers bring (count by topic, weeks 3–8); the officer's answers to the most common ones become the library's first entries. Who: extension officer with the app lead. Metric: share of relay farmers' questions the library covers. When: after the pilot.
+- **Officer decision context.** Next to each village's rust count, the officer screen will show what a photo cannot: where the village is in the rainy season and the KALRO Coffee Research Institute spray calendar, rainfall from CHIRPS (satellite rainfall estimates), and altitude. It will also summarise the three plot-visit taps that are already in the app: variety, last spray and fruit load. **The AI does not use these;** the photo model is unchanged. They inform the officer's decision and are not combined into a risk score. The variety, season and calendar points come from Kenyan sources (KALRO-CRI); the evidence on fruit load is from outside Kenya (Costa Rica, Honduras, Brazil, Hawaii), and the pilot records it to test whether it matters here. Sources and gaps: [docs/OFFICER_CONTEXT.md](docs/OFFICER_CONTEXT.md); pilot design: [docs/PILOT_PLAN.md](docs/PILOT_PLAN.md).
+- **Getting records to the officer and the cooperative without hand work.** Today the queue lives on the relay farmer's phone and the cooperative combines CSV exports by hand. Sending the queue to the officer's own phone and combining phones are not built. **Next step:** in the pilot, combining stays by hand and the co-op manager records the time it takes. Who: co-op manager. Metric: hours a week spent combining the relay farmers' exports. When: pilot weeks 1–12; the week-12 review decides whether sending and combining are built next.
+
+</details>
+
+<details><summary><a name="prior-art"></a><b>Prior art</b> — what exists already, and what we claim</summary>
+
+Much of this exists already, and we build on it. Coffee leaf photo apps exist in East Africa: PlantVillage Nuru (now PlantVillage+) has had a coffee rust model in Uganda since 2022, and KawaScan works offline in Uganda. Coffee rust surveillance with standard plot counts and regional alerts has run in Central America, Mexico and Colombia since 2013–2014, with counts by eye and no image AI. Saying "not sure" is published (Digital Green's FarmerChat rejects poor photos; Pham et al. 2025 reject low-confidence coffee predictions), and the drop from lab photos to field photos has been reported before (Xiang et al. 2026; Zuñiga Cajas et al. 2025 on the same Ecuador dataset). What we did not find in our searches (3 Oct 2026), for coffee or in any extension tool: standard plot photos from a relay farmer turned into rust counts, with unclear photos queued for a named officer, the officer's labels updating the model on the phone, and villages ranked for visits with a small-sample adjustment. Each part has a precedent elsewhere; the combination is what we claim, and we say "not found", never "first". Tools, programmes, datasets, sources and search limits: [docs/PRIOR_ART.md](docs/PRIOR_ART.md).
+
+</details>
+
+<details><summary><a name="fit-with-the-farmer-registry"></a><b>Fit with the farmer registry</b> — how it plugs into the cooperative member list, and who is left out</summary>
+
+The brief warns that AI built where there is no farmer registry will be hard to use. In Kenyan coffee this precondition is **partly met**: the national registry (KIAMIS) exists but is incomplete and its contact details are not kept up to date, while cooperative member lists, keyed by member (grower) number, are what reliably reaches coffee farmers today (they were used to pay hundreds of thousands of farmers). We do not build or fix a registry; we plug into the cooperative list. Kenya has over 800,000 smallholder coffee farmers, and about 550 cooperatives market over 80% of the coffee ([docs/PROBLEM_EVIDENCE.md](docs/PROBLEM_EVIDENCE.md), rows 4 and 6).
+
+- **How it fits.** Each plot record is keyed to the member number, stored on the phone as a scrambled code. Today that links visits to the same farm on the phone; exports hold village totals only. A later version could link records to the cooperative's list and to KIAMIS, the national farmer registry, through the same number. We have not built that link.
+- **What the tool assumes exists:**
+  - a cooperative member list, and a cooperative active enough to support a relay farmer (in the brief, Noor is a member for 11 years yet sells her parchment to a passing middleman, which suggests her cooperative is weak at marketing; our tool needs its list and its relay farmers, not its marketing);
+  - a relay farmer with a smartphone;
+  - a named person who answers the officer queue: the county extension officer, or the cooperative's agronomist or field officer.
+- **If nobody answers the queue:** the photos stay queued, the plot card says "waiting for the officer", and the advice stays "Do not spray because of this result". The model does not adapt, and the village ranking rests on fewer photos.
+- **Who is left out:** farmers outside cooperatives; and, if records are later linked to plot maps, land that is not yet mapped (about 30% of coffee land was geo-mapped in July 2025). Sources: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 5.
+
+</details>
+
+---
 
 ## Licences and attributions
 
@@ -323,35 +425,9 @@ The Swahili and Kikuyu texts and audio are rebuilt with the scripts in `audio/to
 | Advice text in `answers.json` | – | Written from Kenyan extension material, mainly the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute), Infonet-Biovision and CABI Plantwise. Sources per answer in `answers.json`. |
 | Our code and documents | MIT (see LICENSE) | The team |
 
-## Limitations
-
-Each limit has its next step: what, who, how we measure it, and when. Most of them are built into the 90-day pilot ([docs/PILOT_PLAN.md](docs/PILOT_PLAN.md)); the full list is in [results/RESULTS.md](results/RESULTS.md), section 3.8.
-
-- **No Kenyan farm photos yet.** Field training photos are Ecuadorian robusta; the external test is Ugandan. **Next step:** keep the first 200 officer-labelled Kenyan pilot photos aside as a sealed Kenyan test set. Who: the team with the cooperative's extension officer. Metric: photos answered, answers correct, rust leaves named rust. When: first pilot month.
-- **In a new region the officer still sees most photos at first.** On the Ugandan photos never used to choose a setting, the app answers 14% after 10 officer labels and 32% after 50 (Ecuador simulation: 93% after 50). The nearest-officer-photo check that opens it was chosen on Ugandan photos (a separate part) and checked on Ecuador and mite photos, not on Kenyan photos, and it roughly doubles healthy leaves called a problem (0.7% → 1.6% after 100 labels). **Next step:** report photos answered and answers correct on the sealed Kenyan pilot test, with the app rule and the previous rule side by side. Who: ML lead. Metric: answered and correct after 50 and 100 labels; healthy leaves called a problem must stay under 2%. When: first pilot month.
-- **Phoma can reach the rust count.** In Uganda 9% of Phoma leaves are answered "rust"; forced, 53% would be. The shipped model has seen Phoma only in lab photos. **Next step:** train on half of the Ugandan copy groups (Phoma field photos included) and test on the other half. Who: ML lead. Metric: Phoma leaves answered "rust" and rust leaves named rust on the held-out half. When: before the pilot starts.
-- **Officer labels of only healthy and rust photos wear down the "other" answer.** The 38% of mite photos sent to the officer holds before any officer labels. When the phone is updated with 10 officer labels of healthy and rust photos, the share falls to 26%, and to 13% after 100 (starting from 71% with no labels in this test, which is optimistic because the head trained on most of these photos). The cause is the on-phone refit, not the familiarity check. Until it is fixed, the 1-in-10 spot check and the officer's "Different problem" labels are the safeguard. **Next step:** keep the "other" weights fixed during the on-phone refit, or mix stored "other" photos into it, and rerun the mite test. Who: ML lead. Metric: mite photos sent to the officer after 10, 50 and 100 healthy and rust labels, within 5 points of the no-label level, with rust leaves named rust unchanged. When: before the pilot starts.
-- **Mite photos still reach the rust count, and "other" knows one pest.** 85 of 167 mite photos are still answered "rust"; the demo's mite sample is answered "healthy". Brown eye spot in the field, other pests and nutrient shortage are not in "other". **Next step:** the officer labels every "Different problem" photo in the queue; the ML lead retrains "other" with them and keeps 1 in 5 aside as a test. Who: extension officer and ML lead. Metric: mite-like photos counted as rust (must fall), rust leaves named rust (must stay within 3 points). When: pilot week 4.
-- **A few "Different problem" labels can swing the on-phone update.** On the 7 demo photos, an update built from a single "Different problem" label (and no healthy labels) sent the healthy demo photos to the officer as "looks like a different problem"; with a healthy and a rust label added, all demo photos came back as before. **Next step:** test the on-phone update with 1–20 labels that include "Different problem", and add a rule (for example, a stronger pull toward the shipped model for "other", or a minimum number of healthy and rust labels) if healthy photos are sent to "other". Who: ML lead. Metric: healthy field photos sent to "other" after the update (must stay near 0.4%). When: before the pilot starts.
-- **No plant IDs in the Ecuador photos.** Leaves of one plant can sit in both a training and a test fold, so cross-validated numbers may be optimistic; the 60 picture-card photos give a second check. **Next step:** record plot and plant with every pilot photo so tests can hold out whole farms. Who: the team adds the fields; relay farmers fill them in. Metric: answers correct on held-out farms against randomly held-out photos. When: from the first pilot visit.
-- **Labels come from dataset authors, not an officer.** **Next step:** the extension officer relabels 100 random Ecuador photos and 100 random Ugandan photos. Who: cooperative extension officer. Metric: share of photos where the officer agrees with the dataset label. When: pilot week 1.
-- **The village ranking is a simulation** with synthetic villages; it ranks rust already seen and does not predict outbreaks. Each phone ranks only its own records; combining phones is done by hand. **Next step:** replay both alert rules on pilot visit data and compare with the officer's own village checks. Who: ML lead with the extension officer. Metric: false alarms and missed outbreaks. When: after 3 months of pilot visits.
-- **Leaf photos only.** It misses coffee berry disease (berries), Kenya's most damaging coffee disease, and bacterial blight. The checklist (not AI) asks about berries, fertility, old trees, weeds and dry spells; the tool does not explain a yield drop. **Next step:** in the pilot, compare checklist "yes" answers on berry spots with the officer's own berry checks. Who: extension officer. Metric: share of officer-confirmed berry problems the checklist flagged. When: pilot weeks 3–8.
-- **It needs a named reviewer.** Without one, queued photos wait, the model does not adapt, and the ranking rests on fewer photos. **Next step:** the cooperative names the reviewer before the pilot. Metric: median days a queued photo waits. When: pilot week 1.
-- **Unverified Swahili and Kikuyu.** Back-translation flagged 10 of 24 Swahili answers for a speaker to check, and 4 of 24 guide sections. The Phoma guide rests mostly on Brazilian and general sources. Next step in the Small-AI table above; a KALRO coffee agronomist also checks the Phoma guide in pilot week 1.
-- **Phones.** Tried on one iPhone over local Wi-Fi only; offline mode not yet tested on a phone; first download about 36 MB. The newest features (guides, "I think it's something else", farm details) were tested in a desktop browser whose storage ran in memory, so saving the guides for offline use and keeping disagreements and farm details across a reload are not yet tested. Next step in the Small-AI table above.
-- **Privacy on a shared phone.** The Officer and Co-op tabs open only after a fixed demo officer PIN (2026). It is the same on every phone, checked on the phone and shown on the lock screen, so it keeps these screens out of casual reach but is not real security. The Plot visit tab has no PIN; there is no per-farm delete and no remote wipe; short member numbers can be guessed from their codes. **Next step:** add a per-farm delete button, a PIN each officer sets, and a PIN for the plot-visit records. Who: app lead. Metric: all three work offline on the test phones. When: before the pilot starts.
-- **Who is left out.** Farmers outside cooperatives; farmers no relay farmer visits; land not yet mapped, if records are later linked to plot maps. **Next step:** in the pilot, the co-op manager counts members whose plots no relay farmer visited. When: pilot week 12.
-- **Price is out of scope.** The brief also mentions price information; this tool stays on one decision: where the officer should look first, based on standard leaf checks. **Next step:** none in the pilot; at the week-12 review the co-op manager says whether price information should sit next to the visit record.
-- **What we do not claim:** that farmers cannot tell when coffee is sick; that the tool finds rust earlier than people or before symptoms show; that it cuts losses or raises yield; that it beats extension officers or a paper form; that it predicts outbreaks. Full list: [docs/NEED_EVIDENCE.md](docs/NEED_EVIDENCE.md), section 6.
-
-## Roadmap (not built)
-
-- **Majani Relay Assistant.** A chat assistant for relay farmers that answers only from a vetted library of answers the officer has approved. It never generates free text: it picks an approved answer or says it does not know, and then sends the question to the officer. Not built. **Next step:** in the pilot the officer notes the free questions relay farmers bring (count by topic, weeks 3–8); the officer's answers to the most common ones become the library's first entries. Who: extension officer with the app lead. Metric: share of relay farmers' questions the library covers. When: after the pilot.
-- **Officer decision context.** Next to each village's rust count, the officer screen will show what a photo cannot: where the village is in the rainy season and the KALRO Coffee Research Institute spray calendar, rainfall from CHIRPS (satellite rainfall estimates), and altitude. It will also summarise the three plot-visit taps that are already in the app: variety, last spray and fruit load. **The AI does not use these;** the photo model is unchanged. They inform the officer's decision and are not combined into a risk score. The variety, season and calendar points come from Kenyan sources (KALRO-CRI); the evidence on fruit load is from outside Kenya (Costa Rica, Honduras, Brazil, Hawaii), and the pilot records it to test whether it matters here. Sources and gaps: [docs/OFFICER_CONTEXT.md](docs/OFFICER_CONTEXT.md); pilot design: [docs/PILOT_PLAN.md](docs/PILOT_PLAN.md).
-- **Getting records to the officer and the cooperative without hand work.** Today the queue lives on the relay farmer's phone and the cooperative combines CSV exports by hand. Sending the queue to the officer's own phone and combining phones are not built. **Next step:** in the pilot, combining stays by hand and the co-op manager records the time it takes. Who: co-op manager. Metric: hours a week spent combining the relay farmers' exports. When: pilot weeks 1–12; the week-12 review decides whether sending and combining are built next.
-
 ## Team
+
+Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agriculture sector, 3–4 October 2026.
 
 - **Sidian Lin**, PhD in Public Policy (Harvard GSAS and HKS). Works on operations research and machine learning for public services. Co-wrote a report on Zimbabwe's Friendship Bench (task-sharing in community mental health), and wrote a paper on steering patients to hospitals when hospital quality is estimated from few cases.
 - **Yicong Li**, PhD student in Computer Science (Harvard), working on computer vision.
