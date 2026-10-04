@@ -440,10 +440,10 @@ The brief warns that AI built where there is no farmer registry will be hard to 
 | Swahili and Kikuyu audio (made with Meta MMS TTS, `facebook/mms-tts-swh`, `facebook/mms-tts-kik`) | CC-BY-NC 4.0 | Meta AI. Non-commercial: fine for this hackathon and a non-commercial pilot. A paid service would need recorded human clips. |
 | NLLB-200 and MMS-1b-all (used on a laptop to check text and audio; not shipped) | CC-BY-NC 4.0 | Meta AI |
 | Advice text in `answers.json` | – | Written mainly from Kenyan extension material: the Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute) and Infonet-Biovision; for brown eye spot, also a Pacific fact sheet and a CABI Plantwise summary. Sources per answer in `answers.json`. |
-| Our code and documents | MIT (see LICENSE) | The team |
+| Our code and documents | MIT (see LICENSE) | The team, with Claude Code (Anthropic) as a coding assistant |
 
 ## Team
 
 Built for the World Bank / Hack-Nation "Small AI for Development" hackathon, Agriculture sector, 3–4 October 2026.
 
-Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS). <sub>Built with Claude Code.</sub>
+Sidian Lin (Harvard Kennedy School) and Yicong Li (Harvard SEAS).
