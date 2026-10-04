@@ -1,69 +1,84 @@
 {
- "head_version": "v2-2026-10-03-lab+field",
+ "head_version": "v3-2026-10-03-lab+field+other",
+ "classes": [
+  "healthy",
+  "rust",
+  "miner",
+  "cercospora",
+  "phoma",
+  "other"
+ ],
  "reference_rows": 1400,
  "samples_same_decision_as_python": "7/7",
  "onnx_vs_python_same_class": "25/25",
  "onnx_vs_python_max_abs_diff": 0.0001,
  "reference_kb": 1797.6,
  "onnx_mb": 16.8,
- "head_kb": 67.8,
- "cpu_ms_per_image_laptop": 3.6,
+ "head_kb": 81.7,
+ "cpu_ms_per_image_laptop": 4.4,
  "samples": [
   {
    "file": "rocole_healthy_1.jpg",
    "truth": "healthy",
    "pred": "healthy",
-   "p": 0.914,
+   "p": 0.861,
    "dist": 0.243,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   },
   {
    "file": "rocole_rust_level_2_1.jpg",
    "truth": "rust_level_2",
    "pred": "rust",
-   "p": 0.994,
+   "p": 0.979,
    "dist": 0.39,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   },
   {
    "file": "rocole_healthy_2.jpg",
    "truth": "healthy",
    "pred": "healthy",
-   "p": 0.993,
+   "p": 0.983,
    "dist": 0.229,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   },
   {
    "file": "rocole_healthy_3.jpg",
    "truth": "healthy",
    "pred": "healthy",
-   "p": 0.982,
+   "p": 0.955,
    "dist": 0.208,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   },
   {
    "file": "rocole_rust_level_3_1.jpg",
    "truth": "rust_level_3",
    "pred": "rust",
-   "p": 0.902,
+   "p": 0.931,
    "dist": 0.534,
-   "answered": false
+   "answered": false,
+   "route": "unfamiliar"
   },
   {
    "file": "rocole_rust_level_1_1.jpg",
    "truth": "rust_level_1",
    "pred": "rust",
-   "p": 1.0,
+   "p": 0.999,
    "dist": 0.342,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   },
   {
    "file": "rocole_red_spider_mite_1.jpg",
    "truth": "red_spider_mite",
    "pred": "healthy",
-   "p": 0.977,
+   "p": 0.885,
    "dist": 0.231,
-   "answered": true
+   "answered": true,
+   "route": "answered"
   }
  ]
 }

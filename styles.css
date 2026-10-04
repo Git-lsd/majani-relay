@@ -1,4 +1,4 @@
-/* Kahawa Check styles: high contrast for outdoor use, big touch targets (min 52 px),
+/* Majani Relay styles: high contrast for outdoor use, big touch targets (min 52 px),
    one column, bottom tab bar reachable with one thumb. */
 :root {
   --bg: #ffffff;
@@ -94,7 +94,7 @@ main { max-width: 640px; margin: 0 auto; padding: 12px 16px; }
 .warn .card-head { color: var(--warn); }
 .stack > * + * { margin-top: 10px; }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.grow { flex: 1 1 auto; min-width: 0; }
+.grow { flex: 1 1 0; min-width: 140px; } /* basis 0: long tag rows wrap inside, not below the photo */
 .notice { border-left: 5px solid var(--warn); background: var(--warn-bg); padding: 10px 12px; border-radius: 8px; font-size: .95rem; }
 .label-nonai { display: inline-block; font-size: .8rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: var(--warn); border: 2px solid var(--warn); border-radius: 6px; padding: 1px 6px; }
 
@@ -200,3 +200,27 @@ tr.alert td { background: var(--bad-bg); }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .busy { animation: none; } .progress > div { transition: none; } }
 @media (max-width: 360px) { body { font-size: 17px; } .btn-grid { grid-template-columns: 1fr; } }
+
+/* Result card extras: "What does this mean?" guide, "I think it's something else" confirm and sent state */
+.sent-box, .confirm-box { border: 2px solid var(--unsure); background: var(--unsure-bg); color: var(--fg); border-radius: 12px; padding: 10px 12px; }
+.sent-box p, .confirm-box p { margin: 2px 0; }
+.sent-box > p:first-child { display: flex; align-items: center; gap: 6px; color: var(--unsure); }
+.sent-box .btn { margin-top: 6px; }
+.confirm-box .btn-grid { margin-top: 8px; }
+.guide .guide-sec { border-top: 1.5px solid var(--line); padding-top: 10px; margin-top: 10px; }
+.guide .guide-sec h3 { margin: 0 0 4px; }
+.guide .guide-sec p { margin: 0; font-size: 1.02rem; }
+.guide .tags { margin-top: 8px; }
+.guide-sources { border-top: 1.5px solid var(--line); padding-top: 10px; margin-top: 12px; }
+.src-list { margin: 6px 0 0; padding-left: 18px; }
+.src-list li { margin: 4px 0; overflow-wrap: anywhere; }
+.guide > .btn.block { margin-top: 14px; }
+
+/* Farm details taps (for the officer; the AI does not use them) */
+.farm-q { margin-top: 10px; }
+.farm-label { display: block; font-weight: 700; }
+.seg.seg-3 { grid-template-columns: repeat(3, 1fr); }
+.seg.seg-4 { grid-template-columns: repeat(4, 1fr); }
+.seg button { padding: 4px 6px; line-height: 1.15; }
+.farm-line { overflow-wrap: anywhere; }
+@media (max-width: 400px) { .seg.seg-4 { grid-template-columns: repeat(2, 1fr); } }

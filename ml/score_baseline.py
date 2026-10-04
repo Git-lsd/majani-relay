@@ -5,10 +5,14 @@ per name counts), baseline/key.json (answer key), and the model files the phone 
 Writes results/human_baseline.json. Run: ../.venv/bin/python ml/score_baseline.py
 
 Model, same decision rule as ml/train_eval.py and lib/kahawa-core.js:
-  answered = (max softmax(logits / T) >= threshold) and (familiarity distance <= cutoff);
-  familiarity distance = 1 - mean of the k largest cosine similarities to the stored reference rows.
-  (a) the SHIPPED model (lab + field photos): model/head.json + model/reference.bin. It was never trained on these 60
-      photos, nor on any identical copy of them (RoCoLe holds some identical images; see ml/train_eval.py).
+  answered = (max softmax(logits / T) >= threshold) and (familiarity distance <= cutoff) and (top class is not one of
+  head.json's route_to_officer classes, i.e. 'other'); every other photo counts as "not sure" (sent to the officer).
+  familiarity distance = 1 - mean of the k largest cosine similarities to the stored reference rows; with officer rows
+  (only in (c), the rows the update adds) a photo is also familiar when 1 - cosine to the nearest added row <=
+  ood.local_nearest_cutoff (the app's second check). (a), (a2), (b) have no officer rows, so that check does not apply.
+  (a) the SHIPPED model (head v3: lab + field photos + 'other' class): model/head.json + model/reference.bin. It was
+      never trained on these 60 photos, nor on any identical copy of them (RoCoLe holds some identical images).
+  (a2) reference: head v2 (lab + field, five classes): ../data_work/shipped_v2/ (written by ml/train_eval.py).
   (b) context: the LAB-ONLY model of the new-region simulation: model/head_labonly.json + reference_labonly.bin.
   (c) context: the lab-only model after its 50-label demo update: W, b from model/update_demo_50_labonly.json, its
       reference rows added.
@@ -100,8 +104,10 @@ def load_labellers(key, set_name):
     return out, skipped
 
 
-MODELS = [  # (key, what it is, head file, update file or None)
-    ('shipped_v2_lab_field', 'AI as shipped (trained on lab + field photos; never trained on these 60)', 'head.json', None),
+MODELS = [  # (key, what it is, head file (in model/, or an absolute path), update file or None)
+    ('shipped', 'AI as shipped (head v3: lab + field photos + "other" class; never trained on these 60)', 'head.json', None),
+    ('shipped_v2_lab_field', 'Reference: head v2 (lab + field photos, five classes; never trained on these 60)',
+     os.path.join(WORK, 'shipped_v2', 'head.json'), None),
     ('lab_only_as_shipped', 'Context: lab-only model (new-region simulation), no field labels', 'head_labonly.json', None),
     ('lab_only_after_demo_update_50', 'Context: lab-only model after 50 officer-style field labels (demo update)',
      'head_labonly.json', 'update_demo_50_labonly.json'),
@@ -110,15 +116,19 @@ MODELS = [  # (key, what it is, head file, update file or None)
 
 def load_model(head_file, upd_file):
     """W, b, reference rows and decision settings exactly as the phone would use them."""
-    head = json.load(open(os.path.join(REPO, 'model', head_file)))
+    hp = os.path.join(REPO, 'model', head_file)   # an absolute head_file is used as is
+    head = json.load(open(hp))
     ref = head['ood']['reference']; n, D = ref['n'], ref['dim']
-    raw = open(os.path.join(REPO, 'model', ref['file']), 'rb').read()
+    raw = open(os.path.join(os.path.dirname(hp), ref['file']), 'rb').read()
     assert len(raw) == n * D + 4 * n, f"{ref['file']} does not match {head_file}"
     R = unit(np.frombuffer(raw[:n * D], np.int8).reshape(n, D).astype(np.float32) * np.frombuffer(raw[n * D:], '<f4')[:, None])
     m = {'W': np.asarray(head['W']), 'b': np.asarray(head['b']), 'R': R, 'R_added': None, 'classes': head['classes'],
          'T': head['temperature'], 'thr': head['threshold'], 'cut': head['ood']['cutoff'], 'k': head['ood']['k'],
-         'settings': {'head_file': head_file, 'head_version': head.get('version'), 'threshold': head['threshold'],
+         'c1': head['ood'].get('local_nearest_cutoff'),
+         'to_officer': set(head.get('route_to_officer', [])),
+         'settings': {'head_file': os.path.relpath(hp, TOP), 'route_to_officer': head.get('route_to_officer', []), 'head_version': head.get('version'), 'threshold': head['threshold'],
                       'familiarity_cutoff': head['ood']['cutoff'], 'knn': head['ood']['k'], 'temperature': head['temperature'],
+                      'local_nearest_cutoff': head['ood'].get('local_nearest_cutoff'),
                       'reference_rows': int(n)}}
     if upd_file:
         upd = json.load(open(os.path.join(REPO, 'model', upd_file)))
@@ -133,10 +143,16 @@ def decide(Zx, m, ids):
     P = softmax((Zx @ m['W'].T + m['b']) / m['T'], axis=1)
     d = 1 - np.sort(unit(Zx) @ m['R'].T, axis=1)[:, -m['k']:].mean(1)
     conf = P.max(1) >= m['thr']; fam = d <= m['cut']
+    if m.get('c1') is not None and m.get('R_added') is not None and len(m['R_added']):   # the app's second check
+        fam = fam | ((1 - (unit(Zx) @ m['R_added'].T).max(1)) <= m['c1'])
     pred = [m['classes'][j] for j in P.argmax(1)]
-    ans = {i: (p if c and f else 'not_sure') for i, p, c, f in zip(ids, pred, conf, fam)}
-    forced = {i: p for i, p in zip(ids, pred)}
-    why = Counter('answered' if c and f else ('unfamiliar' if not f else 'low_confidence') for c, f in zip(conf, fam))
+    oth = [p in m['to_officer'] for p in pred]
+    ans = {i: (p if c and f and not o else 'not_sure') for i, p, c, f, o in zip(ids, pred, conf, fam, oth)}
+    # forced: best of the classes that are a diagnosis ('other' is skipped)
+    keep = [j for j, c in enumerate(m['classes']) if c not in m['to_officer']]
+    forced = {i: m['classes'][keep[j]] for i, j in zip(ids, P[:, keep].argmax(1))}
+    why = Counter('answered' if c and f and not o else ('other' if o else ('unfamiliar' if not f else 'low_confidence'))
+                  for c, f, o in zip(conf, fam, oth))
     return ans, forced, dict(why), d, P
 
 
@@ -159,8 +175,10 @@ def model_answers(key):
         s = score(ans, key)
         f = score(forced, key)
         # photos among the 60 with an identical copy (cosine > 0.98) in what this model learned from
-        if name == 'shipped_v2_lab_field':
+        if name == 'shipped':
             n_copy = met['shipped']['near_duplicate_check_human_baseline']['n_above_dup_threshold']
+        elif name == 'shipped_v2_lab_field':
+            n_copy = met['shipped_v2']['near_duplicate_check_human_baseline']['n_above_dup_threshold']
         elif m['R_added'] is not None:
             n_copy = int(((unit(Z) @ m['R_added'].T).max(1) > 0.98).sum())
         else:
@@ -235,8 +253,9 @@ def main():
            'notes': ['Labellers are team members who are not farmers or plant experts, standing in for relay farmers.',
                      'The labellers may have known that this dataset holds only healthy and rust leaves; a relay farmer would not.',
                      '60 photos from one dataset (RoCoLe: Ecuador, robusta, on-plant); one-evening test.',
-                     'The shipped model was trained on other RoCoLe photos (never these 60, nor identical copies of them); '
-                     'it has seen field photos of healthy and rust leaves only.',
+                     'The shipped model (head v3) was trained on other RoCoLe photos (never these 60, nor identical '
+                     'copies of them): healthy, rust and red-spider-mite leaves (mite as "other").',
+                     'Head v2 (five classes) is scored as a reference; head v3 replaced it in the app.',
                      'The 50 photos inside the lab-only demo update and the 7 demo samples are excluded from the 60; '
                      'RoCoLe holds identical copies of some images, and one of the 60 is an identical copy of a photo '
                      'in the demo update (see photos_with_identical_copy_in_training).']}

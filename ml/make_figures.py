@@ -1,6 +1,9 @@
 """Figures for the README and videos, from results/metrics.json and results/human_baseline.json.
-Shipped (lab + field) model: field_cv.png, picture_card_vs_ai.png, village_alert.png.
+Shipped model (head v3: lab + field + "other"): field_cv.png (head v2 marked for comparison), mite_other.png,
+picture_card_vs_ai.png, village_alert.png.
 New-region simulation (lab-only model): learning_loop.png, not_sure_signals.png.
+External test on Ugandan farm photos: uganda_learning_loop.png (drawn by ml/eval_uganda.py's figure(), redrawn here
+from results/uganda_external.json so this script makes every figure).
 Run: ../.venv/bin/python ml/make_figures.py"""
 import os, json
 import matplotlib
@@ -11,7 +14,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(HERE)
 RES = os.path.join(REPO, 'results'); FIG = os.path.join(RES, 'figs'); os.makedirs(FIG, exist_ok=True)
 M = json.load(open(os.path.join(RES, 'metrics.json')))
-LO = M['lab_only_new_region_simulation']; SH = M['shipped']
+LO = M['lab_only_new_region_simulation']; SH = M['shipped']; SH2 = M['shipped_v2']
 
 # reference palette (validated slots 1-3, light mode) + text tokens
 S1, S2, S3 = '#2a78d6', '#eb6834', '#1baf7a'
@@ -87,7 +90,7 @@ ax.set_ylim(0, 1.3 * max(V[s][k] for s in ('raw', 'shrunk') for k in keys))
 fig.tight_layout(); fig.savefig(os.path.join(FIG, 'village_alert.png'), dpi=200); plt.close(fig)
 
 # 4) the shipped model on field photos it was not trained on (5-fold cross-validation, mean and spread across folds)
-CVs = SH['field_cv']['summary']
+CVs = SH['field_cv']['summary']; CV2 = SH2['field_cv']['summary']
 items = [('Field photos answered\n(not "not sure")', 'coverage'), ('Answers that are correct', 'acc_answered'),
          ('Rust leaves named rust\n(of all rust leaves)', 'rust_named'),
          ('Healthy leaves called a problem\n(of all healthy leaves)', 'healthy_flagged')]
@@ -96,11 +99,14 @@ ys = np.arange(len(items))[::-1]
 vals = [100 * CVs[k] for _, k in items]; sds = [100 * CVs[k + '_sd'] for _, k in items]
 bars = ax.barh(ys, vals, height=0.5, color=[S1, S1, S1, S2])
 ax.errorbar(vals, ys, xerr=sds, fmt='none', ecolor=INK2, elinewidth=1.2, capsize=3)
+v2 = [100 * CV2[k] for _, k in items]
+ax.scatter(v2, ys + 0.33, marker='v', s=36, color=INK, zorder=3, label='Head v2 (no "other"), same folds')
 for y_, v, sd_ in zip(ys, vals, sds):
     ax.annotate(f'{v:.0f}%', (v + sd_, y_), xytext=(6, 0), textcoords='offset points', va='center', fontsize=10, color=INK)
 ax.set_yticks(ys); ax.set_yticklabels([t for t, _ in items]); ax.set_xlim(0, 110); ax.grid(axis='y', visible=False)
+ax.legend(frameon=False, fontsize=9, loc='lower right')
 ax.set_xlabel('% of field photos (bar = mean of 5 folds; line = spread across folds)')
-ax.set_title(f"Shipped model (lab + field photos) on field photos it was not trained on\n"
+ax.set_title(f"Shipped model (head v3) on healthy and rust field photos it was not trained on\n"
              f"(5-fold cross-validation over {sum(CVs['n_per_fold'])} RoCoLe photos)", loc='left', fontsize=11)
 fig.tight_layout(); fig.savefig(os.path.join(FIG, 'field_cv.png'), dpi=200); plt.close(fig)
 
@@ -109,7 +115,7 @@ HBP = os.path.join(RES, 'human_baseline.json')
 if os.path.exists(HBP):
     HB = json.load(open(HBP))
     who = [(h['name'] + '\n(picture card)', h, S2) for h in HB['labellers']]
-    who.append(('AI as shipped', HB['model']['shipped_v2_lab_field'], S1))
+    who.append(('AI as shipped', HB['model']['shipped'], S1))
     rust_n = lambda r: sum(round(v['correct_of_all'] * v['n']) for k, v in r['by_rust_level'].items() if k != '0')
     n_rust = sum(v['n'] for k, v in who[-1][1]['by_rust_level'].items() if k != '0')
     hz = who[-1][1]['by_rust_level']['0']; n_h = hz['n']
@@ -129,4 +135,33 @@ if os.path.exists(HBP):
                  f"{notsure(who[-1][1])} of {HB['photo_set']['n']} to the officer as \"not sure\".",
                  x=0.01, ha='left', fontsize=11)
     fig.tight_layout(); fig.savefig(os.path.join(FIG, 'picture_card_vs_ai.png'), dpi=200); plt.close(fig)
+
+# 6) the "other" answer: what happens to the red-spider-mite photos (each scored by a head that never saw it)
+mi3, mi2 = SH['held_out']['mite'], SH2['held_out']['mite']
+n_m = mi3['n']
+cats = ['Sent to the officer', 'Counted as rust', 'Called healthy']
+v3 = [round(mi3['not_sure'] * n_m), mi3['answered_as'].get('rust', 0), mi3['answered_as'].get('healthy', 0)]
+v2 = [round(mi2['not_sure'] * mi2['n']), mi2['answered_as'].get('rust', 0), mi2['answered_as'].get('healthy', 0)]
+fig, ax = plt.subplots(figsize=(8, 3.6))
+x = np.arange(len(cats)); w = 0.36
+for i, (vals, col, name) in enumerate([(v2, S2, 'Head v2 (five answers)'), (v3, S1, 'Shipped head v3 (with "other")')]):
+    bars = ax.bar(x + (i - 0.5) * (w + 0.02), vals, w, color=col, label=name)
+    for b_, v in zip(bars, vals):
+        ax.annotate(str(v), (b_.get_x() + b_.get_width() / 2, v), xytext=(0, 3), textcoords='offset points',
+                    ha='center', fontsize=9, color=INK)
+ax.set_xticks(x); ax.set_xticklabels(cats); ax.grid(axis='x', visible=False)
+ax.set_ylabel(f'Mite photos (of {n_m})'); ax.set_ylim(0, 1.2 * max(v2 + v3))
+ax.legend(frameon=False, fontsize=9, loc='upper right')
+ax.set_title(f'{n_m} red-spider-mite photos (a problem outside the five classes):\nfewer are counted as rust, more go to the officer',
+             loc='left', fontsize=11)
+fig.tight_layout(); fig.savefig(os.path.join(FIG, 'mite_other.png'), dpi=200); plt.close(fig)
 print('figures written to', FIG)
+
+# 7) external test on Ugandan farm photos (same drawing code as ml/eval_uganda.py, from its JSON)
+UGP = os.path.join(RES, 'uganda_external.json')
+if os.path.exists(UGP):
+    import sys
+    sys.path.insert(0, HERE)
+    from eval_uganda import figure as uganda_figure
+    uganda_figure(json.load(open(UGP)))
+    print('figure: uganda_learning_loop.png')

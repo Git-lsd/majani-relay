@@ -51,7 +51,8 @@ def load_all():
     raw = open(os.path.join(REPO, 'model', ref['file']), 'rb').read()
     R = np.frombuffer(raw[:n * D], np.int8).reshape(n, D).astype(np.float64) * np.frombuffer(raw[n * D:], '<f4')[:, None]
     base = dict(W=np.array(head['W']), b=np.array(head['b']), T=head['temperature'], thr=head['threshold'],
-                cut=head['ood']['cutoff'], k=head['ood']['k'], lam=head['prior_strength'], ref=unit(R))
+                cut=head['ood']['cutoff'], k=head['ood']['k'], lam=head['prior_strength'], ref=unit(R),
+                c1=head['ood'].get('local_nearest_cutoff'))   # the app's second familiarity check (None = off)
     return rows, Z, base
 
 
@@ -78,15 +79,27 @@ def splits(rows):
 
 # ----------------------------------------------------------------------------- methods
 def baseline_method(base, Z_lab, y_lab, Z_unlab):
-    """What the app does today: refit the head pulled toward the base head; labelled photos join the stored set."""
+    """What the app does today: refit the head pulled toward the base head; labelled photos join the stored set, and a
+    photo also counts as familiar when its nearest labelled photo is within base['c1'] (third output)."""
     W, b = adapt(Z_lab, y_lab, base['W'], base['b'], base['T'], base['lam']) if len(y_lab) else (base['W'], base['b'])
     ref = np.vstack([base['ref'], unit(Z_lab)]) if len(y_lab) else base['ref']
+    loc = unit(Z_lab) if len(y_lab) else None
 
     def predict(Z):
         P = softmax((Z @ W.T + b) / base['T'], axis=1)
         d = knn_dist(unit(Z), ref, base['k'])
-        return P, d
+        d_loc = knn_dist(unit(Z), loc, 1) if loc is not None else np.full(len(Z), np.inf)
+        return P, d, d_loc
     return predict
+
+
+def familiar(base, out):
+    """The app's familiarity rule on a predict() output: (P, d) or (P, d, d_loc).
+    familiar = d <= cut OR (base['c1'] set and d_loc <= c1); d_loc = distance to the nearest officer-labelled photo."""
+    fam = out[1] <= base['cut']
+    if len(out) > 2 and base.get('c1') is not None:
+        fam = fam | (out[2] <= base['c1'])
+    return fam
 
 
 def my_method(base, Z_lab, y_lab, Z_unlab):
@@ -94,7 +107,9 @@ def my_method(base, Z_lab, y_lab, Z_unlab):
       base     : dict with W [5,1280], b [5], T, thr, cut, k, lam, ref (stored rows, L2-normalised)
       Z_lab    : [k,1280] officer-labelled field photos (standardised embeddings); y_lab: class indices (0 healthy, 1 rust)
       Z_unlab  : [m,1280] other field photos on the phone, no labels (e.g. for feature alignment or pseudo-labels)
-    Return predict(Z) -> (P [N,5] class probabilities, d [N] familiarity distance; d > base['cut'] means 'not sure').
+    Return predict(Z) -> (P [N,5] class probabilities, d [N] familiarity distance; d > base['cut'] means 'not sure'),
+    optionally with a third output d_loc [N] (distance to the nearest officer-labelled photo; familiar if <= base['c1'],
+    the app's second check). base['c1'] is head_labonly.json ood.local_nearest_cutoff (None: check off).
     Ideas: augment Z_lab (use embed_images() below for real image augmentations), align field vs lab feature
     statistics with Z_unlab (mean/variance, CORAL), pseudo-label confident Z_unlab, prototype/kNN head, a different
     pull strength, a separate 'unfamiliar' rule. Start by copying baseline_method."""
@@ -111,16 +126,16 @@ def evaluate(method, Z, y, idx, mite_idx, base, seeds=SEEDS, ks=KS):
             pool, test = perm[:len(perm) // 2], perm[len(perm) // 2:]
             lab, unl = pool[:k], pool[k:]
             predict = method(base, Z[lab], y[lab], Z[unl])
-            P, d = predict(Z[test]); pr = P.argmax(1); yt = y[test]
-            ans = (P.max(1) >= base['thr']) & (d <= base['cut'])
+            o = predict(Z[test]); P = o[0]; pr = P.argmax(1); yt = y[test]
+            ans = (P.max(1) >= base['thr']) & familiar(base, o)
             acc['answered'].append(ans.mean())
             acc['acc_answered'].append((pr[ans] == yt[ans]).mean() if ans.any() else np.nan)
             acc['hvp_answered'].append(((pr[ans] == 0) == (yt[ans] == 0)).mean() if ans.any() else np.nan)
             rust = yt == CI['rust']; hl = yt == CI['healthy']
             acc['rust_named'].append(((pr == CI['rust']) & ans & rust).sum() / max(1, rust.sum()))
             acc['healthy_flagged'].append(((pr != CI['healthy']) & ans & hl).sum() / max(1, hl.sum()))
-            Pm, dm = predict(Z[mite_idx])
-            acc['mite_not_sure'].append(1 - ((Pm.max(1) >= base['thr']) & (dm <= base['cut'])).mean())
+            om = predict(Z[mite_idx])
+            acc['mite_not_sure'].append(1 - ((om[0].max(1) >= base['thr']) & familiar(base, om)).mean())
         out[k] = {m: float(np.nanmean(v)) for m, v in acc.items()}
     return out
 
@@ -173,6 +188,9 @@ if __name__ == '__main__':
         print('FINAL RUN on the SEALED part. Do this once, after choosing your method on DEV.')
     print(f'{part}: {len(S[part])} field photos (half are the pool the officer labels from, half are scored), '
           f'{len(S[mpart])} mite photos; {len(list(SEEDS))} random splits.')
+    print(f"familiarity: {base['k']} nearest stored photos within {base['cut']:.3f}"
+          + (f", OR the nearest officer-labelled photo within {base['c1']}" if base.get('c1') is not None else '')
+          + ' (the app\'s rule)')
     rb = evaluate(baseline_method, Z, y, S[part], S[mpart], base); show('baseline (the app\'s learning step, lab-only base)', rb)
     rm = evaluate(my_method, Z, y, S[part], S[mpart], base); show('my_method', rm)
     import datetime

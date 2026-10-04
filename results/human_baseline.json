@@ -157,6 +157,73 @@
   }
  },
  "model": {
+  "shipped": {
+   "n": 60,
+   "n_answered": 50,
+   "share_answered": 0.8333333333333334,
+   "acc_answered": 0.88,
+   "acc_healthy_vs_problem_answered": 0.88,
+   "correct_of_all": 0.7333333333333333,
+   "answer_counts": {
+    "healthy": 27,
+    "rust": 23,
+    "not_sure": 10
+   },
+   "by_rust_level": {
+    "0": {
+     "label": "healthy",
+     "n": 30,
+     "n_answered": 29,
+     "correct_of_all": 0.8333333333333334,
+     "acc_answered": 0.8620689655172413,
+     "called_a_problem_of_all": 0.13333333333333333
+    },
+    "1": {
+     "label": "rust level 1",
+     "n": 17,
+     "n_answered": 12,
+     "correct_of_all": 0.5882352941176471,
+     "acc_answered": 0.8333333333333334,
+     "called_a_problem_of_all": 0.5882352941176471
+    },
+    "2": {
+     "label": "rust level 2",
+     "n": 8,
+     "n_answered": 7,
+     "correct_of_all": 0.875,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.875
+    },
+    "3": {
+     "label": "rust level 3",
+     "n": 3,
+     "n_answered": 1,
+     "correct_of_all": 0.3333333333333333,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.3333333333333333
+    },
+    "4": {
+     "label": "rust level 4",
+     "n": 2,
+     "n_answered": 1,
+     "correct_of_all": 0.5,
+     "acc_answered": 1.0,
+     "called_a_problem_of_all": 0.5
+    }
+   },
+   "what": "AI as shipped (head v3: lab + field photos + \"other\" class; never trained on these 60)",
+   "not_sure_reasons": {
+    "answered": 50,
+    "unfamiliar": 4,
+    "low_confidence": 5,
+    "other": 1
+   },
+   "forced_acc_all": 0.8666666666666667,
+   "forced_acc_healthy_vs_problem": 0.8666666666666667,
+   "median_familiarity_distance": 0.28662562370300293,
+   "mean_confidence": 0.8252101703928704,
+   "photos_with_identical_copy_in_training": 0
+  },
   "shipped_v2_lab_field": {
    "n": 60,
    "n_answered": 50,
@@ -211,7 +278,7 @@
      "called_a_problem_of_all": 0.5
     }
    },
-   "what": "AI as shipped (trained on lab + field photos; never trained on these 60)",
+   "what": "Reference: head v2 (lab + field photos, five classes; never trained on these 60)",
    "not_sure_reasons": {
     "answered": 50,
     "unfamiliar": 4,
@@ -287,24 +354,24 @@
   },
   "lab_only_after_demo_update_50": {
    "n": 60,
-   "n_answered": 53,
-   "share_answered": 0.8833333333333333,
-   "acc_answered": 0.8867924528301887,
-   "acc_healthy_vs_problem_answered": 0.8867924528301887,
+   "n_answered": 54,
+   "share_answered": 0.9,
+   "acc_answered": 0.8703703703703703,
+   "acc_healthy_vs_problem_answered": 0.8703703703703703,
    "correct_of_all": 0.7833333333333333,
    "answer_counts": {
     "healthy": 24,
-    "rust": 29,
-    "not_sure": 7
+    "rust": 30,
+    "not_sure": 6
    },
    "by_rust_level": {
     "0": {
      "label": "healthy",
      "n": 30,
-     "n_answered": 28,
+     "n_answered": 29,
      "correct_of_all": 0.7666666666666667,
-     "acc_answered": 0.8214285714285714,
-     "called_a_problem_of_all": 0.16666666666666666
+     "acc_answered": 0.7931034482758621,
+     "called_a_problem_of_all": 0.2
     },
     "1": {
      "label": "rust level 1",
@@ -341,8 +408,8 @@
    },
    "what": "Context: lab-only model after 50 officer-style field labels (demo update)",
    "not_sure_reasons": {
-    "answered": 53,
-    "unfamiliar": 6,
+    "answered": 54,
+    "unfamiliar": 5,
     "low_confidence": 1
    },
    "forced_acc_all": 0.85,
@@ -353,31 +420,50 @@
   }
  },
  "model_settings": {
+  "shipped": {
+   "head_file": "kahawa-check/model/head.json",
+   "route_to_officer": [
+    "other"
+   ],
+   "head_version": "v3-2026-10-03-lab+field+other",
+   "threshold": 0.53,
+   "familiarity_cutoff": 0.49397,
+   "knn": 10,
+   "temperature": 1.43305,
+   "local_nearest_cutoff": 0.494,
+   "reference_rows": 1400
+  },
   "shipped_v2_lab_field": {
-   "head_file": "head.json",
+   "head_file": "data_work/shipped_v2/head.json",
+   "route_to_officer": [],
    "head_version": "v2-2026-10-03-lab+field",
    "threshold": 0.59,
    "familiarity_cutoff": 0.49397,
    "knn": 10,
    "temperature": 1.10856,
+   "local_nearest_cutoff": 0.494,
    "reference_rows": 1400
   },
   "lab_only_as_shipped": {
-   "head_file": "head_labonly.json",
+   "head_file": "kahawa-check/model/head_labonly.json",
+   "route_to_officer": [],
    "head_version": "v1-2026-10-03",
    "threshold": 0.53,
    "familiarity_cutoff": 0.52794,
    "knn": 10,
    "temperature": 0.98671,
+   "local_nearest_cutoff": 0.494,
    "reference_rows": 1000
   },
   "lab_only_after_demo_update_50": {
-   "head_file": "head_labonly.json",
+   "head_file": "kahawa-check/model/head_labonly.json",
+   "route_to_officer": [],
    "head_version": "v1-2026-10-03",
    "threshold": 0.53,
    "familiarity_cutoff": 0.52794,
    "knn": 10,
    "temperature": 0.98671,
+   "local_nearest_cutoff": 0.494,
    "reference_rows": 1000,
    "update_file": "update_demo_50_labonly.json",
    "update_base_version": "v1-2026-10-03",
@@ -385,6 +471,10 @@
   }
  },
  "model_on_resized_copies": {
+  "shipped": {
+   "same_decision_as_original": 59,
+   "n": 60
+  },
   "shipped_v2_lab_field": {
    "same_decision_as_original": 59,
    "n": 60
@@ -394,7 +484,7 @@
    "n": 60
   },
   "lab_only_after_demo_update_50": {
-   "same_decision_as_original": 58,
+   "same_decision_as_original": 60,
    "n": 60
   }
  },
@@ -411,7 +501,8 @@
   "Labellers are team members who are not farmers or plant experts, standing in for relay farmers.",
   "The labellers may have known that this dataset holds only healthy and rust leaves; a relay farmer would not.",
   "60 photos from one dataset (RoCoLe: Ecuador, robusta, on-plant); one-evening test.",
-  "The shipped model was trained on other RoCoLe photos (never these 60, nor identical copies of them); it has seen field photos of healthy and rust leaves only.",
+  "The shipped model (head v3) was trained on other RoCoLe photos (never these 60, nor identical copies of them): healthy, rust and red-spider-mite leaves (mite as \"other\").",
+  "Head v2 (five classes) is scored as a reference; head v3 replaced it in the app.",
   "The 50 photos inside the lab-only demo update and the 7 demo samples are excluded from the 60; RoCoLe holds identical copies of some images, and one of the 60 is an identical copy of a photo in the demo update (see photos_with_identical_copy_in_training)."
  ]
 }

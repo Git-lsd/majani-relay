@@ -102,25 +102,32 @@ The brief says the binding constraint is often a missing farmer registry. **In K
 
 ## 6. Prior art and how ours differs
 
-Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not documented" below means we did not find it in the sources we read. It does not mean the feature is absent.
+Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not documented" below means we did not find it in the sources we read. It does not mean the feature is absent. *Corrected on 3 Oct, late evening, from the fuller search in [PRIOR_ART.md](PRIOR_ART.md) (Nuru's coffee model, PlantVillage+, Plantix, KawaScan, KAHAWA+). That page is the newer and fuller list; use it where the two differ.*
 
 | Tool | Where / crop | Offline | Says "not sure" | Published field result | Human in the loop | Co-op view |
 |---|---|---|---|---|---|---|
-| PlantVillage Nuru (Penn State, FAO, IITA, CIMMYT) | Kenya and others; cassava, maize, potato; coffee not listed in the CGIAR description | yes | not documented | yes: 65% on cassava vs 40-58% for extension agents and 18-31% for farmers; 74-88% when six leaves per plant are checked (Mrisho et al. 2020: https://doi.org/10.3389/fpls.2020.590889) | works with extension services | not documented |
-| KawaScan (KawaCoffee, Uganda) https://ugandacoffeeforam.vercel.app/ | Uganda; rust, berry borer, brown eye spot | yes | not documented (gives a confidence score) | none found | paid "expert-reviewed" scans | no |
-| Plantix https://plantix.net/en/library/plant-diseases/100360/rust-of-coffee/ | global; coffee rust in its library | not checked | not checked | not checked | not checked | no (snippet only) |
+| PlantVillage Nuru (Penn State, FAO, IITA, CIMMYT; now "PlantVillage+" on Google Play) | Kenya, Uganda and others; cassava, maize, potato; **coffee:** a leaf rust and red blister model in Uganda since 2022, scanning 3 leaves (PlantVillage blog, 2022) | iOS listing says it works without internet; the 2026 Play listing no longer clearly says offline | not documented | yes: 65% on cassava vs 40-58% for extension agents and 18-31% for farmers; 74-88% when six leaves per plant are checked (Mrisho et al. 2020: https://doi.org/10.3389/fpls.2020.590889) | works with extension services | not documented |
+| KawaScan (KawaCoffee, Uganda) https://ugandacoffeeforam.vercel.app/ | Uganda; rust, berry borer, brown eye spot; not found on Google Play (3 Oct 2026) | yes ("offline-first", per its website) | not documented (gives a confidence score) | none found | paid "expert-reviewed" scans | no |
+| Plantix https://plantix.net/en/library/plant-diseases/100360/rust-of-coffee/ | global; coffee rust in its library | library yes; diagnosis appears to need a connection (snippet) | answers with likelihood words ("unlikely", "likely", "very likely"); no "not sure" outcome | not checked | community experts answer users | district disease alerts (method not stated) |
 | Hitimana et al. 2024 research app https://doi.org/10.3390/software3020007 | Rwanda; four coffee leaf classes | not stated in abstract | not documented | abstract reports 99.57% training accuracy only | GPS reports to agronomists | partial (GPS map) |
-| Dimitra Connected Coffee with NACCU (PR Newswire link in section 4) | Kenya; farm registration, mapping, soil, deforestation compliance | yes | n/a (no leaf diagnosis described) | n/a | n/a | cooperative network |
+| Dimitra Connected Coffee / KAHAWA+ with NACCU (PR Newswire link in section 4; the name KAHAWA+ is confirmed on dimitra.io) | Kenya; farm registration, mapping, soil, deforestation compliance | yes | n/a (no leaf diagnosis described) | n/a | n/a | cooperative network |
 
 **What ours adds** (design claims; the evidence for them must come from our own results folder, not from this file):
-1. **Abstains.** Two gates (low confidence, or an image unlike the training data) give "not sure, the officer will look". Most tools above document a diagnosis or a confidence score, not a refusal.
-2. **Measured field gap.** We test on a sealed set from another country and setting (RoCoLe, Ecuador, on-plant phone photos) and report the drop, not only a lab score.
+1. **Routes to the officer.** Three gates (low confidence, an image unlike the training data, or "looks like a different problem") send the photo to the officer with "not sure, the officer will look". Most tools above document a diagnosis or a confidence score, not a refusal; saying "not sure" on its own is published elsewhere (PRIOR_ART.md, section 3).
+2. **Measured field gap, and a test in a new country.** We report the lab-to-field drop of our first model (Ecuador field photos), train the shipped model on field photos, and test it on Ugandan farm photos it never trained on (`results/RESULTS.md`, sections 3.3 and 3.6).
 3. **Officer learning loop.** Officer labels on "not sure" photos refit the small head on the phone, pulled toward the original weights. The update is a few KB.
 4. **Village ranking.** Village rust shares are shrunk toward the regional rate, so two of three photos does not raise an alarm. The officer gets a visit order. It ranks rust already seen; it does not predict outbreaks.
-5. **Multi-leaf plot protocol.** Fifteen photos per plot. Nuru's cassava study (not coffee) found checking six leaves per plant raised the app's accuracy from 65% to 74-88%. That supports scoring a plot, not a single leaf.
+5. **Multi-leaf plot protocol.** Fifteen photos per plot. Nuru's cassava study (not coffee) found checking six leaves per plant raised the app's accuracy from 65% to 74-88%. That supports scoring a plot, not a single leaf. Not new on its own: Nuru's coffee protocol scans 3 leaves, and surveillance programmes count many leaves per plot.
 6. **Fits an existing worker.** The relay farmer maps onto NAVCDP's agripreneurs, and plot cards use the cooperative member number.
 
-## 6b. Is the name "Kahawa Check" taken?
+## 6b. Is the name taken?
+
+**Decision (4 Oct 2026, after midnight ET):** the tool is now called **Majani Relay** (say mah-JAH-nee; *majani* = leaves). The check below was done for the earlier name, Kahawa Check, and is why we moved away from "Kahawa".
+
+- **"Majani Relay": no product with this exact name found** in one web search on 4 Oct 2026. Nearby results: a GitHub account "majani-plus" with an unrelated prayer-app relay, and "majani-mahindi", a maize leaf disease analyser on GitHub (seen only in the search results, not opened). Not checked: app stores, the Kenya trademark register (KIPI), the company register. A Swahili speaker should still confirm that the name reads well.
+
+The earlier check, for "Kahawa Check" (3 Oct 2026):
+
 
 - **Exact name: no use found** in web searches on 3 Oct 2026 for "Kahawa Check", "KahawaCheck", "Kahawa Scan" and "Kahawa Doctor". Not checked: full app-store listings, the Kenya trademark register (KIPI), the company register.
 - **The "Kahawa" space is crowded:**
@@ -128,7 +135,7 @@ Leaf photo diagnosis is not new. We should not pitch it as new. Note: "not docum
   - Kahawa Smart, a record-keeping app on Google Play, updated Aug 2025 (https://play.google.com/store/apps/details?id=com.afrosoft.kahawasmart)
   - Sauti ya Kahawa, the Kenya Coffee Platform (https://www.sautiyakahawa.org/)
   - MyKahawa, a Nairobi Coffee Exchange data site (https://www.mykahawa.org/)
-  - "KAHAWA+", reported as the name of the NACCU-Dimitra programme. Snippet only: the page was blocked, and the press releases we read do not use the name (https://www.newsghana.com.gh/kenyas-coffee-farmers-race-to-meet-eu-digital-compliance-deadline/).
+  - "KAHAWA+", the name of the NACCU-Dimitra programme, confirmed on https://dimitra.io/who-we-help/ (3 Oct 2026; earlier seen only in a snippet: https://www.newsghana.com.gh/kenyas-coffee-farmers-race-to-meet-eu-digital-compliance-deadline/).
 - **Two alternatives** (no app with these names found; the Swahili meanings need a native speaker to check, as for all our local-language text):
   1. **Kutu Watch**. *Kutu* is given as Swahili for "rust" in online dictionaries.
   2. **Majani Check**. *Majani* = leaves.
@@ -166,14 +173,14 @@ On the evening of 3 Oct we asked a separate review to test our claim that farmer
 
 **Recommended problem statement (use this one; replaces A as the lead)**
 
-> Because of this tool, the county extension officer or cooperative agronomist will send their next visits to the villages with the most leaf rust, by the week the relay farmers' plot checks reach the cooperative, that they would otherwise do late, after paper reports arrive; we know because one Kenyan extension officer typically serves 1,500–3,000 farmers and paper-based reporting has caused "delayed information flows" (MoALD draft data policy, 2026), and coffee-specific extension has "collapsed" in places (MoALD Coffee Strategy, 2024).
+> Because of this tool, the county extension officer or cooperative agronomist will send their next visits to the villages with the most leaf rust, by the week the relay farmers' plot checks reach the cooperative, that they would otherwise do late, after paper reports arrive; we know because one Kenyan extension officer typically serves 1,500–3,000 farmers and paper-based reporting has caused "delayed information flows" (Ministry of Agriculture draft data policy, 2026), and coffee-specific extension has "collapsed" in places (Coffee Development and Marketing Strategy, 2024).
 
 Simplifications in this statement:
 - "The week the checks reach the cooperative" depends on how often relay farmers export their village totals. Each phone ranks only its own records today; combining several phones' exports is done by hand (not built into the app).
 - The evidence shows the gap is real. It does not show that our tool closes it.
 - The 1,500–3,000 figure is for all farmers, not coffee farmers only. The national figure in row 15 (1:1,380) comes from a different document.
 
-**Recommended framing in 4 sentences.** Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts. Kahawa Check turns each relay farmer's plot visit into a standard record keyed to the cooperative member number; the AI labels each leaf photo or says "not sure", so 15 photos become a rust count, and unclear photos go to a named officer whose labels improve the model. Village rust shares, adjusted for small samples, rank where the officer should go first, like the brief's cotton example, which counts pests to decide whether and when to act.
+**Recommended framing in 4 sentences.** Kenyan coffee farmers mostly recognise visible rust. What fails is getting standard field checks to the one officer who serves thousands of farmers, early enough to change where that officer goes and when action starts. Majani Relay turns each relay farmer's plot visit into a standard record keyed to the cooperative member number; the AI labels each leaf photo or says "not sure", so 15 photos become a rust count, and unclear photos go to a named officer whose labels improve the model. Village rust shares, adjusted for small samples, rank where the officer should go first, like the brief's cotton example, which counts pests to decide whether and when to act.
 
 **Claims we do not make** are listed in [NEED_EVIDENCE.md](NEED_EVIDENCE.md), section 6.
 

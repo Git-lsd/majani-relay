@@ -1,6 +1,6 @@
 {
-  "name": "Kahawa Check",
-  "short_name": "Kahawa",
+  "name": "Majani Relay",
+  "short_name": "Majani Relay",
   "description": "Offline coffee leaf check for cooperative relay farmers. The extension officer makes the final call.",
   "id": "./",
   "start_url": "./",

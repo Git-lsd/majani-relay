@@ -1,6 +1,6 @@
 # Language plan
 
-Kahawa Check speaks in three tiers. English is on the screen. Swahili is the main local language, as text and audio. Kikuyu is the "less-supported" tier: a few short phrases, and Swahili for the rest.
+Majani Relay (earlier name: Kahawa Check) speaks in three tiers. English is on the screen. Swahili is the main local language, as text and audio. Kikuyu is the "less-supported" tier: a few short phrases, and Swahili for the rest.
 
 No one on the team speaks Swahili or Kikuyu. So every local-language string is marked **unverified** (`sw_verified: false`, `kik_verified: false` in `answers.json`), and the app shows the tag "Not yet checked by a native speaker" next to it.
 

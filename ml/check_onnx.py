@@ -1,5 +1,7 @@
-"""Check that model/backbone.onnx + model/head.json + model/reference.bin (the shipped lab+field model, what the
+"""Check that model/backbone.onnx + model/head.json + model/reference.bin (the shipped model, head v3, what the
 phone runs) give the same answers as the Python evaluation, and time one image on CPU.
+Decision rule (same as ml/train_eval.py and app.js): answered = confident, familiar, and the top class is not one of
+head.json's route_to_officer classes ('other'); otherwise the photo goes to the officer.
 The backbone bakes in the lab-only standardisation (../data_work/standardisation.npz, identical to
 standardisation_labonly.npz), which both heads use. Run: ../.venv/bin/python ml/check_onnx.py"""
 import os, json, time
@@ -13,6 +15,7 @@ meta = json.load(open(os.path.join(REPO, 'model', 'backbone_meta.json')))
 head = json.load(open(os.path.join(REPO, 'model', 'head.json')))
 sess = ort.InferenceSession(os.path.join(REPO, 'model', 'backbone.onnx'), providers=['CPUExecutionProvider'])
 W = np.array(head['W']); b = np.array(head['b'])
+to_officer = set(head.get('route_to_officer', []))
 ref = head['ood']['reference']; n, D = ref['n'], ref['dim']
 raw = open(os.path.join(REPO, 'model', ref['file']), 'rb').read()
 assert len(raw) == n * D + 4 * n, f"{ref['file']} has {len(raw)} bytes, head.json expects n={n} rows"
@@ -37,9 +40,12 @@ for s in man:
     t0 = time.perf_counter(); e = sess.run(None, {'input': x})[0][0]; times.append(time.perf_counter() - t0)
     P = softmax((W @ e + b) / head['temperature'])
     en = e / np.linalg.norm(e); d = 1 - np.sort(R @ en)[-head['ood']['k']:].mean()
-    ans = P.max() >= head['threshold'] and d <= head['ood']['cutoff']
-    sample_rows.append({'file': s['file'], 'truth': s['truth'], 'pred': head['classes'][int(P.argmax())],
-                 'p': round(float(P.max()), 3), 'dist': round(float(d), 3), 'answered': bool(ans)})
+    top = head['classes'][int(P.argmax())]
+    conf, fam, oth = P.max() >= head['threshold'], d <= head['ood']['cutoff'], top in to_officer
+    ans = conf and fam and not oth
+    sample_rows.append({'file': s['file'], 'truth': s['truth'], 'pred': top,
+                 'p': round(float(P.max()), 3), 'dist': round(float(d), 3), 'answered': bool(ans),
+                 'route': 'answered' if ans else ('other' if oth else ('unfamiliar' if not fam else 'low_confidence'))})
 for r in sample_rows:
     print(r)
 # same decisions as the Python evaluation on the original photos (results/metrics.json, shipped model)?
@@ -47,6 +53,7 @@ py = {p['original_file']: p for p in json.load(open(os.path.join(REPO, 'results'
 same_samples = sum(1 for s, r in zip(man, sample_rows) if s['original_file'] in py and py[s['original_file']]['answered'] == r['answered']
                    and (not r['answered'] or py[s['original_file']]['pred'] == r['pred']))
 n_samples = len(sample_rows)
+assert same_samples == n_samples, 'ONNX decisions on the demo samples differ from the Python evaluation'
 print('demo samples (app copies, ONNX) vs Python (original photos): same decision on', same_samples, 'of', n_samples)
 # agreement with the Python pipeline on original field images
 import csv
@@ -63,7 +70,7 @@ for i in pick:
     maxdiff = max(maxdiff, float(np.abs(e - z).max()))
     agree += int(np.argmax(W @ e + b) == np.argmax(W @ z + b))
 print('ONNX vs Python: same class on', agree, 'of', len(pick), '; max abs embedding diff', round(maxdiff, 4))
-out = {'head_version': head['version'], 'reference_rows': int(n),
+out = {'head_version': head['version'], 'classes': head['classes'], 'reference_rows': int(n),
        'samples_same_decision_as_python': f'{same_samples}/{n_samples}',
        'onnx_vs_python_same_class': f'{agree}/{len(pick)}', 'onnx_vs_python_max_abs_diff': round(maxdiff, 4),
        'reference_kb': round(os.path.getsize(os.path.join(REPO, 'model', ref['file'])) / 1e3, 1), 'onnx_mb': round(os.path.getsize(os.path.join(REPO, 'model', 'backbone.onnx')) / 1e6, 1),

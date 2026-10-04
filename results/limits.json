@@ -3,15 +3,32 @@
   "model": "lab-only model + the 50-label demo update (new-region simulation)",
   "dataset": "RoCoLe red spider mite (167 photos)",
   "not_sure_before": 1.0,
-  "not_sure_after_50": 0.257,
+  "not_sure_after_50": 0.192,
   "answered_as_after_50": {
    "healthy": 40,
-   "rust": 79,
+   "rust": 90,
    "phoma": 5
   }
  },
  "out_of_scope_pest_shipped_model": {
-  "model": "shipped model (lab + field)",
+  "model": "shipped model, head v3 (lab + field + \"other\" class trained on mite photos)",
+  "dataset": "RoCoLe red spider mite (167 photos; each scored by a head that never saw it or a copy)",
+  "sent_to_officer": 0.377,
+  "routed_other": 0.21,
+  "answered_as": {
+   "healthy": 19,
+   "rust": 85
+  },
+  "how": "out-of-fold for the 154 mite photos used in training (5-fold, scalars chosen without the fold), final head for the 13 never trained on",
+  "sent_to_officer_cv_mean": 0.39,
+  "auroc_mite_vs_field_cv": {
+   "confidence": 0.677,
+   "familiarity_distance": 0.738,
+   "p_other": 0.844
+  }
+ },
+ "out_of_scope_pest_shipped_v2": {
+  "model": "head v2 (lab + field, five classes), kept for reference",
   "dataset": "RoCoLe red spider mite (167 photos, never trained on)",
   "not_sure": 0.144,
   "answered_as": {
@@ -24,14 +41,15 @@
    "familiarity_distance": 0.735
   }
  },
- "meaning": "Once field photos are familiar, the familiarity check no longer catches a pest the model was never taught: those photos look like the field photos it knows. Most answered mite photos are still called a problem; the rest are called healthy.",
+ "meaning": "Once field photos are familiar, the familiarity check no longer catches a pest the model was never taught: those photos look like the field photos it knows (head v2 and the lab-only model after 50 labels). Head v3 adds an \"other\" answer learned from mite photos; the app sends those photos to the officer and never counts them as rust. It has learned one pest from one dataset only.",
  "mitigations": [
-  "Officer review screen offers \"different problem / not in list\"; those photos stay in the not-sure lane for similar photos.",
+  "Head v3 \"other\" class (trained on RoCoLe mite photos): top class \"other\" means the photo goes to the officer.",
+  "Officer review screen offers \"different problem / not in list\"; that label trains the \"other\" class in the on-phone update.",
   "Spot-check: 1 in 10 answered photos is also queued for the officer, so errors and drift are seen.",
   "Plot card never says a plot is disease-free; the checklist covers what photos cannot see."
  ],
  "plan": [
-  "Collect officer-labelled field photos of look-alike problems (pests, brown eye spot, nutrient deficiency) through the \"different problem\" label during a pilot and add an \"other problem\" class.",
-  "Test that class on the mite photos (never trained on) before shipping it."
+  "Collect officer-labelled field photos of other look-alike problems (other pests, brown eye spot, nutrient deficiency) through the \"different problem\" label during a pilot; they train the same \"other\" class.",
+  "Keep a set of those photos out of training to test the \"other\" class on problems it has not seen."
  ]
 }

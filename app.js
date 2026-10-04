@@ -1,4 +1,6 @@
-/* Kahawa Check: offline coffee leaf check for cooperative relay farmers.
+/* Majani Relay (earlier name: Kahawa Check): offline coffee leaf check for cooperative relay farmers.
+   Internal identifiers keep the old name so saved data keeps working (database 'kahawa-check', update kind
+   'kahawa-head-update', window.__kahawa, KahawaCore, localStorage prefix 'kahawa.').
    Plain JavaScript, no build step. Sections:
    1 constants and built-in English text   2 helpers   3 storage (IndexedDB)
    4 languages and answer texts            5 model (onnxruntime-web backbone + small head)
@@ -69,10 +71,25 @@ const AUDIO_CHAIN = { sw: ['sw', 'en'], en: ['en', 'sw'], kik: ['kik', 'sw', 'en
 
 // Wording corrections: a relay farmer or officer reports a wrong or unnatural phrase. They are saved on the
 // phone and exported for review; the text on screen never changes by itself.
-const APP_VERSION = 'kahawa-v12'; // keep equal to VERSION in sw.js
+const APP_VERSION = 'kahawa-v16'; // keep equal to VERSION in sw.js
+const APP_NAME = 'Majani Relay'; // user-facing name (pronounced mah-JAH-nee)
+const FILE_PREFIX = 'majani-relay'; // start of exported file names
 const WHO = { relay_farmer: 'Relay farmer', extension_officer: 'Extension officer', farmer: 'Farmer', other: 'Other' };
 const WC_KEY = 'wording_corrections'; // meta record: { key, items: [...] }
 const WC_FIELDS = ['id', 'lang', 'shown_text', 'english', 'suggestion', 'who', 'note', 'created', 'app_version', 'head_version'];
+
+// Plot visit: three optional taps for the officer. Saved with the plot record; the AI does not use them.
+const FARM_TAPS = [
+  { key: 'variety', label: 'Variety', cols: 3, options: [['sl28_sl34', 'SL28/SL34'], ['ruiru_11', 'Ruiru 11'], ['batian', 'Batian'], ['other', 'Other'], ['unknown', 'Don\'t know']] },
+  { key: 'last_spray', label: 'Last spray', cols: 3, options: [['never', 'Never'], ['under_1m', 'Under 1 month'], ['1_3m', '1–3 months'], ['over_3m', 'Over 3 months'], ['unknown', 'Don\'t know']] },
+  { key: 'fruit_load', label: 'Fruit load', cols: 4, options: [['low', 'Low'], ['medium', 'Medium'], ['high', 'High'], ['unknown', 'Don\'t know']] },
+];
+const FARM_NOTE = 'For the officer; the AI does not use this';
+const farmValue = (key, code) => { const t = FARM_TAPS.find((x) => x.key === key); const o = t && t.options.find(([k]) => k === code); return o ? o[1] : null; };
+
+// "I think it's something else": the relay farmer disagrees with an AI answer. The photo joins the officer queue
+// and stays out of the village numbers until the officer labels it (then the officer's label counts).
+const DISPUTE_REASON = 'relay farmer disagrees';
 
 // ---------------------------------------------------------------- 2. Helpers
 const $ = (sel) => document.querySelector(sel);
@@ -396,10 +413,14 @@ async function mergeWordingCorrections(list) {
   return added;
 }
 
-function openWordingSheet(id) {
-  const a = answerText(id); // the text as shown right now
+// opts (optional, for text outside answers.json, e.g. a guide section): { text, lang, english, back }.
+// back: called instead of closing, so a report started from the guide returns to the guide.
+function openWordingSheet(id, opts) {
+  const o = opts || {};
+  const a = o.text ? { text: o.text, lang: o.lang || 'en' } : answerText(id); // the text as shown right now
   const entry = answers[id];
-  const english = (entry && typeof entry.en === 'string' && entry.en.trim()) || EN[id] || id;
+  const english = o.english || (entry && typeof entry.en === 'string' && entry.en.trim()) || EN[id] || id;
+  const leave = () => { if (o.back) o.back(); else closeSheet(); };
   const s = $('#sheet');
   const sugg = h('textarea', { id: 'wc-suggestion', rows: 4, required: true, lang: HTML_LANG[a.lang], autocomplete: 'off', spellcheck: 'false' });
   sugg.value = a.text; // start from the current text: changing one word is easier than typing it all on a phone
@@ -421,13 +442,13 @@ function openWordingSheet(id) {
       items.push(rec);
       await DB.put('meta', { key: WC_KEY, items });
     } catch (e) { toast('Could not save: ' + (e.message || e)); return; }
-    closeSheet();
+    leave();
     toast('Saved on this phone. It goes out with the officer\'s next update file or corrections CSV. The app\'s wording does not change until someone reviews it.', null, 8000);
     if (currentTab !== 'visit') renderCurrent(); // the Officer and About screens show the count
   };
   s.replaceChildren(h('div', { class: 'sheet-body', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'wc-title' },
     h('div', { class: 'row' }, h('h3', { class: 'grow', id: 'wc-title', style: 'margin:0' }, 'Wording wrong?'),
-      h('button', { class: 'btn secondary small', type: 'button', onclick: closeSheet }, icon('close'), 'Close')),
+      h('button', { class: 'btn secondary small', type: 'button', onclick: leave }, icon('close'), o.back ? 'Back' : 'Close')),
     h('p', { class: 'small' }, 'Report a wrong or unnatural phrase. It is saved on this phone for the team to review. The app keeps showing the current text until then.'),
     h('div', { class: 'stack' },
       h('div', null, h('span', { class: 'small' }, `${LANG_LABEL[a.lang]} text now shown · sentence ${id}`),
@@ -439,9 +460,76 @@ function openWordingSheet(id) {
       err,
       h('div', { class: 'btn-grid' },
         h('button', { class: 'btn', type: 'button', id: 'wc-save', onclick: save }, icon('check'), 'Save'),
-        h('button', { class: 'btn secondary', type: 'button', id: 'wc-cancel', onclick: closeSheet }, 'Cancel')))));
+        h('button', { class: 'btn secondary', type: 'button', id: 'wc-cancel', onclick: leave }, 'Cancel')))));
   s.hidden = false;
   s.onclick = null; // typed text is not thrown away by a tap outside the sheet
+}
+
+// ----- "What does this mean?" guides (guides.json: fixed text, written by the team from the sources it lists)
+let guides = null; // { meta: { sources: [...] }, guides: { id: { title, sections: [{ key, heading, text, source_ids }], sw_verified } } }
+async function loadGuides() {
+  try {
+    const j = await fetchJSON('guides.json');
+    guides = (j && j.guides && typeof j.guides === 'object') ? j : null;
+  } catch (e) { guides = null; }
+}
+// Result -> guide id. Every photo sent to the officer (low confidence, unfamiliar, "different problem") uses 'not_sure'.
+function guideIdFor(r) {
+  const id = r.not_sure ? 'not_sure' : r.label;
+  return guides && guides.guides[id] && Array.isArray(guides.guides[id].sections) ? id : null;
+}
+// Text of a {en, sw, ...} field in the selected language, walking the same fallback chain as the answers.
+function pickLang(obj) {
+  for (const l of CHAIN[lang]) {
+    const v = obj && typeof obj[l] === 'string' ? obj[l].trim() : '';
+    if (v) return { text: v, lang: l, fallback: l !== lang };
+  }
+  return { text: '', lang: 'en', fallback: lang !== 'en' };
+}
+// Short source name for the "Sources" line: drop bracketed asides, keep the part before the first ':' or ';'.
+const shortSource = (t) => String(t).replace(/\s*\([^()]*\)/g, '').split(/[:;]/)[0].trim();
+
+function openGuide(id) {
+  const g = guides && guides.guides[id];
+  if (!g) return;
+  const title = pickLang(g.title);
+  const main = title.lang;
+  const tagsFor = (l, fallback) => [
+    fallback ? h('span', { class: 'tag warn' }, `${LANG_LABEL[l]} fallback`) : null,
+    l !== 'en' && !isVerified(g, l) ? h('span', { class: 'tag warn' }, 'Not yet checked by a native speaker') : null,
+  ].filter(Boolean);
+  const topTags = tagsFor(main, title.fallback);
+  const sourceIds = [];
+  const sections = g.sections.map((sec) => {
+    const hd = pickLang(sec.heading), tx = pickLang(sec.text);
+    (sec.source_ids || []).forEach((sid) => { if (!sourceIds.includes(sid)) sourceIds.push(sid); });
+    const own = tx.lang !== main ? tagsFor(tx.lang, tx.fallback) : [];
+    const english = sec.text && typeof sec.text.en === 'string' ? sec.text.en.trim() : null;
+    return h('section', { class: 'guide-sec' },
+      h('h3', { lang: HTML_LANG[hd.lang] }, hd.text),
+      h('p', { lang: HTML_LANG[tx.lang] }, tx.text),
+      own.length ? h('div', { class: 'tags' }, own) : null,
+      h('button', { class: 'link-btn', type: 'button', lang: 'en',
+        onclick: () => openWordingSheet(`guide.${id}.${sec.key}`, { text: tx.text, lang: tx.lang, english, back: () => openGuide(id) }) }, 'Wording wrong?'));
+  });
+  const srcList = (guides.meta && Array.isArray(guides.meta.sources)) ? guides.meta.sources : [];
+  const used = sourceIds.map((sid) => srcList.find((x) => x && x.id === sid) || { id: sid, title: sid });
+  const s = $('#sheet');
+  s.replaceChildren(h('div', { class: 'sheet-body guide', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'guide-title' },
+    h('div', { class: 'row' },
+      h('h3', { class: 'grow', id: 'guide-title', style: 'margin:0', lang: HTML_LANG[main] }, title.text),
+      h('button', { class: 'btn secondary small', type: 'button', onclick: closeSheet }, icon('close'), 'Close')),
+    topTags.length ? h('div', { class: 'tags' }, topTags) : null,
+    h('p', { class: 'small' }, 'Fixed text written by the team from the sources below, not by the AI. The extension officer makes the final call.'),
+    sections,
+    used.length ? h('p', { class: 'small guide-sources' }, h('b', null, 'Sources: '), used.map((x) => shortSource(x.title || x.id)).join('; '), '.') : null,
+    used.length ? h('details', { class: 'small' }, h('summary', null, 'Full source list'),
+      h('ul', { class: 'src-list' }, used.map((x) => h('li', null, x.title || x.id,
+        [x.year, x.country].filter(Boolean).length ? ` (${[x.year, x.country].filter(Boolean).join('; ')})` : '',
+        x.url && /^https:\/\//.test(x.url) ? [' ', h('a', { href: x.url, target: '_blank', rel: 'noopener' }, 'link')] : null)))) : null,
+    h('button', { class: 'btn secondary block', type: 'button', onclick: closeSheet }, 'Close')));
+  s.hidden = false;
+  s.onclick = (e) => { if (e.target === s) closeSheet(); };
 }
 
 // ---------------------------------------------------------------- 5. Model
@@ -466,6 +554,8 @@ function dot(a, b) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b
 
 // Read head.json (schema v1 in SPEC.md). Classes and embed_dim come from the file, never hard-coded.
 // The backbone output is already standardised (standardised_in_backbone), so the embedding is used as is.
+// route_to_officer (optional, head v3): classes that are never shown as a diagnosis (the "other" class for a
+// problem outside the list). When one is the top class, the photo goes to the officer like a "not sure" photo.
 function parseHead(raw) {
   const classes = raw.classes;
   const C = classes.length;
@@ -477,9 +567,13 @@ function parseHead(raw) {
   const ood = raw.ood || {};
   const head = {
     version: String(raw.version), classes: classes.slice(), C, D, W, b: Float32Array.from(raw.b),
+    toOfficer: Array.isArray(raw.route_to_officer) ? raw.route_to_officer.filter((c) => classes.includes(c)) : [],
     temperature: Number(raw.temperature) || 1,
     threshold: Number.isFinite(raw.threshold) ? raw.threshold : 0.5,
     cutoff: Number.isFinite(ood.cutoff) ? ood.cutoff : Infinity,
+    // Second familiarity check (optional field; absent = the k-nearest check alone): a photo also counts as familiar
+    // when its single nearest officer-labelled row (localRefs; never reference.bin rows) is within this distance.
+    localCutoff: Number.isFinite(ood.local_nearest_cutoff) ? ood.local_nearest_cutoff : null,
     // Familiarity check: k nearest stored photos (reference.bin, filled in by loadModel).
     // Older heads with class centroids use the nearest centroid instead (k = 1).
     refRows: [], k: 1, refFile: null,
@@ -515,8 +609,11 @@ function softmax(z) {
   return e.map((v) => v / s);
 }
 
-// probs = softmax((W e + b) / T). "Not sure" if max prob < threshold OR the photo is unfamiliar:
-// distance = 1 - mean cosine similarity to the k most similar stored photos (shipped + officer-labelled) > cutoff.
+// probs = softmax((W e + b) / T). "Not sure" (sent to the officer) if the top class is a route_to_officer class
+// ("looks like a different problem"), OR the photo is unfamiliar, OR max prob < threshold. Same order as ml/train_eval.py.
+// Familiar: distance = 1 - mean cosine similarity to the k most similar stored photos (shipped + officer-labelled)
+// <= cutoff, OR (head.localCutoff set and officer-labelled rows exist) 1 - cosine similarity to the single nearest
+// officer-labelled row <= localCutoff. The shipped reference rows never count for the second check.
 function predictHead(head, e) {
   const { C, D, W, b, temperature: T } = head;
   const z = new Array(C);
@@ -531,15 +628,19 @@ function predictHead(head, e) {
   for (let c = 1; c < C; c++) if (probs[c] > probs[idx]) idx = c;
   const refs = head.localRefs.length ? head.refRows.concat(head.localRefs) : head.refRows;
   const dist = refs.length ? KahawaCore.familiarityDistance(e, refs, Math.min(head.k, refs.length)) : null;
+  const localDist = head.localCutoff != null && head.localRefs.length ? KahawaCore.nearestDistance(e, head.localRefs) : null;
   const lowConfidence = probs[idx] < head.threshold;
-  const unfamiliar = dist != null && dist > head.cutoff;
-  const notSure = lowConfidence || unfamiliar;
+  const unfamiliar = dist != null && !KahawaCore.isFamiliar(dist, head.cutoff, localDist == null ? Infinity : localDist, head.localCutoff);
+  const otherProblem = (head.toOfficer || []).includes(head.classes[idx]);
+  const notSure = lowConfidence || unfamiliar || otherProblem;
   return {
     label: notSure ? null : head.classes[idx], top: head.classes[idx], class_index: idx,
     probs, max_prob: probs[idx], not_sure: notSure,
-    reason: unfamiliar ? 'unfamiliar' : (lowConfidence ? 'low_confidence' : null),
+    reason: otherProblem ? 'other_problem' : (unfamiliar ? 'unfamiliar' : (lowConfidence ? 'low_confidence' : null)),
     band: notSure ? null : (probs[idx] >= head.highCut ? 'high' : 'medium'),
-    ood_distance: dist, head_version: head.version,
+    ood_distance: dist, local_distance: localDist,
+    familiar_by: dist == null || unfamiliar ? null : (dist <= head.cutoff ? 'stored_photos' : 'officer_photo'),
+    head_version: head.version,
   };
 }
 
@@ -841,7 +942,13 @@ function refitHead(base, X, y, steps = REFIT_STEPS) {
 }
 
 // Officer labels: a class name, 'other' (a problem not in the list) or 'skip' (cannot tell).
-const finalLabel = (p) => (p.officer_label && p.officer_label !== 'skip') ? p.officer_label : (p.not_sure ? null : p.label);
+// An AI answer of 'other' never exists (the photo is "not sure"), so it never counts as rust.
+// A photo the relay farmer disputed ("I think it's something else") counts only once the officer labels it.
+const finalLabel = (p) => (p.officer_label && p.officer_label !== 'skip') ? p.officer_label : ((p.not_sure || p.disputed) ? null : p.label);
+// The label the officer's "Different problem (not in list)" button saves: the head's "other" class when it has one.
+const otherLabel = () => (Model.shipped && Model.shipped.toOfficer && Model.shipped.toOfficer[0]) || 'other';
+// Classes the AI can give as an answer (route_to_officer classes are never shown as a diagnosis).
+const answerClasses = () => (Model.shipped ? Model.shipped.classes.filter((c) => !(Model.shipped.toOfficer || []).includes(c)) : []);
 
 async function officerLabelled() {
   const classes = Model.shipped ? Model.shipped.classes : [];
@@ -863,7 +970,8 @@ async function updateModelOnPhone() {
     labels: L.map((p) => p.officer_label),
     W: fit.W, b: fit.b,
     // Officer-labelled photos join the familiarity reference, so similar photos stop being "not sure".
-    // ("Different problem" photos are not added: that would make the AI answer them with one of its 5 labels.)
+    // "Different problem" photos train the head's "other" class when it has one (head v3); with an older head without
+    // it they are left out of the refit (officerLabelled keeps only labels that are classes of the head).
     ref_add: X.map((x) => normalize(x)),
     created: Date.now(), steps: fit.steps, steps_done: fit.stepsDone,
     loss_before: fit.lossBefore, loss_after: fit.lossAfter, correct_before: fit.correctBefore, correct_after: fit.correctAfter,
@@ -900,12 +1008,12 @@ async function buildUpdate() {
 async function exportUpdate() {
   const out = await buildUpdate();
   const text = JSON.stringify(out);
-  download(`kahawa-update-${out.base_version}-${out.n_labels}labels.json`, text, 'application/json');
+  download(`${FILE_PREFIX}-update-${out.base_version}-${out.n_labels}labels.json`, text, 'application/json');
   return { size: text.length, corrections: out.wording_corrections.length };
 }
 async function importUpdateJSON(j, sourceNote) {
   const base = Model.shipped;
-  if (!j || j.kind !== 'kahawa-head-update') throw new Error('this is not a Kahawa Check update file');
+  if (!j || j.kind !== 'kahawa-head-update') throw new Error(`this is not a ${APP_NAME} update file`);
   if (j.base_version !== base.version) throw new Error(`made for model ${j.base_version}, this phone has ${base.version}`);
   if (!Array.isArray(j.W) || j.W.length !== base.C || j.W.some((r) => r.length !== base.D) || !Array.isArray(j.b) || j.b.length !== base.C) {
     throw new Error('weights do not match this model');
@@ -983,7 +1091,8 @@ let samples = null; // samples/manifest.json content, if present
 function card(cls, ...kids) { return h('div', { class: 'card ' + (cls || '') }, ...kids); }
 
 // ----- 8a. Plot visit
-const visit = { step: 'consent', plot: null, photos: [], last: null, retake: null, busy: false, knownVillages: [], unfinished: null };
+const visit = { step: 'consent', plot: null, photos: [], last: null, retake: null, busy: false, knownVillages: [], unfinished: null,
+  farmDraft: {}, confirmDispute: null };
 
 const posOf = (i) => i < PROTOCOL.trees * PROTOCOL.leaves
   ? { tree: Math.floor(i / PROTOCOL.leaves) + 1, leaf: (i % PROTOCOL.leaves) + 1 }
@@ -1015,7 +1124,7 @@ function viewConsent() {
   out.push(card('', h('h2', null, 'Plot visit'), h('p', { class: 'small' }, 'Step 1 of 3: ask the farmer first.'),
     answerBlock('consent_photos'),
     h('div', { class: 'stack', style: 'margin-top:14px' },
-      h('button', { class: 'btn block', type: 'button', onclick: () => { visit.step = 'details'; renderVisit(); } }, icon('check'), 'Farmer agrees'),
+      h('button', { class: 'btn block', type: 'button', onclick: () => { visit.farmDraft = {}; visit.step = 'details'; renderVisit(); } }, icon('check'), 'Farmer agrees'),
       h('button', { class: 'btn secondary block', type: 'button', onclick: () => toast('No photos taken. Thank the farmer.') }, 'Farmer does not agree'))));
   return out;
 }
@@ -1034,8 +1143,9 @@ function viewDetails() {
     }
     store.set('lastVillage', v);
     visit.plot = { id: uid(), created: Date.now(), updated: Date.now(), village: v, member_hash: hash, status: 'in_progress',
-      consent: true, photo_ids: [], checklist: {}, has_samples: false, synthetic: false };
-    visit.photos = []; visit.last = null; visit.retake = null;
+      consent: true, photo_ids: [], checklist: {}, has_samples: false, synthetic: false,
+      farm: Object.assign({ variety: null, last_spray: null, fruit_load: null }, visit.farmDraft) };
+    visit.photos = []; visit.last = null; visit.retake = null; visit.confirmDispute = null;
     await DB.put('plots', visit.plot);
     askPersist();
     visit.step = 'photos';
@@ -1046,8 +1156,33 @@ function viewDetails() {
       h('label', { class: 'field' }, h('span', null, 'Village'), village, dl),
       h('label', { class: 'field' }, h('span', null, 'Cooperative member number'), member),
       h('p', { class: 'small' }, icon('lock'), ' Only a scrambled code (SHA-256 hash) of the number is saved, not the number. Short numbers can still be guessed by someone who has this phone, so keep the phone private.'),
+      farmBlock(visit.farmDraft, null),
       h('button', { class: 'btn block', type: 'button', onclick: start }, 'Start leaf photos', icon('arrow')),
       h('button', { class: 'btn secondary block', type: 'button', onclick: () => { visit.step = 'consent'; renderVisit(); } }, 'Back')));
+}
+
+// Three optional taps for the officer (variety, last spray, fruit load). Tapping a chosen answer again clears it.
+// The buttons update in place (no re-render), so text typed on the same screen is kept. onChange: save callback.
+function farmTaps(target, onChange) {
+  return FARM_TAPS.map((t) => {
+    const btns = t.options.map(([k, label]) => h('button', { type: 'button', 'aria-pressed': String(target[t.key] === k), 'data-farm': t.key + ':' + k,
+      onclick: (e) => {
+        target[t.key] = target[t.key] === k ? null : k;
+        e.currentTarget.parentNode.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.farm === t.key + ':' + target[t.key])));
+        if (onChange) onChange();
+      } }, label));
+    return h('div', { class: 'farm-q' }, h('span', { class: 'farm-label' }, t.label),
+      h('div', { class: 'seg seg-' + t.cols, role: 'group', 'aria-label': t.label + ' (optional)' }, btns));
+  });
+}
+function farmBlock(target, onChange) {
+  return h('div', { class: 'farm' }, h('span', { class: 'label-nonai' }, FARM_NOTE),
+    h('p', { class: 'small', style: 'margin-top:6px' }, 'Optional. Tap if you know; leave blank if not.'), farmTaps(target, onChange));
+}
+// One line for the plot card, the officer screen and the CSV: "Variety: Ruiru 11 · Last spray: Never · ...".
+function farmLine(farm) {
+  const parts = FARM_TAPS.map((t) => farm && farm[t.key] ? `${t.label}: ${farmValue(t.key, farm[t.key])}` : null).filter(Boolean);
+  return parts.length ? parts.join(' · ') : null;
 }
 
 function fileButton(text, iconName, capture, cls, disabled) {
@@ -1088,20 +1223,24 @@ function viewPhotos() {
 
 function bandText(band) { return band === 'high' ? 'High confidence' : 'Medium confidence'; }
 function reasonText(reason) {
+  if (reason === 'other_problem') return 'This photo looks like a different problem, not one of the AI\'s answers.';
   return reason === 'unfamiliar'
     ? 'This photo looks unlike the photos the AI learned from.'
     : 'The AI\'s best guess was below its confidence line.';
 }
-// Dataset label of a sample photo. For a problem outside the AI's classes (the mite sample), say what the
-// right result is and, if the AI answered anyway, how such photos are caught now and the planned fix.
+// Dataset label of a sample photo. For a problem outside the AI's answers (the mite sample), say what the
+// right result is and, if the AI answered anyway, how such photos are caught.
 function truthText(truth, notSure) {
   const t = String(truth).replace(/_/g, ' ');
   const base = String(truth).split('_level')[0];
-  const known = Model.shipped && Model.shipped.classes.includes(base);
+  const known = answerClasses().includes(base);
   if (known) return t;
-  if (notSure) return `${t} (not one of the AI's answers, so "not sure" is the right result)`;
-  return `${t}. This problem is not one of the AI's ${Model.shipped ? Model.shipped.C : 5} answers, so the answer above is wrong. ` +
-    'Such photos are found by the officer\'s 1-in-10 spot check and marked "Different problem". The planned fix is an "other problem" class learned from those officer labels.';
+  if (notSure) return `${t} (not one of the AI's answers, so sending it to the officer is the right result)`;
+  const hasOther = !!(Model.shipped && Model.shipped.toOfficer && Model.shipped.toOfficer.length);
+  return `${t}. This problem is not one of the AI's ${answerClasses().length || 5} answers, so the answer above is wrong. ` +
+    (hasOther
+      ? 'The AI has a "different problem" answer that sends such photos to the officer, but it did not pick it here. The officer\'s 1-in-10 spot check catches some of these photos, and the officer\'s "Different problem" label teaches the AI on this phone.'
+      : 'Such photos are found by the officer\'s 1-in-10 spot check and marked "Different problem".');
 }
 
 function probBars(r) {
@@ -1117,23 +1256,70 @@ function resultCard(r) {
   const details = h('details', null, h('summary', null, 'Details'),
     h('div', { class: 'stack small' },
       probBars(r),
-      h('p', null, `Confidence line: ${pct(head ? head.threshold : null)}. Distance from familiar photos: ${r.ood_distance == null ? '–' : r.ood_distance.toFixed(3)} (limit ${head && isFinite(head.cutoff) ? head.cutoff.toFixed(3) : 'none'}).`),
+      h('p', null, `Confidence line: ${pct(head ? head.threshold : null)}. Distance from familiar photos: ${r.ood_distance == null ? '–' : r.ood_distance.toFixed(3)} (limit ${head && isFinite(head.cutoff) ? head.cutoff.toFixed(3) : 'none'}).` +
+        (r.local_distance != null && head && head.localCutoff != null ? ` Distance from the nearest officer-labelled photo: ${r.local_distance.toFixed(3)} (limit ${head.localCutoff.toFixed(3)}).` : '')),
       h('p', null, `Model ${r.head_version}. ${r.ms ? r.ms + ' ms on this phone.' : ''}`),
       h('p', null, 'The square shows the part of the photo the AI looked at.')));
   const sample = r.sample_truth ? h('p', { class: 'small' }, h('b', null, 'Dataset label: '), truthText(r.sample_truth, r.not_sure), ' (RoCoLe sample)') : null;
   const where = r.tree ? h('p', { class: 'small' }, `Tree ${r.tree}, leaf ${r.leaf}`) : null;
+  const gid = guideIdFor(r);
+  const guideBtn = gid ? h('button', { class: 'btn secondary block', type: 'button', 'data-guide': gid, onclick: () => openGuide(gid) }, icon('info'), 'What does this mean?') : null;
   if (r.not_sure) {
     return card('unsure', h('div', { class: 'row' }, h('img', { class: 'thumb', src: r.thumb, alt: 'Leaf photo' }),
       h('div', { class: 'grow' }, h('div', { class: 'card-head' }, icon('question'), 'Not sure'), where)),
     h('div', { class: 'stack', style: 'margin-top:10px' }, answerBlock('result_not_sure'), answerBlock('action_not_sure'),
-      h('p', { class: 'small' }, reasonText(r.reason), ' Photo saved for the officer.'), sample, details));
+      h('p', { class: 'small' }, reasonText(r.reason), ' Photo saved for the officer.'), guideBtn, sample, details));
   }
   const healthy = r.label === 'healthy';
   return card(healthy ? 'ok' : 'bad', h('div', { class: 'row' }, h('img', { class: 'thumb', src: r.thumb, alt: 'Leaf photo' }),
     h('div', { class: 'grow' }, h('div', { class: 'card-head' }, icon(healthy ? 'check' : 'alert'), className(r.label)),
-      h('div', { class: 'tags' }, h('span', { class: 'tag' }, bandText(r.band))), where)),
+      h('div', { class: 'tags' }, h('span', { class: 'tag' }, bandText(r.band)),
+        r.disputed ? h('span', { class: 'tag syn' }, 'Sent to the officer') : null), where)),
   h('div', { class: 'stack', style: 'margin-top:10px' }, answerBlock('result_' + r.label), answerBlock('action_' + r.label),
-    r.spot_check ? h('p', { class: 'small' }, 'This photo was also picked for an officer spot check (1 in 10 answers are).') : null, sample, details));
+    r.spot_check ? h('p', { class: 'small' }, 'This photo was also picked for an officer spot check (1 in 10 answers are).') : null,
+    guideBtn, disputeBlock(r), sample, details));
+}
+
+// "I think it's something else" on an answered photo: one confirm step inside the card, then a small
+// "sent to the officer" state with Undo (until the plot card is saved or the officer has labelled the photo).
+function disputeBlock(r) {
+  const saved = !visit.plot || visit.plot.status === 'done';
+  if (r.disputed) {
+    return h('div', { class: 'sent-box', role: 'status' },
+      h('p', null, icon('officer'), h('span', null, h('b', null, 'Sent to the officer'), ` (${DISPUTE_REASON}).`)),
+      h('p', { class: 'small' }, r.officer_label
+        ? (r.officer_label === 'skip' ? 'The officer could not tell, so this photo is left out of the village numbers.' : `The officer labelled it: ${className(r.officer_label)}. That label counts.`)
+        : 'It does not count in the village numbers until the officer labels it.'),
+      (!saved && !r.officer_label) ? h('button', { class: 'btn secondary small', type: 'button', onclick: () => setDisputed(r, false) }, icon('undo'), 'Undo') : null);
+  }
+  if (visit.confirmDispute === r.id) {
+    return h('div', { class: 'confirm-box', role: 'group', 'aria-label': 'Send to the officer?' },
+      h('p', null, h('b', null, 'Send this photo to the officer?')),
+      h('p', { class: 'small' }, `The AI said ${className(r.label)}. The photo will wait for the officer and will not count in the village numbers until the officer labels it.`),
+      h('div', { class: 'btn-grid' },
+        h('button', { class: 'btn', type: 'button', onclick: () => setDisputed(r, true) }, 'Yes, send'),
+        h('button', { class: 'btn secondary', type: 'button', onclick: () => { visit.confirmDispute = null; renderVisit(); } }, 'Cancel')));
+  }
+  if (saved) return null;
+  return h('button', { class: 'btn secondary block', type: 'button', onclick: () => { visit.confirmDispute = r.id; renderVisit(); } },
+    icon('question'), 'I think it\'s something else');
+}
+
+async function setDisputed(r, on) {
+  visit.confirmDispute = null;
+  let cur = null;
+  try { cur = await DB.get('photos', r.id); } catch (e) { /* storage unavailable */ }
+  if (cur && cur.officer_label) { // labelled on the Officer screen meanwhile: keep the officer's label
+    Object.assign(r, { officer_label: cur.officer_label, reviewed_at: cur.reviewed_at });
+    toast('The officer has already labelled this photo.');
+    renderVisit();
+    return;
+  }
+  Object.assign(r, { disputed: on, dispute_reason: on ? DISPUTE_REASON : null, disputed_at: on ? Date.now() : null });
+  try { await DB.put('photos', r); } catch (e) { toast('Could not save: ' + (e.message || e)); }
+  updateQueueBadge();
+  renderVisit();
+  toast(on ? 'Sent to the officer. It does not count in the village numbers until the officer labels it.' : 'Undone. The AI answer counts again.');
 }
 
 function retakeCard() {
@@ -1170,8 +1356,10 @@ async function addPhoto(r, sample) {
   const rec = {
     id: uid(), plot_id: visit.plot.id, village: visit.plot.village, created: Date.now(), index: i, tree: pos.tree, leaf: pos.leaf,
     thumb: r.thumb, embedding: r.embedding, probs: r.probs, label: r.label, top: r.top, max_prob: r.max_prob, band: r.band,
-    not_sure: r.not_sure, reason: r.reason, ood_distance: r.ood_distance, head_version: r.head_version, ms: r.ms,
+    not_sure: r.not_sure, reason: r.reason, ood_distance: r.ood_distance, local_distance: r.local_distance,
+    familiar_by: r.familiar_by, head_version: r.head_version, ms: r.ms,
     officer_label: null, sample_file: sample ? sample.file : null, sample_truth: sample ? sample.truth : null,
+    disputed: false, dispute_reason: null, disputed_at: null, // set by "I think it's something else"
     // Spot check: a random 1 in 10 answered photos also goes to the officer, to catch confident mistakes.
     spot_check: !r.not_sure && Math.random() < SPOT_CHECK_RATE,
   };
@@ -1200,6 +1388,21 @@ async function undoLastPhoto() {
   renderVisit();
 }
 
+// The Officer screen saves labels on fresh copies of the photo records; copy them onto the open visit so its
+// result card and plot card show the officer's label (and Undo is not offered for a labelled photo).
+async function syncVisitPhotos() {
+  if (!visit.plot || !visit.photos.length) return;
+  try {
+    const byId = new Map((await DB.all('photos')).map((p) => [p.id, p]));
+    let changed = false;
+    for (const p of visit.photos) {
+      const q = byId.get(p.id);
+      if (q && q.officer_label !== p.officer_label) { p.officer_label = q.officer_label; p.reviewed_at = q.reviewed_at; changed = true; }
+    }
+    if (changed && currentTab === 'visit') renderVisit();
+  } catch (e) { /* storage unavailable */ }
+}
+
 async function resumeVisit(plot) {
   const all = await DB.all('photos');
   visit.plot = plot;
@@ -1226,17 +1429,22 @@ function viewSummary() {
   const counts = {};
   ph.forEach((p) => { const l = finalLabel(p); if (l) counts[l] = (counts[l] || 0) + 1; });
   const waiting = ph.filter((p) => p.not_sure && !p.officer_label).length; // spot checks already have an AI answer
+  const disputed = ph.filter((p) => p.disputed && !p.officer_label).length; // relay farmer disagrees: not counted yet
   const verdict = plotVerdict(ph);
   const tone = verdict === 'plot_all_healthy' ? 'ok' : verdict ? 'bad' : 'unsure';
-  const classes = ((Model.shipped && Model.shipped.classes) || Object.keys(counts)).concat(['other']);
+  const classes = [...new Set(((Model.shipped && Model.shipped.classes) || Object.keys(counts)).concat([otherLabel()]))];
   const list = h('ul', null, classes.filter((c) => counts[c]).map((c) => h('li', null, `${className(c)}: ${counts[c]}`)),
-    waiting ? h('li', null, `Not sure, waiting for the officer: ${waiting}`) : null);
+    waiting ? h('li', null, `Not sure, waiting for the officer: ${waiting}`) : null,
+    disputed ? h('li', null, `You think it is something else, waiting for the officer: ${disputed}`) : null);
+  if (!visit.plot.farm) visit.plot.farm = { variety: null, last_spray: null, fruit_load: null };
+  const farm = farmLine(visit.plot.farm);
   const plotCard = card(tone,
     h('div', { class: 'card-head' }, icon(tone === 'ok' ? 'check' : tone === 'bad' ? 'alert' : 'question'), 'Plot card'),
     h('p', null, h('b', null, visit.plot.village), ` · ${fmtDate(visit.plot.created)} · ${ph.length} of 15 photos`),
     list,
-    verdict ? answerBlock(verdict) : h('p', null, 'No photo was answered by the AI yet.'),
-    h('p', { class: 'small' }, 'Rule: "ask the officer to visit soon" when a possible disease shows on 2 or more trees, or in 3 or more photos.'));
+    verdict ? answerBlock(verdict) : h('p', null, (waiting || disputed) ? 'No photo counts yet. The photos above wait for the officer.' : 'No photo was answered by the AI yet.'),
+    h('p', { class: 'small' }, 'Rule: "ask the officer to visit soon" when a possible disease shows on 2 or more trees, or in 3 or more photos.'),
+    h('p', { class: 'small farm-line' }, h('b', null, 'Farm details: '), farm || 'none tapped', ' (for the officer; the AI does not use this).'));
   const qs = CHECK_IDS.map((id) => {
     const val = visit.plot.checklist[id];
     const seg = h('div', { class: 'seg', role: 'group' }, [['yes', 'Yes'], ['no', 'No'], ['unknown', 'Don\'t know']].map(([k, label]) =>
@@ -1252,7 +1460,13 @@ function viewSummary() {
   const checklist = card('', h('span', { class: 'label-nonai' }, 'Checklist - not AI'),
     h('h3', { style: 'margin-top:8px' }, 'Things a leaf photo cannot show'),
     h('p', { class: 'small' }, 'Fixed questions about other causes of low yield. The AI does not use these answers.'), ...qs);
-  return [plotCard, checklist,
+  const farmCard = card('', h('h3', null, 'Farm details'),
+    farmBlock(visit.plot.farm, async () => {
+      visit.plot.updated = Date.now();
+      try { await DB.put('plots', visit.plot); } catch (e) { /* storage unavailable */ }
+      renderVisit();
+    }));
+  return [plotCard, checklist, farmCard,
     card('warn', answerBlock('disclaimer_final_call')),
     h('button', { class: 'btn block', type: 'button', onclick: savePlot }, icon('check'), 'Save plot card'),
     h('button', { class: 'btn secondary block', type: 'button', onclick: () => { visit.step = 'photos'; renderVisit(); } }, 'Back to photos')];
@@ -1273,7 +1487,7 @@ function viewSaved() {
     h('p', null, `${visit.plot.village}: ${plural(visit.photos.length, 'photo')}.`),
     h('div', { class: 'stack' },
       h('button', { class: 'btn block', type: 'button', onclick: async () => {
-        Object.assign(visit, { step: 'consent', plot: null, photos: [], last: null, retake: null });
+        Object.assign(visit, { step: 'consent', plot: null, photos: [], last: null, retake: null, farmDraft: {}, confirmDispute: null });
         await refreshVisitContext();
         renderVisit();
       } }, 'Start a new plot visit'),
@@ -1304,8 +1518,8 @@ function openSamples() {
 }
 
 // ----- 8b. Officer review
-// Queue: "not sure" photos and spot-check photos that the officer has not labelled yet.
-const inQueue = (p) => (p.not_sure || p.spot_check) && !p.officer_label;
+// Queue: "not sure" photos, spot-check photos and photos the relay farmer disputed, not yet labelled by the officer.
+const inQueue = (p) => (p.not_sure || p.spot_check || p.disputed) && !p.officer_label;
 async function updateQueueBadge() {
   try {
     const n = (await DB.all('photos')).filter(inQueue).length;
@@ -1333,15 +1547,17 @@ async function setOfficerLabel(p, label) {
 
 async function renderReview() {
   const root = $('#tab-review');
-  const photos = await DB.all('photos').catch(() => []);
+  const [photos, plots] = await Promise.all([DB.all('photos').catch(() => []), DB.all('plots').catch(() => [])]);
+  const plotById = new Map(plots.map((pl) => [pl.id, pl]));
   const queue = photos.filter(inQueue).sort((a, b) => a.created - b.created);
   const classes = (Model.shipped && Model.shipped.classes) || [];
   const labelled = photos.filter((p) => classes.includes(p.officer_label) && p.embedding);
   const out = [card('', h('h2', null, 'Officer review'),
-    h('p', null, 'Photos the AI was not sure about, plus a random 1 in 10 of its answers as a spot check. Tap the correct answer. You make the final call.'),
+    h('p', null, 'Photos the AI was not sure about, photos the relay farmer thinks are something else, plus a random 1 in 10 of the AI\'s answers as a spot check. Tap the correct answer. You make the final call.'),
     h('p', { class: 'small' }, `${queue.length} waiting · ${photos.filter((p) => p.officer_label).length} reviewed so far.`))];
   if (!queue.length) out.push(card('', h('p', null, 'No photos waiting.')));
   for (const p of queue) {
+    const farm = farmLine((plotById.get(p.plot_id) || {}).farm);
     out.push(card('', h('div', { class: 'review-item' },
       h('img', { class: 'thumb', src: p.thumb, alt: 'Leaf photo for review' }),
       h('div', null,
@@ -1351,15 +1567,76 @@ async function renderReview() {
         p.not_sure
           ? h('details', null, h('summary', { class: 'small' }, 'AI was not sure: see its best guess'),
             h('p', { class: 'small' }, `${className(p.top)} (${pct(p.max_prob)}). ${reasonText(p.reason)}`))
-          : h('div', { class: 'tags' }, h('span', { class: 'tag syn' }, `Spot check: AI said ${className(p.label)} (${pct(p.max_prob)})`)))),
+          : h('div', { class: 'tags' },
+            p.disputed ? h('span', { class: 'tag warn' }, `Relay farmer disagrees: AI said ${className(p.label)} (${pct(p.max_prob)})`) : null,
+            p.spot_check ? h('span', { class: 'tag syn' }, p.disputed ? 'Also a spot check' : `Spot check: AI said ${className(p.label)} (${pct(p.max_prob)})`) : null),
+        farm ? h('div', { class: 'small farm-line' }, `${farm}. ${FARM_NOTE}.`) : null)),
     h('div', { class: 'label-btns' },
-      classes.map((c) => h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, c) }, className(c))),
-      h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, 'other') }, 'Different problem (not in list)'),
+      answerClasses().map((c) => h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, c) }, className(c))),
+      h('button', { class: 'btn secondary', type: 'button', onclick: () => setOfficerLabel(p, otherLabel()) }, 'Different problem (not in list)'),
       h('button', { class: 'btn danger', type: 'button', onclick: () => setOfficerLabel(p, 'skip') }, 'Skip (cannot tell)'))));
   }
+  out.push(plotsCard(plots, photos));
   out.push(learningCard(labelled));
   out.push(wordingCard(await wordingList()));
   root.replaceChildren(...out);
+}
+
+// Plot visits saved on this phone (newest first): the officer sees the farm details and can export every plot.
+function plotsCard(plots, photos) {
+  const real = plots.filter((pl) => !pl.synthetic).sort((a, b) => b.created - a.created);
+  const nPhotos = new Map();
+  photos.forEach((p) => nPhotos.set(p.plot_id, (nPhotos.get(p.plot_id) || 0) + 1));
+  const SHOW = 10;
+  return card('', h('h3', null, icon('list'), ` Plot visits on this phone (${real.length})`),
+    real.length
+      ? h('ul', { class: 'wc-list' }, real.slice(0, SHOW).map((pl) => h('li', null,
+        h('div', null, h('b', null, pl.village || '(no village)'), ` · ${fmtDate(pl.created)} · ${plural(nPhotos.get(pl.id) || 0, 'photo')}`,
+          pl.status === 'done' ? '' : ' · not finished'),
+        h('div', { class: 'small' }, farmLine(pl.farm) || 'Farm details: none tapped'))),
+        real.length > SHOW ? h('li', { class: 'small' }, `${real.length - SHOW} more in the CSV file.`) : null)
+      : h('p', null, 'No plot visits yet.'),
+    h('p', { class: 'small' }, `Farm details: ${FARM_NOTE.charAt(0).toLowerCase() + FARM_NOTE.slice(1)}. The CSV has one row per plot visit: counts, the plot card result, farm details and checklist answers. No member numbers, member codes or photos.`),
+    h('button', { class: 'btn secondary block', type: 'button', id: 'plots-export', disabled: !real.length, onclick: exportPlotsCsv }, icon('download'), 'Export plot records (CSV)'));
+}
+
+// CSV cells: a byte-order mark (Excel reads Swahili and Kikuyu letters), and cells that start with = + - @ get a
+// leading apostrophe so a spreadsheet does not run them as formulas.
+function csvCell(v) {
+  let s = v == null ? '' : String(v);
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+async function plotsCsv() {
+  const [plots, photos] = await Promise.all([DB.all('plots'), DB.all('photos')]);
+  const byPlot = new Map();
+  photos.forEach((p) => { if (!byPlot.has(p.plot_id)) byPlot.set(p.plot_id, []); byPlot.get(p.plot_id).push(p); });
+  const classes = [...new Set(((Model.shipped && Model.shipped.classes) || ['healthy', 'rust', 'miner', 'cercospora', 'phoma']).concat([otherLabel()]))];
+  const head = ['plot_id', 'village', 'visit_date', 'status', 'includes_sample_photos', 'photos', 'answered']
+    .concat(classes.map((c) => c === otherLabel() ? 'different_problem' : c))
+    .concat(['waiting_for_officer', 'sent_by_relay_farmer', 'plot_card_result', 'variety', 'last_spray', 'fruit_load'])
+    .concat(CHECK_IDS).concat(['model_version']);
+  const rows = plots.filter((pl) => !pl.synthetic).sort((a, b) => a.created - b.created).map((pl) => {
+    const ph = byPlot.get(pl.id) || [];
+    const counts = {};
+    let answered = 0, waiting = 0;
+    ph.forEach((p) => { const l = finalLabel(p); if (l) { answered += 1; counts[l] = (counts[l] || 0) + 1; } else if (!p.officer_label) waiting += 1; });
+    const farm = pl.farm || {};
+    const d = new Date(pl.created); // local date, as on screen
+    const day = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    return [pl.id, pl.village, day, pl.status, !!pl.has_samples, ph.length, answered]
+      .concat(classes.map((c) => counts[c] || 0))
+      .concat([waiting, ph.filter((p) => p.disputed).length, plotVerdict(ph) || '',
+        farmValue('variety', farm.variety) || '', farmValue('last_spray', farm.last_spray) || '', farmValue('fruit_load', farm.fruit_load) || ''])
+      .concat(CHECK_IDS.map((id) => (pl.checklist || {})[id] || '')).concat([pl.model_version || '']);
+  });
+  return '\ufeff' + [head].concat(rows).map((r) => r.map(csvCell).join(',')).join('\r\n') + '\r\n';
+}
+async function exportPlotsCsv() {
+  try {
+    download(`${FILE_PREFIX}-plots-${new Date().toISOString().slice(0, 10)}.csv`, await plotsCsv(), 'text/csv;charset=utf-8');
+    toast('Plot records saved as a CSV file.');
+  } catch (e) { toast('Could not export: ' + (e.message || e)); }
 }
 
 // Wording corrections saved on this phone (newest first), with delete and CSV export.
@@ -1387,16 +1664,11 @@ function wordingCard(items) {
 // CSV with a byte-order mark so Excel reads Swahili and Kikuyu letters (ĩ, ũ) correctly.
 // Cells that start with = + - @ get a leading apostrophe so a spreadsheet does not run them as formulas.
 function wordingCsv(items) {
-  const esc = (v) => {
-    let s = v == null ? '' : String(v);
-    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
-    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-  };
   const rows = items.map((c) => WC_FIELDS.map((f) => c[f]));
-  return '﻿' + [WC_FIELDS.join(',')].concat(rows.map((r) => r.map(esc).join(','))).join('\r\n') + '\r\n';
+  return '﻿' + [WC_FIELDS.join(',')].concat(rows.map((r) => r.map(csvCell).join(','))).join('\r\n') + '\r\n';
 }
 function exportWordingCsv(items) {
-  download(`kahawa-wording-corrections-${new Date().toISOString().slice(0, 10)}.csv`, wordingCsv(items), 'text/csv;charset=utf-8');
+  download(`${FILE_PREFIX}-wording-corrections-${new Date().toISOString().slice(0, 10)}.csv`, wordingCsv(items), 'text/csv;charset=utf-8');
   toast(`Saved ${plural(items.length, 'correction')} as a CSV file.`);
 }
 
@@ -1414,7 +1686,7 @@ function learningCard(labelled) {
     importInput.value = '';
     if (!f) return;
     let j, added = 0;
-    try { j = JSON.parse(await f.text()); } catch (e) { toast('Could not load the update: this is not a Kahawa Check update file'); return; }
+    try { j = JSON.parse(await f.text()); } catch (e) { toast(`Could not load the update: this is not a ${APP_NAME} update file`); return; }
     // Wording corrections do not depend on the model, so they are kept even if the model part cannot be used.
     if (j && j.kind === 'kahawa-head-update') { try { added = await mergeWordingCorrections(j.wording_corrections); } catch (e) { /* storage problem */ } }
     const wc = Array.isArray(j && j.wording_corrections) ? ` ${plural(added, 'new wording correction')} added.` : '';
@@ -1424,7 +1696,7 @@ function learningCard(labelled) {
   const ready = Model.ready;
   return card('', h('h3', null, icon('refresh'), ' Update the model on this phone'),
     h('p', null, `Model in use: `, h('b', null, Model.active ? Model.active.version : '–'),
-      ad ? ` (shipped model + ${ad.n_labels} officer labels, from ${ad.source})` : ' (shipped model)'),
+      ad ? ` (shipped model + ${plural(ad.n_labels, 'officer label')}, from ${ad.source})` : ' (shipped model)'),
     Model.adaptedMismatch ? h('p', { class: 'notice' }, `A saved update was made for model ${Model.adaptedMismatch.base_version}; this phone now has ${Model.shipped.version}. The old update is not used. Tap Update to rebuild it from the labels.`) : null,
     h('p', { class: 'small' }, `Officer labels on this phone: ${labelled.length}` + (labelled.length ? ' (' + Object.entries(counts).map(([c, k]) => `${className(c)} ${k}`).join(', ') + ')' : '') + '.'),
     h('div', { class: 'stack' },
@@ -1447,7 +1719,7 @@ function learningCard(labelled) {
         toast('Back to the shipped model. Officer labels are kept.');
         renderReview();
       } }, icon('undo'), 'Reset to shipped model')),
-    h('p', { class: 'small' }, `How it works: the small last layer of the AI is refitted on this phone from the officer's labels (up to ${REFIT_STEPS} steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI's set of familiar photos, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as ${(Model.shipped ? Model.shipped.D : 1280).toLocaleString('en')} numbers each (about 5 KB per photo as text); no pictures.`));
+    h('p', { class: 'small' }, `How it works: the small last layer of the AI is refitted on this phone from the officer's labels (up to ${REFIT_STEPS} steps of gradient descent). A penalty keeps it close to the shipped model, so a few labels cannot pull it far. The labelled photos also join the AI's set of familiar photos, and a photo close to one labelled photo counts as familiar, so similar photos stop being "not sure". The picture-reading part of the model is not changed. The share file holds the new last layer and the labelled photos as ${(Model.shipped ? Model.shipped.D : 1280).toLocaleString('en')} numbers each (about 5 KB per photo as text); no pictures.`));
 }
 
 // ----- 8c. Co-op dashboard
@@ -1480,7 +1752,7 @@ async function renderCoop() {
     h('p', { class: 'notice' }, explain),
     card('', h('h3', null, 'How the numbers are made'),
       h('ul', { class: 'small' },
-        h('li', null, 'Answered = photos with an AI answer or an officer label. "Not sure" photos count only after the officer labels them; an officer label replaces the AI answer. "Different problem" counts as answered, not rust; "skip" is left out.'),
+        h('li', null, 'Answered = photos with an AI answer or an officer label. "Not sure" photos, and photos the relay farmer sent to the officer ("I think it\'s something else"), count only after the officer labels them; an officer label replaces the AI answer. "Different problem" counts as answered, not rust; "skip" is left out.'),
         h('li', null, `Prior: Beta(${P.a.toFixed(2)}, ${P.b.toFixed(2)}), ${P.source === 'fitted' ? `fitted across ${P.k} villages by maximum likelihood (beta-binomial)${P.capped ? ', capped at the weight of 50 photos' : ''}` : 'fallback starting guess, used until 3 villages have answered photos'}; it counts like ${(P.a + P.b).toFixed(1)} photos.`),
         h('li', null, `Adjusted = posterior mean (Beta-binomial). "Chance rate > ${pct(ALERT_RATE)}" = P(rate > ${pct(ALERT_RATE)}), computed from the posterior Beta distribution.`),
         h('li', null, 'Simplification: photos are counted as independent. Leaves from the same tree or farm are alike, so the true uncertainty is larger than shown.'),
@@ -1489,7 +1761,8 @@ async function renderCoop() {
       hasDemo
         ? h('button', { class: 'btn secondary block', type: 'button', onclick: removeDemo }, icon('trash'), 'Remove demo villages')
         : h('button', { class: 'btn secondary block', type: 'button', onclick: loadDemo }, icon('grid'), 'Load demo villages (synthetic)'),
-      h('button', { class: 'btn secondary block', type: 'button', disabled: !st.rows.length, onclick: () => exportCsv(st) }, icon('download'), 'Export CSV')));
+      h('button', { class: 'btn secondary block', type: 'button', disabled: !st.rows.length, onclick: () => exportCsv(st) }, icon('download'), 'Export CSV'),
+      h('button', { class: 'btn secondary block', type: 'button', disabled: !rows.some((r) => !r.synthetic), onclick: exportPlotsCsv }, icon('download'), 'Export plot records (CSV)')));
 }
 
 async function loadDemo() {
@@ -1513,7 +1786,7 @@ function exportCsv(st) {
   const lines = [head.join(',')].concat(st.rows.map((r, i) => [i + 1, r.name, r.synthetic, r.samples, r.plots, r.n, r.x, r.waiting,
     r.raw == null ? '' : r.raw.toFixed(4), r.adjusted == null ? '' : r.adjusted.toFixed(4), r.pAbove == null ? '' : r.pAbove.toFixed(4),
     r.alert, P.a.toFixed(4), P.b.toFixed(4), P.source].map(esc).join(',')));
-  download(`kahawa-coop-${new Date().toISOString().slice(0, 10)}.csv`, lines.join('\n') + '\n', 'text/csv');
+  download(`${FILE_PREFIX}-coop-${new Date().toISOString().slice(0, 10)}.csv`, lines.join('\n') + '\n', 'text/csv');
 }
 
 // ----- 8d. About / privacy
@@ -1535,11 +1808,14 @@ async function renderAbout() {
   const meta = Model.meta || {};
   const kv = (pairs) => h('dl', { class: 'kv' }, pairs.filter(([, v]) => v != null && v !== '').map(([k, v]) => [h('dt', null, k), h('dd', null, String(v))]));
   const known = new Set(['version', 'classes', 'embed_dim', 'W', 'b', 'temperature', 'threshold', 'ood', 'prior_strength', 'notes',
-    'trained_on', 'calibrated_on', 'field_test', 'standardised_in_backbone', 'standardisation', 'role']);
+    'trained_on', 'calibrated_on', 'field_test', 'standardised_in_backbone', 'standardisation', 'role',
+    'route_to_officer', 'route_to_officer_note']);
+  const toOfficer = Array.isArray(hr.route_to_officer) ? hr.route_to_officer : [];
   const ft = hr.field_test && typeof hr.field_test === 'object' ? hr.field_test : null;
   const ood = hr.ood || {};
   const famText = ood.reference
-    ? `distance to the ${ood.k || 10} most similar of ${Number(ood.reference.n).toLocaleString('en')} stored training photos above ${ood.cutoff} means "not sure"`
+    ? `distance to the ${ood.k || 10} most similar of ${Number(ood.reference.n).toLocaleString('en')} stored training photos (plus any officer-labelled photos) above ${ood.cutoff} means "not sure"` +
+      (Number.isFinite(ood.local_nearest_cutoff) ? `, unless the single nearest officer-labelled photo is within ${ood.local_nearest_cutoff}` : '')
     : (ood.cutoff != null ? `distance to the nearest class centre above ${ood.cutoff} means "not sure"` : null);
   const extra = Object.entries(hr).filter(([k, v]) => !known.has(k) && v != null && (typeof v !== 'object' || JSON.stringify(v).length < 400))
     .map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v]);
@@ -1552,11 +1828,16 @@ async function renderAbout() {
   let usage = '';
   try { if (navigator.storage && navigator.storage.estimate) { const e = await navigator.storage.estimate(); usage = `App files and records use ${e.usage < 1e6 ? 'less than 1' : 'about ' + Math.round(e.usage / 1e6)} MB on this phone.`; } } catch (e) { /* ignore */ }
   root.replaceChildren(
+    card('', h('h2', null, `About ${APP_NAME}`),
+      h('p', null, `${APP_NAME} (say mah-JAH-nee; "majani" is Swahili for leaves) turns a relay farmer's plot visit into a standard leaf-check record for the extension officer, offline on this phone.`),
+      h('p', { class: 'small' }, `Earlier versions were called Kahawa Check. Records saved on this phone and update files shared by those versions still work.`)),
     card('', h('h2', null, 'What the AI does'),
       h('ul', null,
         h('li', null, 'Looks at one photo of the underside of a coffee leaf.'),
-        h('li', null, `Picks one of ${(Model.shipped ? Model.shipped.classes : Object.keys(CLASS_NAMES).filter((c) => c !== 'other')).map(className).join(', ')}, or says "not sure".`),
-        h('li', null, 'Says "not sure" when its best guess is below a confidence line, or when the photo looks unlike the photos it learned from. Those photos wait for the officer.'),
+        h('li', null, `Picks one of ${(Model.shipped ? answerClasses() : Object.keys(CLASS_NAMES).filter((c) => c !== 'other')).map(className).join(', ')}, or says "not sure".`),
+        h('li', null, 'Says "not sure" when its best guess is below a confidence line, when the photo looks unlike the photos it learned from' +
+          (toOfficer.length ? ', or when the photo looks like a different problem (one not in the list)' : '') + '. Those photos wait for the officer.'),
+        h('li', null, 'If the relay farmer taps "I think it\'s something else", the photo goes to the officer and counts in the village numbers only after the officer labels it.'),
         h('li', null, 'Runs on this phone. No internet is needed after the first visit.'),
         h('li', null, 'Every answer comes from a fixed list of texts. It never writes new text.'))),
     card('', h('h2', null, 'What it does not do'),
@@ -1565,11 +1846,13 @@ async function renderAbout() {
         h('li', null, 'It does not name any spray, product or dose.'),
         h('li', null, 'It does not check berries, roots or the whole farm. Other causes of low yield are in the checklist, which is not AI.'),
         h('li', null, 'It has not yet seen photos from Kenyan farms. It learned from lab leaf photos (Kenya, Brazil) and from on-plant field photos of healthy and rust leaves (Ecuador). Photos that look unlike these get "not sure" and go to the officer, and each officer label teaches the model on this phone.'),
-        h('li', null, `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem"; the planned fix is an "other problem" class learned from those officer labels.`))),
+        h('li', null, toOfficer.length
+          ? `It can give only the ${answerClasses().length} answers above. Its "different problem" check learned one pest (red spider mite, from field photos in Ecuador); it sends many such photos to the officer, but it still gives some of them a wrong answer, and other problems outside the list can get a wrong answer too. The officer's 1-in-10 spot check finds such photos, and the officer's "Different problem" label teaches the AI on this phone.`
+          : `It can give only the ${Model.shipped ? Model.shipped.C : 5} answers above. A pest or problem outside the list (for example red spider mite) can get a wrong answer. The officer's 1-in-10 spot check finds such photos and the officer marks them "Different problem".`))),
     card('', h('h2', null, icon('lock'), ' Privacy and your data'),
-      h('p', null, 'Plot records, leaf photos (small 160-pixel copies) and officer labels stay on this phone (browser storage) until someone exports them. Nothing is sent anywhere by the app.'),
+      h('p', null, 'Plot records (with the optional farm details), leaf photos (small 160-pixel copies) and officer labels stay on this phone (browser storage) until someone exports them. Nothing is sent anywhere by the app.'),
       h('p', null, 'The member number is saved only as a scrambled code (SHA-256 hash). Short numbers can still be guessed by someone who has this phone.'),
-      h('p', { class: 'small' }, `On this phone now: ${counts.plots} plot visits, ${counts.photos} photos, ${counts.labels} officer labels. ${usage}`),
+      h('p', { class: 'small' }, `On this phone now: ${plural(counts.plots, 'plot visit')}, ${plural(counts.photos, 'photo')}, ${plural(counts.labels, 'officer label')}. ${usage}`),
       h('button', { class: 'btn danger block', type: 'button', onclick: deleteAll }, icon('trash'), 'Delete all data on this phone'),
       h('p', { class: 'small' }, 'This removes plot records, photos, officer labels, wording corrections and the local model update. The app itself stays saved so it still works offline.')),
     card('', h('h2', null, 'Languages'),
@@ -1579,6 +1862,7 @@ async function renderAbout() {
         `${plural(nWc, 'wording correction')} saved on this phone. They go out with the officer's update file or the corrections CSV (Officer screen). The text on screen changes only after the team reviews them and ships a new answer list.`)),
     card('', h('h2', null, 'Model card'),
       kv([['Head version', hr.version], ['Model in use', Model.active && Model.active.version], ['Classes', (hr.classes || []).join(', ')],
+        ['Sent to the officer, never shown as an answer', toOfficer.length ? toOfficer.map(className).join(', ') : null],
         ['Embedding size', hr.embed_dim], ['Temperature', hr.temperature], ['Confidence line (threshold)', hr.threshold],
         ['"High" confidence from', Model.shipped ? pct(Model.shipped.highCut) : null],
         ['Familiarity check', famText], ['Prior strength (learning loop)', hr.prior_strength],
@@ -1635,6 +1919,7 @@ function setTab(name) {
   closeSheet();
   renderCurrent();
   window.scrollTo(0, 0);
+  if (name === 'visit') syncVisitPhotos();
 }
 
 function updateNet() {
@@ -1686,7 +1971,7 @@ async function boot() {
   try { await DB.open(); } catch (e) { toast('This browser cannot save records. Results will not be kept.'); }
   const sw = setupServiceWorker();
   swSettled = sw.then(() => {});
-  await Promise.all([loadAnswers(), loadSamples(), refreshVisitContext()]);
+  await Promise.all([loadAnswers(), loadGuides(), loadSamples(), refreshVisitContext()]);
   const start = (location.hash || '').slice(1);
   setTab(['visit', 'review', 'coop', 'about'].includes(start) ? start : 'visit');
   // Wait at most 20 s for offline saving before loading the model (it keeps saving in the background).
@@ -1705,7 +1990,8 @@ window.__kahawa = {
     return {
       url, label: r.label, top: r.top, not_sure: r.not_sure, reason: r.reason, band: r.band,
       max_prob: r.max_prob, probs: Object.fromEntries(classes.map((c, k) => [c, r.probs[k]])),
-      ood_distance: r.ood_distance, head_version: r.head_version, quality: r.quality, ms: r.ms,
+      ood_distance: r.ood_distance, local_distance: r.local_distance, familiar_by: r.familiar_by,
+      head_version: r.head_version, quality: r.quality, ms: r.ms,
       embed_dim: r.embedding.length, embedding_head: Array.from(r.embedding.slice(0, 8)),
     };
   },
@@ -1714,7 +2000,8 @@ window.__kahawa = {
     const r = await classifyImage(await loadImage(await res.blob()));
     return Array.from(r.embedding);
   },
-  stats: { villageStats, villageRows },
+  stats: { villageStats, villageRows, finalLabel, plotsCsv },
+  guides: { get: () => guides, idFor: guideIdFor, open: openGuide },
   wording: { list: wordingList, csv: async () => wordingCsv(await wordingList()), merge: mergeWordingCorrections, buildUpdate },
   refitHead, predictHead,
   model: Model,

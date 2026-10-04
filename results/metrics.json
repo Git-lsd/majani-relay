@@ -32,7 +32,749 @@
   "Lab-only learning loop: pool and test photos both come from RoCoLe (one region of Ecuador); real farms vary more."
  ],
  "shipped": {
-  "what": "Shipped model (head v2): lab + field photos. Field numbers are 5-fold cross-validated.",
+  "what": "Shipped model head v3 (lab + field photos + \"other\" class from mite photos). Field numbers are 5-fold cross-validated.",
+  "classes": [
+   "healthy",
+   "rust",
+   "miner",
+   "cercospora",
+   "phoma",
+   "other"
+  ],
+  "C": 0.01,
+  "c_scores_calibration_nll": {
+   "0.001": 0.6667860089594824,
+   "0.003": 0.5925653759563857,
+   "0.01": 0.5842472147884011,
+   "0.03": 0.6418030029833828,
+   "0.1": 0.7611093292132873,
+   "0.3": 0.9171249963078426,
+   "1.0": 1.1240180302691953
+  },
+  "other_weight": null,
+  "other_budget": 0.01,
+  "other_bias": -3.3214419140435387,
+  "threshold_rule_on_known_classes_only": true,
+  "temperature": 1.4330484726823949,
+  "threshold": 0.5299999999999999,
+  "familiarity_cutoff": 0.49397116899490356,
+  "knn": 10,
+  "reference_n": 1400,
+  "reference_rows": {
+   "lab": 1000,
+   "field": 400
+  },
+  "prior_strength": 0.3,
+  "n_train": {
+   "lab": 7045,
+   "field": 1303,
+   "field_healthy": 751,
+   "field_rust": 552,
+   "field_other_mite": 154,
+   "total": 8502
+  },
+  "mite_split": {
+   "mite_total": 167,
+   "mite_used_for_training_v3": 154,
+   "mite_never_trained_v3": 13,
+   "mite_demo_sample": 1,
+   "mite_in_groups_with_different_labels": 12,
+   "mite_copies_of_held_out_photos": 0
+  },
+  "held_out_never_trained": {
+   "human_baseline": 60,
+   "demo_samples": 7,
+   "mite": 13
+  },
+  "field_cv": {
+   "folds": 5,
+   "summary": {
+    "coverage": 0.9149281540948305,
+    "not_sure": 0.08507184590516943,
+    "acc_answered": 0.8918221282555997,
+    "acc_all": 0.8697453080885493,
+    "acc_not_sure_if_forced": 0.6308945440524388,
+    "hvp_answered": 0.8918221282555997,
+    "rust_named": 0.720982800982801,
+    "healthy_flagged": 0.05684005020830074,
+    "sens_answered_rust": 0.8221460158531497,
+    "fpr_answered_healthy_as_rust": 0.059943180559437835,
+    "ece": 0.044914334876592354,
+    "mean_confidence": 0.8288415071032575,
+    "not_sure_low_confidence": 0.05602277670754051,
+    "not_sure_unfamiliar": 0.017585006415952044,
+    "routed_other": 0.011464062781676878,
+    "rust_routed_other": 0.021703521703521703,
+    "healthy_routed_other": 0.004040671971706454,
+    "coverage_sd": 0.008304413361743318,
+    "not_sure_sd": 0.008304413361743318,
+    "acc_answered_sd": 0.025099122654103474,
+    "acc_all_sd": 0.028084573048279826,
+    "acc_not_sure_if_forced_sd": 0.0792719273226376,
+    "hvp_answered_sd": 0.025099122654103474,
+    "rust_named_sd": 0.040829352044967696,
+    "healthy_flagged_sd": 0.03067964197895125,
+    "sens_answered_rust_sd": 0.03343797631035572,
+    "fpr_answered_healthy_as_rust_sd": 0.031877203464876026,
+    "ece_sd": 0.029376071495957987,
+    "mean_confidence_sd": 0.014797126658206962,
+    "not_sure_low_confidence_sd": 0.008597025741787946,
+    "not_sure_unfamiliar_sd": 0.009018288713025874,
+    "routed_other_sd": 0.008650604745087848,
+    "rust_routed_other_sd": 0.023221179197056022,
+    "healthy_routed_other_sd": 0.005471854165918573,
+    "n_per_fold": [
+     266,
+     259,
+     260,
+     255,
+     263
+    ]
+   },
+   "per_fold": [
+    {
+     "n": 266,
+     "coverage": 0.9022556390977443,
+     "not_sure": 0.09774436090225569,
+     "acc_answered": 0.8708333333333333,
+     "acc_all": 0.849624060150376,
+     "acc_not_sure_if_forced": 0.6538461538461539,
+     "hvp_answered": 0.8708333333333333,
+     "rust_named": 0.6636363636363637,
+     "healthy_flagged": 0.0641025641025641,
+     "sens_answered_rust": 0.776595744680851,
+     "fpr_answered_healthy_as_rust": 0.0684931506849315,
+     "ece": 0.020663337086609324,
+     "mean_confidence": 0.8282226522654565,
+     "not_sure_low_confidence": 0.05263157894736842,
+     "not_sure_unfamiliar": 0.03383458646616541,
+     "routed_other": 0.011278195488721804,
+     "rust_routed_other": 0.01818181818181818,
+     "healthy_routed_other": 0.00641025641025641
+    },
+    {
+     "n": 259,
+     "coverage": 0.918918918918919,
+     "not_sure": 0.08108108108108103,
+     "acc_answered": 0.9033613445378151,
+     "acc_all": 0.8725868725868726,
+     "acc_not_sure_if_forced": 0.5238095238095238,
+     "hvp_answered": 0.9033613445378151,
+     "rust_named": 0.7363636363636363,
+     "healthy_flagged": 0.06711409395973154,
+     "sens_answered_rust": 0.8617021276595744,
+     "fpr_answered_healthy_as_rust": 0.06944444444444445,
+     "ece": 0.05697297713584843,
+     "mean_confidence": 0.8176896595570029,
+     "not_sure_low_confidence": 0.05019305019305019,
+     "not_sure_unfamiliar": 0.019305019305019305,
+     "routed_other": 0.011583011583011582,
+     "rust_routed_other": 0.02727272727272727,
+     "healthy_routed_other": 0.0
+    },
+    {
+     "n": 260,
+     "coverage": 0.9192307692307692,
+     "not_sure": 0.08076923076923082,
+     "acc_answered": 0.9288702928870293,
+     "acc_all": 0.9153846153846154,
+     "acc_not_sure_if_forced": 0.7619047619047619,
+     "hvp_answered": 0.9288702928870293,
+     "rust_named": 0.7747747747747747,
+     "healthy_flagged": 0.020134228187919462,
+     "sens_answered_rust": 0.86,
+     "fpr_answered_healthy_as_rust": 0.02158273381294964,
+     "ece": 0.09735919502906316,
+     "mean_confidence": 0.8180254203555521,
+     "not_sure_low_confidence": 0.07307692307692308,
+     "not_sure_unfamiliar": 0.007692307692307693,
+     "routed_other": 0.0,
+     "rust_routed_other": 0.0,
+     "healthy_routed_other": 0.0
+    },
+    {
+     "n": 255,
+     "coverage": 0.9254901960784314,
+     "not_sure": 0.07450980392156858,
+     "acc_answered": 0.8983050847457628,
+     "acc_all": 0.8784313725490196,
+     "acc_not_sure_if_forced": 0.631578947368421,
+     "hvp_answered": 0.8983050847457628,
+     "rust_named": 0.7454545454545455,
+     "healthy_flagged": 0.027586206896551724,
+     "sens_answered_rust": 0.803921568627451,
+     "fpr_answered_healthy_as_rust": 0.029850746268656716,
+     "ece": 0.028001392009092196,
+     "mean_confidence": 0.8574259231472741,
+     "not_sure_low_confidence": 0.050980392156862744,
+     "not_sure_unfamiliar": 0.01568627450980392,
+     "routed_other": 0.00784313725490196,
+     "rust_routed_other": 0.0,
+     "healthy_routed_other": 0.013793103448275862
+    },
+    {
+     "n": 263,
+     "coverage": 0.908745247148289,
+     "not_sure": 0.09125475285171103,
+     "acc_answered": 0.8577405857740585,
+     "acc_all": 0.8326996197718631,
+     "acc_not_sure_if_forced": 0.5833333333333334,
+     "hvp_answered": 0.8577405857740585,
+     "rust_named": 0.6846846846846847,
+     "healthy_flagged": 0.10526315789473684,
+     "sens_answered_rust": 0.8085106382978723,
+     "fpr_answered_healthy_as_rust": 0.1103448275862069,
+     "ece": 0.02157477312234869,
+     "mean_confidence": 0.8228438801910027,
+     "not_sure_low_confidence": 0.053231939163498096,
+     "not_sure_unfamiliar": 0.011406844106463879,
+     "routed_other": 0.026615969581749048,
+     "rust_routed_other": 0.06306306306306306,
+     "healthy_routed_other": 0.0
+    }
+   ],
+   "scalars_per_fold": [
+    {
+     "temperature": 1.3822287375645237,
+     "threshold": 0.5299999999999999,
+     "familiarity_cutoff": 0.497286319732666,
+     "other_bias": -3.3060927792970447
+    },
+    {
+     "temperature": 1.4010725826609927,
+     "threshold": 0.5399999999999999,
+     "familiarity_cutoff": 0.4990827888250351,
+     "other_bias": -3.2807515066066983
+    },
+    {
+     "temperature": 1.434766865307848,
+     "threshold": 0.5599999999999999,
+     "familiarity_cutoff": 0.500529670715332,
+     "other_bias": -3.5504352326207336
+    },
+    {
+     "temperature": 1.3948668890982232,
+     "threshold": 0.5399999999999999,
+     "familiarity_cutoff": 0.49991564452648163,
+     "other_bias": -3.3386594508380982
+    },
+    {
+     "temperature": 1.3624543531712796,
+     "threshold": 0.5299999999999999,
+     "familiarity_cutoff": 0.5004617631435394,
+     "other_bias": -2.9475247106085773
+    }
+   ],
+   "mite_summary": {
+    "not_sure": 0.39010752688172046,
+    "not_sure_low_confidence": 0.12946236559139784,
+    "not_sure_unfamiliar": 0.0389247311827957,
+    "called_rust": 0.49956989247311834,
+    "called_healthy": 0.11032258064516129,
+    "routed_other": 0.22172043010752684,
+    "not_sure_sd": 0.0736175239409365,
+    "not_sure_low_confidence_sd": 0.08379262953002778,
+    "not_sure_unfamiliar_sd": 0.024086021505376344,
+    "called_rust_sd": 0.06653333875520706,
+    "called_healthy_sd": 0.048124015997345844,
+    "routed_other_sd": 0.08410334502406148,
+    "n_per_fold": [
+     31,
+     31,
+     31,
+     31,
+     30
+    ]
+   },
+   "mite_per_fold": [
+    {
+     "n": 31,
+     "not_sure": 0.4838709677419355,
+     "answered_as": {
+      "healthy": 2,
+      "rust": 14
+     },
+     "not_sure_low_confidence": 0.2903225806451613,
+     "not_sure_unfamiliar": 0.06451612903225806,
+     "called_rust": 0.45161290322580644,
+     "called_healthy": 0.06451612903225806,
+     "routed_other": 0.12903225806451613
+    },
+    {
+     "n": 31,
+     "not_sure": 0.3548387096774194,
+     "answered_as": {
+      "healthy": 6,
+      "rust": 14
+     },
+     "not_sure_low_confidence": 0.0967741935483871,
+     "not_sure_unfamiliar": 0.0,
+     "called_rust": 0.45161290322580644,
+     "called_healthy": 0.1935483870967742,
+     "routed_other": 0.25806451612903225
+    },
+    {
+     "n": 31,
+     "not_sure": 0.29032258064516125,
+     "answered_as": {
+      "healthy": 4,
+      "rust": 18
+     },
+     "not_sure_low_confidence": 0.06451612903225806,
+     "not_sure_unfamiliar": 0.03225806451612903,
+     "called_rust": 0.5806451612903226,
+     "called_healthy": 0.12903225806451613,
+     "routed_other": 0.1935483870967742
+    },
+    {
+     "n": 31,
+     "not_sure": 0.3548387096774194,
+     "answered_as": {
+      "healthy": 2,
+      "rust": 18
+     },
+     "not_sure_low_confidence": 0.12903225806451613,
+     "not_sure_unfamiliar": 0.06451612903225806,
+     "called_rust": 0.5806451612903226,
+     "called_healthy": 0.06451612903225806,
+     "routed_other": 0.16129032258064516
+    },
+    {
+     "n": 30,
+     "not_sure": 0.4666666666666667,
+     "answered_as": {
+      "healthy": 3,
+      "rust": 13
+     },
+     "not_sure_low_confidence": 0.06666666666666667,
+     "not_sure_unfamiliar": 0.03333333333333333,
+     "called_rust": 0.43333333333333335,
+     "called_healthy": 0.1,
+     "routed_other": 0.36666666666666664
+    }
+   ],
+   "all_field_with_mite_summary": {
+    "coverage": 0.882785462640378,
+    "acc_answered": 0.8264721729208926,
+    "rust_answers_that_are_mite": 0.14855479523848344,
+    "coverage_sd": 0.014057669566197247,
+    "acc_answered_sd": 0.01575177665468798,
+    "rust_answers_that_are_mite_sd": 0.019235879293939405,
+    "n_per_fold": [
+     297,
+     290,
+     291,
+     286,
+     293
+    ]
+   },
+   "all_field_with_mite_per_fold": [
+    {
+     "n": 297,
+     "coverage": 0.8619528619528619,
+     "acc_answered": 0.81640625,
+     "rust_answers_that_are_mite": 0.14432989690721648
+    },
+    {
+     "n": 290,
+     "coverage": 0.8896551724137931,
+     "acc_answered": 0.8333333333333334,
+     "rust_answers_that_are_mite": 0.13333333333333333
+    },
+    {
+     "n": 291,
+     "coverage": 0.8969072164948454,
+     "acc_answered": 0.8505747126436781,
+     "rust_answers_that_are_mite": 0.16822429906542055
+    },
+    {
+     "n": 286,
+     "coverage": 0.8951048951048951,
+     "acc_answered": 0.828125,
+     "rust_answers_that_are_mite": 0.17307692307692307
+    },
+    {
+     "n": 293,
+     "coverage": 0.8703071672354948,
+     "acc_answered": 0.803921568627451,
+     "rust_answers_that_are_mite": 0.12380952380952381
+    }
+   ],
+   "mite_all_167_per_fold_v2": [],
+   "method": "Stratified 5-fold CV over the training field photos (healthy, rust; copy groups kept in one fold). The mite photos that v3 may train on get their own 5-fold assignment; v2 only scores them, v3 also trains on the other 4 folds. Each fold: head trained on all lab training rows + the other 4 folds; familiarity reference = the 1,000 lab rows + 200 healthy + 200 rust from the other 4 folds (int8, as on the phone; no mite photos); temperature, threshold and cutoff chosen on the BRACOL calibration half + out-of-fold rows of the other 4 folds (v3: the cutoff on the photos of the five known classes, the threshold counting only photos whose top class is not \"other\" as answered); scored with the full decision rule on the held-out fold."
+  },
+  "held_out": {
+   "human_baseline_60": {
+    "n": 60,
+    "coverage": 0.8333333333333334,
+    "not_sure": 0.16666666666666663,
+    "acc_answered": 0.88,
+    "acc_all": 0.8666666666666667,
+    "acc_not_sure_if_forced": 0.8,
+    "hvp_answered": 0.88,
+    "rust_named": 0.6333333333333333,
+    "healthy_flagged": 0.13333333333333333,
+    "sens_answered_rust": 0.9047619047619048,
+    "fpr_answered_healthy_as_rust": 0.13793103448275862,
+    "ece": 0.09155401376214345,
+    "mean_confidence": 0.8252101749928697,
+    "not_sure_low_confidence": 0.08333333333333333,
+    "not_sure_unfamiliar": 0.06666666666666667,
+    "routed_other": 0.016666666666666666,
+    "rust_routed_other": 0.03333333333333333,
+    "healthy_routed_other": 0.0
+   },
+   "demo_samples_healthy_rust": {
+    "n": 6,
+    "coverage": 0.8333333333333334,
+    "not_sure": 0.16666666666666663,
+    "acc_answered": 1.0,
+    "acc_all": 1.0,
+    "acc_not_sure_if_forced": 1.0,
+    "hvp_answered": 1.0,
+    "rust_named": 0.6666666666666666,
+    "healthy_flagged": 0.0,
+    "sens_answered_rust": 1.0,
+    "fpr_answered_healthy_as_rust": 0.0,
+    "ece": 0.05071238512949498,
+    "mean_confidence": 0.9492876148705052,
+    "not_sure_low_confidence": 0.0,
+    "not_sure_unfamiliar": 0.16666666666666666,
+    "routed_other": 0.0,
+    "rust_routed_other": 0.0,
+    "healthy_routed_other": 0.0
+   },
+   "demo_samples_7": [
+    {
+     "original_file": "cjvnf5ealftjc0984n8uka3fs.jpeg",
+     "truth": "healthy",
+     "pred": "healthy",
+     "confidence": 0.853,
+     "distance": 0.25,
+     "answered": true,
+     "route": "answered"
+    },
+    {
+     "original_file": "cjvnf878wfzzd0838svwmv6gu.jpeg",
+     "truth": "rust",
+     "pred": "rust",
+     "confidence": 0.985,
+     "distance": 0.386,
+     "answered": true,
+     "route": "answered"
+    },
+    {
+     "original_file": "cjvnf89dsfy900795gjew8qoj.jpeg",
+     "truth": "healthy",
+     "pred": "healthy",
+     "confidence": 0.983,
+     "distance": 0.223,
+     "answered": true,
+     "route": "answered"
+    },
+    {
+     "original_file": "cjvnf8b7fg82s0a70ijp6fz1o.jpeg",
+     "truth": "healthy",
+     "pred": "healthy",
+     "confidence": 0.944,
+     "distance": 0.208,
+     "answered": true,
+     "route": "answered"
+    },
+    {
+     "original_file": "cjvnf8h50fvp30984cykakd0w.jpeg",
+     "truth": "rust",
+     "pred": "rust",
+     "confidence": 0.931,
+     "distance": 0.525,
+     "answered": false,
+     "route": "unfamiliar"
+    },
+    {
+     "original_file": "cjvnwptfpossk08287dh2lzh9.jpeg",
+     "truth": "rust",
+     "pred": "rust",
+     "confidence": 1.0,
+     "distance": 0.338,
+     "answered": true,
+     "route": "answered"
+    },
+    {
+     "original_file": "cjvnxxoqppi4v086689r0fmcr.jpeg",
+     "truth": "mite",
+     "pred": "healthy",
+     "confidence": 0.886,
+     "distance": 0.241,
+     "answered": true,
+     "route": "answered"
+    }
+   ],
+   "mite": {
+    "n": 167,
+    "not_sure": 0.3772455089820359,
+    "routed_other": 0.20958083832335328,
+    "answered_as": {
+     "healthy": 19,
+     "rust": 85
+    },
+    "not_sure_low_confidence": 0.11976047904191617,
+    "not_sure_unfamiliar": 0.04790419161676647,
+    "how": "out-of-fold for the 154 mite photos used in training (5-fold, scalars chosen without the fold), final head for the 13 never trained on",
+    "cv_mean_not_sure": 0.39010752688172046,
+    "cv_sd_not_sure": 0.0736175239409365,
+    "auroc_mite_vs_field_cv": {
+     "confidence": 0.6769287171436622,
+     "familiarity_distance": 0.7383886057520332,
+     "p_other": 0.8439748437606317
+    }
+   },
+   "mite_never_trained": {
+    "n": 13,
+    "not_sure": 0.23076923076923073,
+    "answered_as": {
+     "healthy": 2,
+     "rust": 8
+    },
+    "not_sure_low_confidence": 0.0,
+    "not_sure_unfamiliar": 0.15384615384615385,
+    "called_rust": 0.6153846153846154,
+    "called_healthy": 0.15384615384615385,
+    "routed_other": 0.07692307692307693
+   }
+  },
+  "lab_style": {
+   "bracol_calibration_half": {
+    "n": 672,
+    "coverage": 0.7038690476190477,
+    "not_sure": 0.29613095238095233,
+    "acc_answered": 0.919661733615222,
+    "acc_all": 0.84375,
+    "acc_not_sure_if_forced": 0.6633165829145728,
+    "hvp_answered": 0.985200845665962,
+    "rust_named": 0.776824034334764,
+    "healthy_flagged": 0.056338028169014086,
+    "sens_answered_rust": 0.9627659574468085,
+    "fpr_answered_healthy_as_rust": 0.02040816326530612,
+    "ece": 0.10068840252458344,
+    "mean_confidence": 0.7488971965129092,
+    "not_sure_low_confidence": 0.18452380952380953,
+    "not_sure_unfamiliar": 0.11160714285714286,
+    "routed_other": 0.0,
+    "rust_routed_other": 0.0,
+    "healthy_routed_other": 0.0
+   },
+   "jmuben_val_optimistic": {
+    "n": 1125,
+    "coverage": 0.8195555555555556,
+    "not_sure": 0.1804444444444444,
+    "acc_answered": 1.0,
+    "acc_all": 1.0,
+    "acc_not_sure_if_forced": 1.0,
+    "hvp_answered": 1.0,
+    "rust_named": 0.918552036199095,
+    "healthy_flagged": 0.0,
+    "sens_answered_rust": 1.0,
+    "fpr_answered_healthy_as_rust": 0.0,
+    "ece": 0.03314846567667672,
+    "mean_confidence": 0.9668515343233234,
+    "not_sure_low_confidence": 0.0,
+    "not_sure_unfamiliar": 0.18044444444444444,
+    "routed_other": 0.0,
+    "rust_routed_other": 0.0,
+    "healthy_routed_other": 0.0
+   }
+  },
+  "rocole_identical_copies": {
+   "cosine_threshold": 0.98,
+   "pairs": 71,
+   "pairs_with_different_labels": 12,
+   "label_pairs": {
+    "healthy/healthy": 35,
+    "healthy/mite": 1,
+    "mite/rust": 11,
+    "rust/rust": 24
+   },
+   "groups_with_different_labels": 12,
+   "photos_in_groups_with_different_labels": {
+    "healthy": 1,
+    "rust": 11,
+    "mite": 12
+   },
+   "training_candidates_removed_as_copies_of_held_out": 16
+  },
+  "near_duplicate_check_human_baseline": {
+   "max_cosine_to_training_field": 0.9424878358840942,
+   "median_cosine_to_training_field": 0.7976521253585815,
+   "n_above_dup_threshold": 0
+  },
+  "paired_vs_v2": {
+   "coverage": {
+    "per_fold_difference": [
+     -0.048872180451127845,
+     0.0038610038610039643,
+     0.01538461538461533,
+     -0.0039215686274509665,
+     -0.019011406844106515
+    ],
+    "mean_difference": -0.010511907335413207,
+    "folds_lower": 3
+   },
+   "acc_answered": {
+    "per_fold_difference": [
+     0.01707839262187094,
+     -0.016469879090876827,
+     0.0012107184189441567,
+     -0.0004290924694271281,
+     -0.007013512586597215
+    ],
+    "mean_difference": -0.0011246746212172144,
+    "folds_lower": 3
+   },
+   "rust_named": {
+    "per_fold_difference": [
+     -0.045454545454545414,
+     -0.045454545454545525,
+     -0.018018018018018056,
+     -0.009090909090909038,
+     -0.06306306306306309
+    ],
+    "mean_difference": -0.03621621621621622,
+    "folds_lower": 5
+   },
+   "healthy_flagged": {
+    "per_fold_difference": [
+     -0.03205128205128206,
+     0.02684563758389262,
+     0.0,
+     -0.027586206896551724,
+     0.02631578947368421
+    ],
+    "mean_difference": -0.0012952123780513914,
+    "folds_lower": 2
+   },
+   "acc_all": {
+    "per_fold_difference": [
+     0.003759398496240629,
+     -0.02316602316602312,
+     0.007692307692307665,
+     0.0039215686274509665,
+     0.0076045627376426506
+    ],
+    "mean_difference": -3.763712247624173e-05,
+    "folds_lower": 1
+   }
+  },
+  "other_tradeoff": {
+   "what": "Head v3 settings, each 5-fold cross-validated like the shipped head. other_budget = share of known-class out-of-fold field photos allowed to have \"other\" as top class (None = no adjustment); threshold_rule_on_known_classes_only = the 90% accuracy rule for the confidence threshold is checked on healthy / rust / lab photos only, as in v2 (False = mite photos answered as rust or healthy count as errors in that rule).",
+   "rows": [
+    {
+     "other_budget": null,
+     "threshold_rule_on_known_classes_only": false,
+     "shipped": false,
+     "coverage": 0.7239540165686442,
+     "acc_answered": 0.9170393061235431,
+     "rust_named": 0.48748566748566746,
+     "healthy_flagged": 0.026564091945278073,
+     "rust_routed_other": 0.18643734643734644,
+     "mite_sent_to_officer_cv": 0.7733333333333333,
+     "mite_routed_other_cv": 0.5978494623655913,
+     "mite_sent_to_officer_167": 0.7544910179640718,
+     "mite_called_rust_167": 28,
+     "mite_called_healthy_167": 13,
+     "rust_answers_that_are_mite": 0.07653885060740148
+    },
+    {
+     "other_budget": null,
+     "threshold_rule_on_known_classes_only": true,
+     "shipped": false,
+     "coverage": 0.7991519266865652,
+     "acc_answered": 0.8962745279104591,
+     "rust_named": 0.5508599508599509,
+     "healthy_flagged": 0.03979750838652896,
+     "rust_routed_other": 0.18643734643734644,
+     "mite_sent_to_officer_cv": 0.7210752688172043,
+     "mite_routed_other_cv": 0.5978494623655913,
+     "mite_sent_to_officer_167": 0.7065868263473054,
+     "mite_called_rust_167": 33,
+     "mite_called_healthy_167": 16,
+     "rust_answers_that_are_mite": 0.0799351522934352
+    },
+    {
+     "other_budget": 0.005,
+     "threshold_rule_on_known_classes_only": true,
+     "shipped": false,
+     "coverage": 0.9294556586966151,
+     "acc_answered": 0.8887563410505418,
+     "rust_named": 0.7373136773136773,
+     "healthy_flagged": 0.06081720130886381,
+     "rust_routed_other": 0.009025389025389024,
+     "mite_sent_to_officer_cv": 0.2924731182795699,
+     "mite_routed_other_cv": 0.10473118279569893,
+     "mite_sent_to_officer_167": 0.28742514970059885,
+     "mite_called_rust_167": 96,
+     "mite_called_healthy_167": 23,
+     "rust_answers_that_are_mite": 0.162578032091184
+    },
+    {
+     "other_budget": 0.01,
+     "threshold_rule_on_known_classes_only": true,
+     "shipped": true,
+     "coverage": 0.9149281540948305,
+     "acc_answered": 0.8918221282555997,
+     "rust_named": 0.720982800982801,
+     "healthy_flagged": 0.05684005020830074,
+     "rust_routed_other": 0.021703521703521703,
+     "mite_sent_to_officer_cv": 0.39010752688172046,
+     "mite_routed_other_cv": 0.22172043010752684,
+     "mite_sent_to_officer_167": 0.3772455089820359,
+     "mite_called_rust_167": 85,
+     "mite_called_healthy_167": 19,
+     "rust_answers_that_are_mite": 0.14855479523848344
+    },
+    {
+     "other_budget": 0.02,
+     "threshold_rule_on_known_classes_only": true,
+     "shipped": false,
+     "coverage": 0.8988020971588758,
+     "acc_answered": 0.89176696276255,
+     "rust_named": 0.6956265356265356,
+     "healthy_flagged": 0.055524260734616526,
+     "rust_routed_other": 0.039836199836199834,
+     "mite_sent_to_officer_cv": 0.4288172043010753,
+     "mite_routed_other_cv": 0.28021505376344086,
+     "mite_sent_to_officer_167": 0.4131736526946108,
+     "mite_called_rust_167": 79,
+     "mite_called_healthy_167": 19,
+     "rust_answers_that_are_mite": 0.14257859568962733
+    },
+    {
+     "other_budget": 0.05,
+     "threshold_rule_on_known_classes_only": true,
+     "shipped": false,
+     "coverage": 0.8689635492250002,
+     "acc_answered": 0.8951278008008468,
+     "rust_named": 0.6576412776412777,
+     "healthy_flagged": 0.04767775365638921,
+     "rust_routed_other": 0.09228501228501228,
+     "mite_sent_to_officer_cv": 0.52,
+     "mite_routed_other_cv": 0.40365591397849465,
+     "mite_sent_to_officer_167": 0.5089820359281437,
+     "mite_called_rust_167": 64,
+     "mite_called_healthy_167": 18,
+     "rust_answers_that_are_mite": 0.12664702344771353
+    }
+   ]
+  }
+ },
+ "shipped_v2": {
+  "what": "Shipped model head v2 (lab + field photos). Field numbers are 5-fold cross-validated.",
+  "classes": [
+   "healthy",
+   "rust",
+   "miner",
+   "cercospora",
+   "phoma"
+  ],
   "C": 0.01,
   "c_scores_calibration_nll": {
    "0.001": 0.40455086485079744,
@@ -43,6 +785,10 @@
    "0.3": 0.5720368474025489,
    "1.0": 0.7075229025988213
   },
+  "other_weight": null,
+  "other_budget": null,
+  "other_bias": null,
+  "threshold_rule_on_known_classes_only": null,
   "temperature": 1.1085642634419597,
   "threshold": 0.59,
   "familiarity_cutoff": 0.49397116899490356,
@@ -58,7 +804,16 @@
    "field": 1303,
    "field_healthy": 751,
    "field_rust": 552,
+   "field_other_mite": 0,
    "total": 8348
+  },
+  "mite_split": {
+   "mite_total": 167,
+   "mite_used_for_training_v3": 154,
+   "mite_never_trained_v3": 13,
+   "mite_demo_sample": 1,
+   "mite_in_groups_with_different_labels": 12,
+   "mite_copies_of_held_out_photos": 0
   },
   "held_out_never_trained": {
    "human_baseline": 60,
@@ -195,30 +950,163 @@
     {
      "temperature": 1.0738044303722305,
      "threshold": 0.57,
-     "familiarity_cutoff": 0.497286319732666
+     "familiarity_cutoff": 0.497286319732666,
+     "other_bias": 0.0
     },
     {
      "temperature": 1.1219039991562096,
      "threshold": 0.6099999999999999,
-     "familiarity_cutoff": 0.4990827888250351
+     "familiarity_cutoff": 0.4990827888250351,
+     "other_bias": 0.0
     },
     {
      "temperature": 1.1161994583732386,
      "threshold": 0.6199999999999999,
-     "familiarity_cutoff": 0.500529670715332
+     "familiarity_cutoff": 0.500529670715332,
+     "other_bias": 0.0
     },
     {
      "temperature": 1.096466459239752,
      "threshold": 0.5999999999999999,
-     "familiarity_cutoff": 0.49991564452648163
+     "familiarity_cutoff": 0.49991564452648163,
+     "other_bias": 0.0
     },
     {
      "temperature": 1.0738365827094658,
      "threshold": 0.58,
-     "familiarity_cutoff": 0.5004617631435394
+     "familiarity_cutoff": 0.5004617631435394,
+     "other_bias": 0.0
     }
    ],
+   "mite_summary": {
+    "not_sure": 0.09096774193548388,
+    "not_sure_low_confidence": 0.04559139784946237,
+    "not_sure_unfamiliar": 0.0453763440860215,
+    "called_rust": 0.7397849462365591,
+    "called_healthy": 0.169247311827957,
+    "not_sure_sd": 0.03775158409891043,
+    "not_sure_low_confidence_sd": 0.026141198105845583,
+    "not_sure_unfamiliar_sd": 0.025702298784221353,
+    "called_rust_sd": 0.03930250942472488,
+    "called_healthy_sd": 0.0533645416842372,
+    "n_per_fold": [
+     31,
+     31,
+     31,
+     31,
+     30
+    ]
+   },
    "mite_per_fold": [
+    {
+     "n": 31,
+     "not_sure": 0.12903225806451613,
+     "answered_as": {
+      "healthy": 3,
+      "rust": 24
+     },
+     "not_sure_low_confidence": 0.06451612903225806,
+     "not_sure_unfamiliar": 0.06451612903225806,
+     "called_rust": 0.7741935483870968,
+     "called_healthy": 0.0967741935483871
+    },
+    {
+     "n": 31,
+     "not_sure": 0.032258064516129004,
+     "answered_as": {
+      "healthy": 7,
+      "rust": 23
+     },
+     "not_sure_low_confidence": 0.03225806451612903,
+     "not_sure_unfamiliar": 0.0,
+     "called_rust": 0.7419354838709677,
+     "called_healthy": 0.22580645161290322
+    },
+    {
+     "n": 31,
+     "not_sure": 0.06451612903225812,
+     "answered_as": {
+      "healthy": 5,
+      "rust": 24
+     },
+     "not_sure_low_confidence": 0.0,
+     "not_sure_unfamiliar": 0.06451612903225806,
+     "called_rust": 0.7741935483870968,
+     "called_healthy": 0.16129032258064516
+    },
+    {
+     "n": 31,
+     "not_sure": 0.12903225806451613,
+     "answered_as": {
+      "healthy": 4,
+      "rust": 23
+     },
+     "not_sure_low_confidence": 0.06451612903225806,
+     "not_sure_unfamiliar": 0.06451612903225806,
+     "called_rust": 0.7419354838709677,
+     "called_healthy": 0.12903225806451613
+    },
+    {
+     "n": 30,
+     "not_sure": 0.09999999999999998,
+     "answered_as": {
+      "healthy": 7,
+      "rust": 20
+     },
+     "not_sure_low_confidence": 0.06666666666666667,
+     "not_sure_unfamiliar": 0.03333333333333333,
+     "called_rust": 0.6666666666666666,
+     "called_healthy": 0.23333333333333334
+    }
+   ],
+   "all_field_with_mite_summary": {
+    "coverage": 0.9237317383247117,
+    "acc_answered": 0.7998163031462504,
+    "rust_answers_that_are_mite": 0.19789825734905825,
+    "coverage_sd": 0.011366145191461265,
+    "acc_answered_sd": 0.02124016729808234,
+    "rust_answers_that_are_mite_sd": 0.012356645292260184,
+    "n_per_fold": [
+     297,
+     290,
+     291,
+     286,
+     293
+    ]
+   },
+   "all_field_with_mite_per_fold": [
+    {
+     "n": 297,
+     "coverage": 0.9427609427609428,
+     "acc_answered": 0.7714285714285715,
+     "rust_answers_that_are_mite": 0.20512820512820512
+    },
+    {
+     "n": 290,
+     "coverage": 0.9206896551724137,
+     "acc_answered": 0.8164794007490637,
+     "rust_answers_that_are_mite": 0.2
+    },
+    {
+     "n": 291,
+     "coverage": 0.9072164948453608,
+     "acc_answered": 0.8257575757575758,
+     "rust_answers_that_are_mite": 0.20869565217391303
+    },
+    {
+     "n": 286,
+     "coverage": 0.9230769230769231,
+     "acc_answered": 0.8068181818181818,
+     "rust_answers_that_are_mite": 0.20175438596491227
+    },
+    {
+     "n": 293,
+     "coverage": 0.9249146757679181,
+     "acc_answered": 0.7785977859778598,
+     "rust_answers_that_are_mite": 0.17391304347826086
+    }
+   ],
+   "mite_all_167_per_fold_v2": [
     {
      "n": 167,
      "not_sure": 0.12574850299401197,
@@ -227,7 +1115,9 @@
       "rust": 123
      },
      "not_sure_low_confidence": 0.0658682634730539,
-     "not_sure_unfamiliar": 0.059880239520958084
+     "not_sure_unfamiliar": 0.059880239520958084,
+     "called_rust": 0.7365269461077845,
+     "called_healthy": 0.1377245508982036
     },
     {
      "n": 167,
@@ -237,7 +1127,9 @@
       "rust": 129
      },
      "not_sure_low_confidence": 0.0658682634730539,
-     "not_sure_unfamiliar": 0.041916167664670656
+     "not_sure_unfamiliar": 0.041916167664670656,
+     "called_rust": 0.7724550898203593,
+     "called_healthy": 0.11976047904191617
     },
     {
      "n": 167,
@@ -247,7 +1139,9 @@
       "rust": 126
      },
      "not_sure_low_confidence": 0.059880239520958084,
-     "not_sure_unfamiliar": 0.05389221556886228
+     "not_sure_unfamiliar": 0.05389221556886228,
+     "called_rust": 0.7544910179640718,
+     "called_healthy": 0.1317365269461078
     },
     {
      "n": 167,
@@ -257,7 +1151,9 @@
       "rust": 122
      },
      "not_sure_low_confidence": 0.07784431137724551,
-     "not_sure_unfamiliar": 0.05389221556886228
+     "not_sure_unfamiliar": 0.05389221556886228,
+     "called_rust": 0.7305389221556886,
+     "called_healthy": 0.1377245508982036
     },
     {
      "n": 167,
@@ -267,10 +1163,12 @@
       "rust": 114
      },
      "not_sure_low_confidence": 0.07784431137724551,
-     "not_sure_unfamiliar": 0.059880239520958084
+     "not_sure_unfamiliar": 0.059880239520958084,
+     "called_rust": 0.6826347305389222,
+     "called_healthy": 0.17964071856287425
     }
    ],
-   "method": "Stratified 5-fold CV over the training field photos. Each fold: head trained on all lab training rows + the other 4 folds; familiarity reference = the 1,000 lab rows + 200 healthy + 200 rust from the other 4 folds (int8, as on the phone); temperature, threshold and cutoff chosen on the BRACOL calibration half + out-of-fold rows of the other 4 folds; scored with the full decision rule on the held-out fold."
+   "method": "Stratified 5-fold CV over the training field photos (healthy, rust; copy groups kept in one fold). The mite photos that v3 may train on get their own 5-fold assignment; v2 only scores them, v3 also trains on the other 4 folds. Each fold: head trained on all lab training rows + the other 4 folds; familiarity reference = the 1,000 lab rows + 200 healthy + 200 rust from the other 4 folds (int8, as on the phone; no mite photos); temperature, threshold and cutoff chosen on the BRACOL calibration half + out-of-fold rows of the other 4 folds (v3: the cutoff on the photos of the five known classes, the threshold counting only photos whose top class is not \"other\" as answered); scored with the full decision rule on the held-out fold."
   },
   "held_out": {
    "human_baseline_60": {
@@ -314,7 +1212,8 @@
      "pred": "healthy",
      "confidence": 0.897,
      "distance": 0.25,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     },
     {
      "original_file": "cjvnf878wfzzd0838svwmv6gu.jpeg",
@@ -322,7 +1221,8 @@
      "pred": "rust",
      "confidence": 0.996,
      "distance": 0.386,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     },
     {
      "original_file": "cjvnf89dsfy900795gjew8qoj.jpeg",
@@ -330,7 +1230,8 @@
      "pred": "healthy",
      "confidence": 0.994,
      "distance": 0.223,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     },
     {
      "original_file": "cjvnf8b7fg82s0a70ijp6fz1o.jpeg",
@@ -338,7 +1239,8 @@
      "pred": "healthy",
      "confidence": 0.977,
      "distance": 0.208,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     },
     {
      "original_file": "cjvnf8h50fvp30984cykakd0w.jpeg",
@@ -346,7 +1248,8 @@
      "pred": "rust",
      "confidence": 0.912,
      "distance": 0.525,
-     "answered": false
+     "answered": false,
+     "route": "unfamiliar"
     },
     {
      "original_file": "cjvnwptfpossk08287dh2lzh9.jpeg",
@@ -354,7 +1257,8 @@
      "pred": "rust",
      "confidence": 1.0,
      "distance": 0.338,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     },
     {
      "original_file": "cjvnxxoqppi4v086689r0fmcr.jpeg",
@@ -362,7 +1266,8 @@
      "pred": "healthy",
      "confidence": 0.979,
      "distance": 0.241,
-     "answered": true
+     "answered": true,
+     "route": "answered"
     }
    ],
    "mite": {
@@ -374,6 +1279,9 @@
     },
     "not_sure_low_confidence": 0.0658682634730539,
     "not_sure_unfamiliar": 0.07784431137724551,
+    "called_rust": 0.7245508982035929,
+    "called_healthy": 0.1317365269461078,
+    "how": "final head on all mite photos (none trained on)",
     "cv_mean_not_sure": 0.12335329341317365,
     "cv_sd_not_sure": 0.011106129934725402,
     "auroc_mite_vs_field_cv": {
@@ -428,12 +1336,43 @@
     "mite/rust": 11,
     "rust/rust": 24
    },
+   "groups_with_different_labels": 12,
+   "photos_in_groups_with_different_labels": {
+    "healthy": 1,
+    "rust": 11,
+    "mite": 12
+   },
    "training_candidates_removed_as_copies_of_held_out": 16
   },
   "near_duplicate_check_human_baseline": {
    "max_cosine_to_training_field": 0.9424878358840942,
    "median_cosine_to_training_field": 0.7976521253585815,
    "n_above_dup_threshold": 0
+  },
+  "village_sim": {
+   "inputs": {
+    "coverage": 0.9254400614302438,
+    "sensitivity": 0.8295785456373691,
+    "false_positive_rate": 0.06155183354806454,
+    "villages": 40,
+    "reps": 1000,
+    "tau": 0.25,
+    "flagged_share_threshold": 0.25,
+    "alert_rule_adjusted": "P(share > q*) > 0.5"
+   },
+   "raw": {
+    "false_alarms": 3.566,
+    "missed": 1.481,
+    "top5_hits": 3.541
+   },
+   "shrunk": {
+    "false_alarms": 1.068,
+    "missed": 2.934,
+    "top5_hits": 3.729
+   },
+   "mean_true_hot_villages": 6.613,
+   "median_prior_strength": 16.945307454539435,
+   "operating_point": "head v2 (lab + field), 5-fold cross-validated on field photos"
   }
  },
  "lab_only_new_region_simulation": {
@@ -874,13 +1813,29 @@
      ],
      "coverage": [
       0.003463203463203463,
+      0.8533910533910534,
+      0.8883116883116884,
+      0.9327561327561327,
+      0.9587301587301587,
+      0.9702741702741704
+     ],
+     "acc_answered": [
+      0.0,
+      0.7531332551661939,
+      0.7551461657216276,
+      0.8202673183430486,
+      0.8470610114065302,
+      0.863526292784852
+     ],
+     "coverage_previous_rule": [
+      0.003463203463203463,
       0.6132756132756134,
       0.8210678210678211,
       0.9085137085137085,
       0.9391053391053392,
       0.9593073593073592
      ],
-     "acc_answered": [
+     "acc_answered_previous_rule": [
       0.0,
       0.7392479902314315,
       0.7508185349714711,
@@ -908,13 +1863,29 @@
      ],
      "coverage": [
       0.003463203463203463,
+      0.8926406926406927,
+      0.9128427128427129,
+      0.941991341991342,
+      0.9679653679653679,
+      0.978932178932179
+     ],
+     "acc_answered": [
+      0.0,
+      0.670700769682171,
+      0.6990747834617435,
+      0.8071947829470728,
+      0.8371888097404078,
+      0.852316567457747
+     ],
+     "coverage_previous_rule": [
+      0.003463203463203463,
       0.6274170274170274,
       0.8401154401154403,
       0.9174603174603174,
       0.9483405483405484,
       0.9679653679653679
      ],
-     "acc_answered": [
+     "acc_answered_previous_rule": [
       0.0,
       0.631300182484942,
       0.690089321051715,
@@ -924,6 +1895,8 @@
      ]
     }
    },
+   "familiarity_rule": "app rule: k nearest of stored + officer rows within the cutoff, OR the nearest officer row within local_nearest_cutoff = 0.494; *_previous_rule: k nearest only",
+   "local_nearest_cutoff": 0.494,
    "update_bytes_float16_head": 12810,
    "update_bytes_int8_per_reference_photo": 1284
   },
@@ -966,9 +1939,9 @@
   },
   "village_sim": {
    "inputs": {
-    "coverage": 0.9085137085137085,
-    "sensitivity": 0.747817804059125,
-    "false_positive_rate": 0.13474403721886452,
+    "coverage": 0.9327561327561327,
+    "sensitivity": 0.76067735785346,
+    "false_positive_rate": 0.13672560281291998,
     "villages": 40,
     "reps": 1000,
     "tau": 0.25,
@@ -976,17 +1949,17 @@
     "alert_rule_adjusted": "P(share > q*) > 0.5"
    },
    "raw": {
-    "false_alarms": 8.127,
-    "missed": 1.156,
-    "top5_hits": 3.045
+    "false_alarms": 8.36,
+    "missed": 1.169,
+    "top5_hits": 3.137
    },
    "shrunk": {
-    "false_alarms": 4.672,
-    "missed": 2.022,
-    "top5_hits": 3.253
+    "false_alarms": 5.268,
+    "missed": 1.909,
+    "top5_hits": 3.294
    },
-   "mean_true_hot_villages": 6.53,
-   "median_prior_strength": 32.77996521047055,
+   "mean_true_hot_villages": 6.728,
+   "median_prior_strength": 31.430719338714876,
    "operating_point": "lab-only model + 50 officer labels (learning-loop average)"
   },
   "mite_after_demo_update_50": {
@@ -995,9 +1968,24 @@
     "not_sure": 1.0,
     "answered_as": {},
     "not_sure_low_confidence": 0.0,
-    "not_sure_unfamiliar": 1.0
+    "not_sure_unfamiliar": 1.0,
+    "called_rust": 0.0,
+    "called_healthy": 0.0
    },
    "after": {
+    "n": 167,
+    "not_sure": 0.19161676646706582,
+    "answered_as": {
+     "healthy": 40,
+     "rust": 90,
+     "phoma": 5
+    },
+    "not_sure_low_confidence": 0.08383233532934131,
+    "not_sure_unfamiliar": 0.10778443113772455,
+    "called_rust": 0.5389221556886228,
+    "called_healthy": 0.23952095808383234
+   },
+   "after_previous_rule": {
     "n": 167,
     "not_sure": 0.2574850299401198,
     "answered_as": {
@@ -1006,15 +1994,17 @@
      "phoma": 5
     },
     "not_sure_low_confidence": 0.0718562874251497,
-    "not_sure_unfamiliar": 0.18562874251497005
+    "not_sure_unfamiliar": 0.18562874251497005,
+    "called_rust": 0.47305389221556887,
+    "called_healthy": 0.23952095808383234
    }
   }
  },
  "village_sim": {
   "inputs": {
-   "coverage": 0.9254400614302438,
-   "sensitivity": 0.8295785456373691,
-   "false_positive_rate": 0.06155183354806454,
+   "coverage": 0.9149281540948305,
+   "sensitivity": 0.8221460158531497,
+   "false_positive_rate": 0.059943180559437835,
    "villages": 40,
    "reps": 1000,
    "tau": 0.25,
@@ -1022,17 +2012,17 @@
    "alert_rule_adjusted": "P(share > q*) > 0.5"
   },
   "raw": {
-   "false_alarms": 3.566,
-   "missed": 1.481,
-   "top5_hits": 3.541
+   "false_alarms": 3.38,
+   "missed": 1.55,
+   "top5_hits": 3.537
   },
   "shrunk": {
-   "false_alarms": 1.068,
-   "missed": 2.934,
-   "top5_hits": 3.729
+   "false_alarms": 1.04,
+   "missed": 2.979,
+   "top5_hits": 3.737
   },
-  "mean_true_hot_villages": 6.613,
-  "median_prior_strength": 16.945307454539435,
-  "operating_point": "shipped model (lab + field), 5-fold cross-validated on field photos"
+  "mean_true_hot_villages": 6.637,
+  "median_prior_strength": 16.58562726936031,
+  "operating_point": "shipped model (head v3: lab + field + \"other\"), 5-fold cross-validated on healthy and rust field photos"
  }
 }

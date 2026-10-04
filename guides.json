@@ -1,0 +1,528 @@
+{
+ "meta": {
+  "version": "g1",
+  "sources": [
+   {
+    "id": "KCS",
+    "title": "Kenya Coffee Sustainability Manual (review led by KALRO Coffee Research Institute with AFA Coffee Directorate and partners); sections 3.3, 3.7.1, 4.3, 4.6, 6.2, 6.4, 7.4, 8.1-8.4, 8.5.2, 9.4, 9.5.2, 9.5.8",
+    "url": "https://www.globalcoffeeplatform.org/wp-content/uploads/2021/03/KCS-MANUAL-review-03112020.pdf",
+    "year": "2020 (date in the file name; posted March 2021)",
+    "country": "Kenya"
+   },
+   {
+    "id": "INFONET",
+    "title": "Infonet-Biovision, Coffee (Revised): leaf rust, leafmining caterpillars, bacterial blight of coffee",
+    "url": "https://infonet-biovision.org/crops-fruits-vegetables/coffee-revised",
+    "year": "2019 (page says updated 8 July 2019)",
+    "country": "Kenya"
+   },
+   {
+    "id": "LUCID_BES",
+    "title": "Pacific Pests, Pathogens and Weeds fact sheet: Coffee brown-eye spot (142)",
+    "url": "https://apps.lucidcentral.org/ppp/text/web_full/entities/coffee_browneye_spot_142.htm",
+    "year": "2019",
+    "country": "Pacific Islands (not Kenya)"
+   },
+   {
+    "id": "PLANTWISE_BES",
+    "title": "CABI PlantwisePlus Knowledge Bank: Cercospora coffeicola; brown eye spot, berry blotch (seen only in a search summary; the page is behind a bot check)",
+    "url": "https://plantwiseplusknowledgebank.org/doi/full/10.1079/pwkb.20207800275",
+    "year": "not confirmed",
+    "country": "not confirmed"
+   },
+   {
+    "id": "CULTIVAR_PHOMA",
+    "title": "Pereira and Reis, Phoma spot or Ascochyta spot of coffee, Cultivar magazine",
+    "url": "https://revistacultivar.com/articles/phoma-spot-or-ascochyta-spot-of-coffee",
+    "year": "2024",
+    "country": "Brazil"
+   },
+   {
+    "id": "WIKI_ASCOCHYTA",
+    "title": "Wikipedia: Ascochyta tarda (Phoma tarda), coffee leaf spot and dieback; names Kenya among affected countries",
+    "url": "https://en.wikipedia.org/wiki/Ascochyta_tarda",
+    "year": "undated page (read 3 Oct 2026)",
+    "country": "global (names Ethiopia, Kenya, Cameroon)"
+   },
+   {
+    "id": "WCR_VARIETIES",
+    "title": "World Coffee Research, Arabica Coffee Varieties catalogue: Batian ('Intermediate resistance' to leaf rust) and Ruiru 11 ('Highly resistant'); also https://varieties.worldcoffeeresearch.org/varieties/ruiru-11",
+    "url": "https://varieties.worldcoffeeresearch.org/varieties/batian",
+    "year": "undated pages (read 3 Oct 2026)",
+    "country": "global (pages on Kenyan varieties)"
+   },
+   {
+    "id": "APP",
+    "title": "Majani Relay photo protocol and fixed answers (answers.json: retake_photo, action_not_sure)",
+    "url": "answers.json",
+    "year": "2026",
+    "country": "Kenya (this project)"
+   }
+  ],
+  "rules": "fixed text; no pesticide names or doses; not yet checked by a native speaker"
+ },
+ "guides": {
+  "healthy": {
+   "title": {
+    "en": "Healthy leaves",
+    "sw": "Majani yenye afya"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "Healthy coffee leaves are green and even in colour. The underside is clean: no yellow-orange powder, no spots, and no dry brown patches.",
+      "sw": "Majani ya kahawa yenye afya ni ya kijani, na rangi yake ni sawa kote. Upande wa chini ni safi: hakuna unga wa manjano au wa rangi ya chungwa, hakuna madoa, na hakuna sehemu kavu za kahawia."
+     },
+     "source_ids": [
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Healthy coffee leaves are green, and the color is the same everywhere. The bottom is clean: no yellow or tan flour, no stains, and no dry brown patches.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "What keeps trees healthy",
+      "sw": "Kinachosaidia miti kubaki na afya"
+     },
+     "text": {
+      "en": "Trees stay healthy with good care: pruning on time, weeding, and feeding as advised. This check sees leaves only. Leaf photos cannot show berry problems.",
+      "sw": "Miti hubaki na afya ikitunzwa vizuri: kupogoa kwa wakati, kuondoa magugu, na kuweka mbolea kama ulivyoshauriwa. Ukaguzi huu unaangalia majani ya kahawa tu. Picha za majani haziwezi kuonyesha matatizo ya matunda."
+     },
+     "source_ids": [
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Trees remain healthy if properly cared for: timely pruning, weeding, and keeping fertilizer as instructed. This review looks only at coffee leaves. Pictures of the leaves cannot reveal the problems of the fruit.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Keep up good care. Prune and remove extra suckers on time, and weed before you feed the trees. Check the leaves again at the next visit.",
+      "sw": "Endelea kutunza vizuri. Pogoa na uondoe machipukizi ya ziada kwa wakati, na uondoe magugu kabla ya kuweka mbolea. Kagua majani tena katika ziara ijayo."
+     },
+     "source_ids": [
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Keep taking good care of them. Cut and remove the extra buds in time, and remove the weeds before fertilizing. Review the leaves again on the next visit.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer if berries have dark sunken spots or a small hole, if many leaves turn yellow or fall, or if branches dry from the tip.",
+      "sw": "Mjulishe afisa wa ugani ikiwa matunda yana madoa meusi yaliyozama ndani au tundu dogo, ikiwa majani mengi yanageuka manjano au kuanguka, au ikiwa matawi yanakauka kuanzia ncha."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "Notify the extension officer if the fruit has deep black spots or a small hole, if many of the leaves turn yellow or fall, or if the branches dry from the tip.",
+     "sw_backtranslation_match": "ok"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "Leaf-only result. The officer triggers point to problems a leaf photo cannot show: coffee berry disease (KCS 8.4.1), berry borer (KCS 9.5.2) and branch dieback, for example from bacterial blight (KCS 8.4.3). 'Feed as advised' avoids fertiliser types and rates. Simplification: 'green and even in colour' is a plain description, not a sourced definition. Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): meaning kept in all four. 'machipukizi ya ziada' (extra suckers) came back as 'extra buds', 'unga' (powder) as 'flour'. Revised once: 'Ukaguzi huu ni wa majani tu' came back as 'only for herbs' (now 'unaangalia majani ya kahawa tu'); 'matundu madogo' (small holes) came back as 'pimples' (now 'tundu dogo', as in answers.json). QA fix (3 Oct 2026): sentence 3 of 'causes' was 'Hauwezi kuona matatizo ya matunda'; the machine read it back as 'You can't see the problems of fruit', since 'hauwezi' can also mean 'you cannot'. It now reuses the answers.json plot_all_healthy line ('Leaf photos cannot show berry problems'), which reads back as 'Pictures of the leaves cannot reveal the problems of the fruit.'"
+  },
+  "rust": {
+   "title": {
+    "en": "Coffee leaf rust",
+    "sw": "Kutu ya majani ya kahawa"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "Rust starts as small pale yellow spots on the underside of the leaf. The spots turn into yellow-orange powder. Badly hit leaves fall early.",
+      "sw": "Kutu huanza kama madoa madogo ya manjano hafifu upande wa chini wa jani. Baadaye unga wa manjano au wa rangi ya chungwa hutokea kwenye madoa hayo. Majani yaliyoathirika sana huanguka mapema."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "The rash begins as tiny yellow spots on the underside of the leaf. Later on, yellow or tan flour appears on the stains. The severely damaged leaves fall early.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "Common causes",
+      "sw": "Sababu za kawaida"
+     },
+     "text": {
+      "en": "Coffee leaf rust is a disease spread by wind and rain. It spreads fast in warm, wet weather. The varieties SL28 and SL34 get it easily; Batian and Ruiru 11 resist it better, but can still get it.",
+      "sw": "Kutu ya majani ya kahawa ni ugonjwa unaoenezwa na upepo na mvua. Huenea haraka wakati wa joto na mvua. Aina za kahawa SL28 na SL34 hushambuliwa kwa urahisi; Batian na Ruiru 11 zinastahimili ugonjwa huu zaidi, lakini bado zinaweza kushambuliwa."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET",
+      "WCR_VARIETIES"
+     ],
+     "sw_backtranslation_en": "Coffee leaf rust is a disease spread by wind and rain. It spreads rapidly in the heat and rain. The SL28 and SL34 varieties are easily attacked; Batian and Ruiru 11 are more resistant to the disease, but they can still be attacked.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Mark the tree. Prune so air and light get into the tree, and remove extra suckers. Ask the officer about approved rust control before the next rains.",
+      "sw": "Weka alama kwenye mti huu. Pogoa matawi ili hewa na mwanga viingie ndani ya mti, na uondoe machipukizi ya ziada. Muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti kutu kabla ya mvua zijazo."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "Make a mark on this tree. Cut off the branches so that the air and light enter the tree, and remove the extra buds. Ask an expansion officer about approved methods for controlling corrosion before the coming rains.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer soon if rust is on several trees, if many leaves are falling, or if about one leaf in five has rust. Also call if you are not sure.",
+      "sw": "Mjulishe afisa wa ugani bila kuchelewa ikiwa kutu iko kwenye miti kadhaa, ikiwa majani mengi yanaanguka, au ikiwa takriban jani moja kati ya kila majani matano lina kutu. Mjulishe pia ikiwa huna uhakika."
+     },
+     "source_ids": [
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Notify the extension officer immediately if there is corrosion on several trees, if many leaves are falling, or if at least one out of every five leaves is corrosive. Also, let him know if you are unsure.",
+     "sw_backtranslation_match": "ok"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "Symptoms, spread and weather from KCS 8.4.2. Varieties: KCS Table 1 calls Batian and Ruiru 11 resistant to leaf rust and SL28 and SL34 susceptible; the World Coffee Research catalogue (WCR_VARIETIES, read) rates Ruiru 11 'Highly resistant' and Batian 'Intermediate resistance' and warns that resistance can change. QA fix (3 Oct 2026): the guide said Batian and Ruiru 11 'resist it'; it now says they 'resist it better, but can still get it', so a farmer with these varieties does not dismiss a rust result. Field data on resistance in Kenya today were not checked. 'About one leaf in five' is the KCS definition of a severe infection (20% of leaves with rust); KCS uses it in its spray programme, and here it is only a reason to call the officer. Control timing 'before the rains' follows KCS 8.4.2; no product, ingredient or dose is named. Shade is not advised here: with the same crop load, shade can raise rust (Avelino et al. 2004, Plant Pathology; seen only in a search summary). Avelino et al. 2015 (Food Security 7:303-321, Colombia and Central America, https://doi.org/10.1007/s12571-015-0446-9; read) says shade has many effects on rust, some opposing, and the balance is hard to establish. answers.json action_rust notes call shading a key cultural practice (CLR_REVIEW); neither text advises shade for rust. Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): meaning kept. QA re-check of the changed causes line: 'are more resistant to the disease, but they can still be attacked'. 'kutu' came back as 'rash' and 'corrosion' (a known model error; 'kutu ya majani ya kahawa' came back correctly as 'coffee leaf rust'); 'takriban' (about) as 'at least'; 'bila kuchelewa' (without delay) as 'immediately'. Revised once: 'Kutu ya majani ni ugonjwa' came back as 'Acne is a disease'; the powder sentence lost 'powder'; 'mapema' (soon) came back as 'beforehand'."
+  },
+  "miner": {
+   "title": {
+    "en": "Leaf miner",
+    "sw": "Wadudu wanaochimba ndani ya majani"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "Leaf miner shows as dry brown patches on the top side of the leaf. A small white caterpillar may be inside a patch. Badly hit leaves fall early.",
+      "sw": "Uharibifu wa wadudu hawa huonekana kama sehemu kavu za kahawia upande wa juu wa jani. Ndani ya sehemu hiyo kunaweza kuwa na kiwavi mdogo mweupe. Majani yaliyoathirika sana huanguka mapema."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "The destruction of these insects appears as dry brown patches on the upper part of the leaf. Inside may be a small white squirrel. The severely damaged leaves fall early.",
+     "sw_backtranslation_match": "check"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "Common causes",
+      "sw": "Sababu za kawaida"
+     },
+     "text": {
+      "en": "Tiny white moths lay eggs on the leaf. The young caterpillars eat the leaf from inside. They increase fast after sprays that kill the small wasps that feed on them.",
+      "sw": "Nondo wadogo weupe hutaga mayai kwenye jani. Viwavi wao hula jani kutoka ndani. Wadudu hawa huongezeka sana baada ya kunyunyizia dawa zinazoua nyigu wadogo wanaowala."
+     },
+     "source_ids": [
+      "INFONET",
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Small white moths lay eggs on the leaf. Their larvae feed on leaves from the inside. These insects multiply exponentially after being sprayed with pesticides that kill small insects that eat them.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Mark the tree, and do not spray without advice, so the helpful wasps survive. Keep the trees pruned, weeded and fed. Ask the officer what to do.",
+      "sw": "Weka alama kwenye mti huu, na usinyunyize dawa bila ushauri, ili nyigu, wadudu wenye manufaa, waendelee kuishi. Endelea kupogoa, kuondoa magugu na kuweka mbolea. Muulize afisa wa ugani hatua za kuchukua."
+     },
+     "source_ids": [
+      "INFONET",
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Make a mark on this tree, and do not spray the medicine without advice, so that the ants, the beneficial insects, can survive. Keep cutting, removing weeds, and keeping fertilizer. Ask the extension officer what steps to take.",
+     "sw_backtranslation_match": "check"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer if these insects are on many trees, or if leaves are falling. The officer can shake a tree and count the flying white moths to decide if control is needed.",
+      "sw": "Mjulishe afisa wa ugani ikiwa wadudu hawa wako kwenye miti mingi, au ikiwa majani yanaanguka. Afisa anaweza kuutikisa mti na kuhesabu nondo weupe wanaoruka, ili kuamua kama udhibiti unahitajika."
+     },
+     "source_ids": [
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "Notify the extension officer if these insects are on many trees, or if leaves are falling. An officer can shake a tree and count flying white ants, to determine if control is needed.",
+     "sw_backtranslation_match": "check"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "Symptoms from KCS 9.5.8 (brown blotches on the upper side, white caterpillars inside) and INFONET (tiny white moths; natural enemies; indiscriminate sprays kill natural enemies faster than the pest; a shaking count of moths decides if control is worth it). KCS 9.4: avoid unnecessary sprays to keep natural enemies. Simplification: 'wasps that feed on them' covers parasitism. Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): three sections stay marked 'check' after one revision: 'kiwavi' (caterpillar) came back as 'squirrel', 'nyigu' (wasp) as 'ants', and 'nondo' (moth) as 'ants'. Dictionaries give caterpillar and moth (bab.la, search summary), and the same model read 'viwavi' as 'larvae' and 'nondo' as 'moths' in the causes section. A speaker should confirm all three words."
+  },
+  "cercospora": {
+   "title": {
+    "en": "Brown eye spot (Cercospora)",
+    "sw": "Ugonjwa wa madoa ya kahawia"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "Brown eye spot shows as round brown spots with a pale grey or white centre and often a yellow ring. These spots can also show on the berries.",
+      "sw": "Ugonjwa wa madoa ya kahawia huonekana kama madoa ya mviringo ya kahawia, yenye rangi ya kijivu au nyeupe katikati, na mara nyingi yenye duara la manjano. Madoa haya yanaweza pia kuonekana kwenye matunda."
+     },
+     "source_ids": [
+      "LUCID_BES",
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Brown spots appear as round brown spots, with a gray or white center, and often a yellow circle. These stains can also be seen on fruits.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "Common causes",
+      "sw": "Sababu za kawaida"
+     },
+     "text": {
+      "en": "It is a disease spread by wind and rain splash. It is worst on weak trees: trees that are underfed, short of water, or in strong sun without enough shade.",
+      "sw": "Ni ugonjwa unaoenezwa na upepo na matone ya mvua. Huzidi kwenye miti dhaifu: miti isiyo na mbolea ya kutosha, inayokosa maji, au iliyo kwenye jua kali bila kivuli cha kutosha."
+     },
+     "source_ids": [
+      "LUCID_BES",
+      "PLANTWISE_BES"
+     ],
+     "sw_backtranslation_en": "It is a disease spread by wind and raindrops. It grows on weak trees: trees that do not have enough fertilizer, lack water, or are exposed to the hot sun without sufficient shade.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Mark the tree, and ask the officer about a soil test, feeding and approved control. Cover the soil with mulch to keep it moist, but keep the mulch off the stem. Prune for air flow, and clear away the cut branches.",
+      "sw": "Weka alama kwenye mti huu, na umuulize afisa wa ugani kuhusu kupima udongo, mbolea, na njia zilizoidhinishwa za kudhibiti. Funika udongo kwa matandazo ili ubaki na unyevu, lakini matandazo yasiguse shina la mti. Pogoa matawi ili hewa ipite ndani ya mti, na uondoe matawi yaliyokatwa."
+     },
+     "source_ids": [
+      "KCS",
+      "LUCID_BES"
+     ],
+     "sw_backtranslation_en": "Make a mark on this tree, and ask the expansion officer about soil measurements, fertilizers, and approved control methods. Cover the soil with netting to keep it moist, but keep the netting from touching the trunk of the tree. Cut the branches to allow air to pass through the tree, and remove the cut branches.",
+     "sw_backtranslation_match": "check"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer if the spots are on many trees, if leaves are falling, or if berries have spots too. Spots on berries need the officer to check them.",
+      "sw": "Mjulishe afisa wa ugani ikiwa madoa yako kwenye miti mingi, ikiwa majani yanaanguka, au ikiwa matunda nayo yana madoa. Madoa kwenye matunda yanahitaji kukaguliwa na afisa."
+     },
+     "source_ids": [
+      "KCS",
+      "LUCID_BES"
+     ],
+     "sw_backtranslation_en": "Notify the extension officer if there are spots on many trees, if leaves fall off, or if the fruit also has spots. The stains on the fruit need to be examined by an official.",
+     "sw_backtranslation_match": "ok"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "KCS lists brown eye spot as a minor disease in Kenya (8.1, 8.5.2) and gives no symptoms or causes, so the symptoms and causes come from the Pacific fact sheet (LUCID_BES): round brown spots with a pale centre and yellow ring, spread by wind and rain splash, worse on poorly fed, stressed trees with too little shade. Mulch must not touch the stem (KCS 3.7.1). Berry spots go to the officer because coffee berry disease also marks berries (KCS 8.4.1). The Swahili name is descriptive, as in answers.json. Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): 'matandazo' (mulch) came back as 'netting' again (as in answers.json action_cercospora), so do_now stays 'check'. 'huzidi' (gets worse) came back as 'grows'. Revised once: 'Madoa yanaweza pia kutokea kwenye matunda' came back as 'Fleas can also appear on fruits'; 'Pogoa ili hewa ipite' came back as 'Cut the air out'. QA fix (3 Oct 2026): do_now now also says to ask the officer about approved control, as the rust and Phoma guides do; no product is named. To stay within 45 Swahili words, 'mbolea inayofaa' became 'mbolea' and 'vizuri' (well) was dropped from the pruning sentence. Machine re-check: 'njia zilizoidhinishwa za kudhibiti' came back as 'approved control methods'; 'matandazo' still came back as 'netting', so do_now stays 'check'. Symptom wording: LUCID_BES says 'light brown or sometimes light grey centres'; 'white' follows answers.json."
+  },
+  "phoma": {
+   "title": {
+    "en": "Phoma leaf spot",
+    "sw": "Ugonjwa wa Phoma"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "Phoma shows as black or dark brown spots on young leaves near the shoot tips. The leaves may curl and crack. Young shoots can dry from the tip.",
+      "sw": "Ugonjwa wa Phoma huonekana kama madoa meusi au ya kahawia kwenye majani machanga karibu na ncha za matawi. Majani yanaweza kujikunja na kupasuka. Matawi machanga yanaweza kukauka kuanzia ncha."
+     },
+     "source_ids": [
+      "CULTIVAR_PHOMA",
+      "WIKI_ASCOCHYTA"
+     ],
+     "sw_backtranslation_en": "Phoma's disease appears as black or brown spots on young leaves near the tip of the branches. The leaves can twist and crack. Young branches can wither from the tip.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "Common causes",
+      "sw": "Sababu za kawaida"
+     },
+     "text": {
+      "en": "It is a disease of cold, wet, windy weather on high ground. Wind, hail and cold damage young leaves, and the disease gets in through the wounds.",
+      "sw": "Ni ugonjwa wa hali ya baridi, unyevunyevu na upepo mkali katika maeneo ya juu. Upepo, mvua ya mawe na baridi huumiza majani machanga, na ugonjwa huingia kupitia majeraha hayo."
+     },
+     "source_ids": [
+      "CULTIVAR_PHOMA",
+      "WIKI_ASCOCHYTA"
+     ],
+     "sw_backtranslation_en": "It is a disease of cold, humidity, and high-altitude winds. Wind, hail, and cold damage young leaves, and disease enters through these wounds.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Mark the tree. Cut off dead shoot tips, and clean the pruning tool before the next tree. Planting windbreak and shade trees on the windy side can help; ask the officer about approved control.",
+      "sw": "Weka alama kwenye mti huu. Kata ncha za matawi zilizokauka, na usafishe kifaa cha kupogoa kabla ya kuhamia mti mwingine. Kupanda miti ya kukinga upepo na miti ya kivuli upande wa upepo kunaweza kusaidia; muulize afisa wa ugani kuhusu njia zilizoidhinishwa za kudhibiti ugonjwa huu."
+     },
+     "source_ids": [
+      "INFONET",
+      "KCS",
+      "CULTIVAR_PHOMA"
+     ],
+     "sw_backtranslation_en": "Make a mark on this tree. Cut the dried ends of the branches, and clean the cutting tool before moving to another tree. Planting windshields and shade trees on the windward side may help; ask an extension officer about approved methods of controlling the disease.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer soon. Bacterial blight of coffee looks similar and is a major disease in Kenya. Call at once if shoot tips die on many trees, or if flowers or young berries turn black.",
+      "sw": "Mjulishe afisa wa ugani bila kuchelewa. Ugonjwa wa bakteria wa kahawa unafanana na huu, na ni ugonjwa mkubwa nchini Kenya. Mjulishe mara moja ikiwa ncha za matawi zinakauka kwenye miti mingi, au ikiwa maua au matunda machanga yanageuka meusi."
+     },
+     "source_ids": [
+      "KCS",
+      "INFONET"
+     ],
+     "sw_backtranslation_en": "Notify the extension officer without delay. The bacterial disease of coffee is similar to this, and it is a major disease in Kenya. Immediately let him know if the tips of the branches wither on many trees, or if the young flowers or fruits turn black.",
+     "sw_backtranslation_match": "ok"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "Weakest-sourced guide for Kenya. Symptoms and weather come from Brazilian and general sources (CULTIVAR_PHOMA, WIKI_ASCOCHYTA); KCS only lists 'leaf blight and stem die back' as minor. The pruning hygiene (cut off dead tips, clean the tool) comes from Kenyan guidance for bacterial blight of coffee, a major look-alike (KCS 8.4.3 and INFONET), so the steps fit both. The windbreak and shade-tree advice comes from INFONET's bacterial blight section ('wind breaks on exposed sides') and CULTIVAR_PHOMA ('install windbreaks'); KCS 8.4.3 does not mention windbreaks (QA correction, 3 Oct 2026). The Swahili here says 'miti ya kukinga upepo'; answers.json action_phoma says 'miti ya kuzuia upepo' for the same thing. The officer trigger names bacterial blight because the leaf model has no label for it. A KALRO coffee agronomist should confirm this guide. Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): meaning kept. 'miti ya kukinga upepo' came back as 'windshields' (= windbreaks). Revised once: 'kahawia iliyokolea hadi meusi' (dark brown to black) was garbled; 'miti ya kuzuia upepo' came back as 'windmills' (as in answers.json action_phoma); 'ugonjwa wa bakteria unaokausha matawi' came back as 'bacterial dryness'. Sentence 2 of do_now was then shortened by one word to stay within 45 words and re-checked."
+  },
+  "not_sure": {
+   "title": {
+    "en": "Not sure, or a different problem",
+    "sw": "Sina uhakika, au tatizo jingine"
+   },
+   "sections": [
+    {
+     "key": "looks_like",
+     "heading": {
+      "en": "What it looks like",
+      "sw": "Jinsi inavyoonekana"
+     },
+     "text": {
+      "en": "The tool could not match this photo to one of its answers. The photo may be unclear, or the leaf may have a problem the tool does not know.",
+      "sw": "Programu haikuweza kulinganisha picha hii na mojawapo ya majibu yake. Huenda picha haiko wazi, au jani lina tatizo ambalo programu hailijui."
+     },
+     "source_ids": [
+      "APP"
+     ],
+     "sw_backtranslation_en": "The program could not compare this picture to one of its responses. The image may not be clear, or the leaf may have a problem that the program was unaware of.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "causes",
+     "heading": {
+      "en": "Common reasons",
+      "sw": "Sababu za kawaida"
+     },
+     "text": {
+      "en": "Often the photo is blurred, too dark, or shows the top of the leaf. Other problems also look different: bacterial blight, insects, sun scorch, or a shortage of plant food.",
+      "sw": "Mara nyingi picha haiko wazi, ina giza sana, au inaonyesha upande wa juu wa jani. Matatizo mengine pia huonekana tofauti: ugonjwa wa bakteria, wadudu, kuungua kwa jua, au upungufu wa chakula cha mimea."
+     },
+     "source_ids": [
+      "KCS",
+      "APP"
+     ],
+     "sw_backtranslation_en": "Often the image is not clear, too dark, or shows the top of the leaf. Other problems also appear differently: bacterial infections, insects, sunburn, or malnutrition.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "do_now",
+     "heading": {
+      "en": "What to do now",
+      "sw": "Cha kufanya sasa"
+     },
+     "text": {
+      "en": "Take the photo again: the underside of one leaf, in daylight, phone held still. Mark the tree. Do not spray because of this result; the officer will look at the saved photo.",
+      "sw": "Piga picha tena: upande wa chini wa jani moja, kwenye mwanga wa mchana, ukishika simu bila kutikisa. Weka alama kwenye mti huu. Usinyunyize dawa kwa sababu ya matokeo haya; afisa wa ugani ataangalia picha iliyohifadhiwa."
+     },
+     "source_ids": [
+      "APP"
+     ],
+     "sw_backtranslation_en": "Picture again: at the bottom of one leaf, in broad daylight, holding the phone without shaking. Make a mark on this tree. Do not spray the drug because of these results; the extension officer will look at the saved image.",
+     "sw_backtranslation_match": "ok"
+    },
+    {
+     "key": "call_officer",
+     "heading": {
+      "en": "When to call the officer",
+      "sw": "Wakati wa kumjulisha afisa wa ugani"
+     },
+     "text": {
+      "en": "Call the officer if many trees look sick, if leaves fall fast, or if branches dry from the tip. Also call if berries have dark sunken spots: it may be coffee berry disease.",
+      "sw": "Mjulishe afisa wa ugani ikiwa miti mingi inaonekana kuwa na ugonjwa, ikiwa majani yanaanguka kwa haraka, au ikiwa matawi yanakauka kuanzia ncha. Mjulishe pia ikiwa matunda yana madoa meusi yaliyozama ndani: huenda ni ugonjwa wa matunda ya kahawa."
+     },
+     "source_ids": [
+      "KCS"
+     ],
+     "sw_backtranslation_en": "Inform the extension officer if many trees appear to be infected, if the leaves fall quickly, or if the branches dry from the tip. Also let him know if the fruit has deep black spots: it may be a disease of the coffee fruit.",
+     "sw_backtranslation_match": "ok"
+    }
+   ],
+   "sw_verified": false,
+   "notes": "One guide for both 'not sure' and 'different problem'. Retake and do-not-spray steps repeat answers.json (retake_photo, action_not_sure). Look-alikes named in causes: bacterial blight (KCS 8.4.3), insects (KCS 9), sun scorch (KCS 6.4) and shortage of plant food (KCS 4.3). Berry spots point to coffee berry disease (KCS 8.4.1). Back-translation check (NLLB-200 distilled 600M, Swahili to English, one sentence at a time, beam 4; machine only, judged by hand): meaning kept in all four, no revision needed. 'upande wa chini' (underside) came back as 'bottom', 'upungufu wa chakula cha mimea' (shortage of plant food) as 'malnutrition'."
+  }
+ }
+}

@@ -1,6 +1,6 @@
-# Kahawa Check: Swahili review sheet
+# Majani Relay: Swahili review sheet
 
-**Thank you for helping.** Kahawa Check is a free, offline phone tool for coffee cooperatives in Kirinyaga, Nyeri and Murang'a. A relay farmer photographs coffee leaves on a smallholder's farm. The tool then shows and plays **one of the 24 fixed Swahili answers** below (2-6 short sentences each). It never writes new text. No one on our team speaks Swahili, so a machine helped us write these lines.
+**Thank you for helping.** Majani Relay (earlier name: Kahawa Check) is a free, offline phone tool for coffee cooperatives in Kirinyaga, Nyeri and Murang'a. A relay farmer photographs coffee leaves on a smallholder's farm. The tool then shows and plays **one of the 24 fixed Swahili answers** below (2-6 short sentences each). It never writes new text. No one on our team speaks Swahili, so a machine helped us write these lines.
 
 **What we ask (15-20 minutes):** for each row, would a coffee farmer in Central Kenya understand it, and is it correct? Write **Y** if yes. Write **N** and a better wording if not. If you only have 5 minutes, do rows 1-9 (the safety lines).
 
