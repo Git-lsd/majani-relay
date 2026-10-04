@@ -10,6 +10,8 @@ Live app: https://git-lsd.github.io/majani-relay/ · Code: https://github.com/gi
 
 **New here? Read [Why Majani Relay: the story on one page](docs/WHY.md)** (Noor, the situation in Kenya, the gap, and the pilot).
 
+**Quick links:** [One-page summary (PDF)](docs/Majani_Relay_1-page_report.pdf) · [In short](#short-description) · [Datasets](docs/DATA_CARD.md) · [Download the code (.zip)](https://github.com/Git-lsd/majani-relay/archive/refs/heads/main.zip) · [Our take on localizing AI](#our-take)
+
 Officer and Co-op tabs: demo PIN **2026** (one fixed demo PIN, the same on every phone; see [Run it](#run-it)).
 
 ---
@@ -46,6 +48,20 @@ Full steps, what each sample photo should show, and how to run it on your own co
 - **Phones and access.** A PIN each officer sets, and timing on low-cost Android phones, before the pilot ([details](#limitations)).
 
 Every next step, with when it happens: [Limitations and next steps](#limitations).
+
+---
+
+### <a name="short-description"></a>In short
+
+Majani Relay is an offline phone app for coffee cooperatives in central Kenya. One extension officer serves 1,500 to 3,000 farmers, so most plots go unchecked and paper reports arrive late. Majani Relay lets relay farmers, farmers the cooperative trains to visit members' plots, run a standard check: three leaves on each of five trees, photographed with a phone.
+
+A small AI model on the phone (a MobileNetV3 backbone and a small head) names the leaf problem from a fixed list of five answers, in Swahili text and audio, or says "not sure — the officer will look". Unclear or unfamiliar photos go to the officer's queue, and the officer makes the final call. The officer's labels refit the model on the phone, offline, so it answers more photos over time. The co-op screen turns the photos into village rust counts, adjusted for small samples, and ranks villages so the officer knows where to go first.
+
+On healthy and rust field photos from Ecuador, never used in training, the app answers 91% of photos and 89% of those answers are right. On farm photos from Uganda, it first sends 93% to the officer instead of guessing; after 100 officer labels it answers 46%, and 94% of those answers are right (dataset labels stand in for the officer). Next is a 90-day pilot with one Kirinyaga cooperative, scored on a sealed set of Kenyan photos.
+
+### <a name="our-take"></a>Our take on localizing AI
+
+Localizing AI is not translating an app. Our first model, trained on lab photos, was right on 84% of held-out lab photos, but on Ecuador field photos it was right only 2.5% of the time while 93% confident on average. So we retrained it on field photos, taught it to say "not sure", and let the local extension officer teach it, on the phone. To us, localizing AI means the people closest to the farm teach it, correct it, and stay in charge.
 
 ---
 
